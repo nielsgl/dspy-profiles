@@ -1,0 +1,49 @@
+[project]
+name = "dspy-profiles"
+version = "0.1.0"
+description = "Add support for DSPy profiles"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [
+    { name = "Niels van Galen Last", email = "nvangalenlast@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+dspy-profiles = "dspy_profiles:main"
+
+[build-system]
+requires = ["uv_build>=0.8.12,<0.9.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "dspy_profiles"
+module-root = ""
+
+[tool.black]
+line-length = 100
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+ignore = ["W505"]
+
+[tool.ruff.lint.isort]
+force-sort-within-sections = true
+
+[tool.pytest.ini_options]
+addopts = "--cov=dspy_profiles --cov-report=term-missing"
+
+[tool.coverage.run]
+source = ["dspy_profiles"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 90
+omit = [
+    "dspy_profiles/__init__.py",
+]
