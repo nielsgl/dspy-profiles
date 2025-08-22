@@ -1,2 +1,2 @@
-# dspy-profiles
+# DSPy Profiles
 DSPy Profile Manager
