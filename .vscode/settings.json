@@ -1,0 +1,9 @@
+{
+    "python.analysis.typeCheckingMode": "standard",
+    "python.analysis.extraPaths": [
+        "dspy_profiles"
+    ],
+    "python.autoComplete.extraPaths": [
+        "dspy_profiles"
+    ]
+}
