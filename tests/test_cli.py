@@ -1,0 +1,76 @@
+from unittest.mock import MagicMock, patch
+
+from typer.testing import CliRunner
+
+from dspy_profiles import cli
+from dspy_profiles.config import ProfileManager
+
+runner = CliRunner()
+
+
+@patch("dspy_profiles.cli.get_manager")
+def test_cli_lifecycle(mock_get_manager: MagicMock):
+    """Tests the full lifecycle of CLI commands with a mocked manager."""
+    mock_manager = MagicMock(spec=ProfileManager)
+    mock_get_manager.return_value = mock_manager
+
+    # 1. Start with no profiles
+    mock_manager.load.return_value = {}
+    result = runner.invoke(cli.app, ["list"])
+    assert "No profiles found" in result.stdout
+
+    # 2. Init a profile
+    mock_manager.get.return_value = None  # Ensure it doesn't think the profile exists
+    result = runner.invoke(cli.app, ["init", "--profile", "test_profile"])
+    assert result.exit_code == 0
+    assert "initialized successfully" in result.stdout
+    mock_manager.set.assert_called_with("test_profile", {})
+    mock_manager.reset_mock()
+
+    # 3. Set a value
+    mock_manager.get.return_value = {}
+    result = runner.invoke(cli.app, ["set", "test_profile", "lm.model", "gpt-4"])
+    assert result.exit_code == 0
+    mock_manager.set.assert_called_with("test_profile", {"lm": {"model": "gpt-4"}})
+
+    # 4. Show the profile
+    mock_manager.get.return_value = {"lm": {"model": "gpt-4"}}
+    result = runner.invoke(cli.app, ["show", "test_profile"])
+    assert "gpt-4" in result.stdout
+
+    # 5. List profiles
+    mock_manager.load.return_value = {"test_profile": {"lm": {"model": "gpt-4"}}}
+    result = runner.invoke(cli.app, ["list"])
+    assert "test_profile" in result.stdout
+    assert "gpt-4" in result.stdout
+
+    # 6. Delete the profile
+    mock_manager.delete.return_value = True
+    result = runner.invoke(cli.app, ["delete", "test_profile"])
+    assert "deleted successfully" in result.stdout
+    mock_manager.delete.assert_called_with("test_profile")
+
+
+@patch("dspy_profiles.cli.get_manager")
+def test_error_cases(mock_get_manager: MagicMock):
+    """Tests error cases for the CLI."""
+    mock_manager = MagicMock(spec=ProfileManager)
+    mock_get_manager.return_value = mock_manager
+    mock_manager.get.return_value = {"existing_profile": {}}
+
+    # Show non-existent profile
+    mock_manager.get.return_value = None
+    result = runner.invoke(cli.app, ["show", "nonexistent"])
+    assert "not found" in result.stdout
+    assert result.exit_code == 1
+
+    # Delete non-existent profile
+    mock_manager.delete.return_value = False
+    result = runner.invoke(cli.app, ["delete", "nonexistent"])
+    assert "not found" in result.stdout
+    assert result.exit_code == 1
+
+    # Init existing profile without --force
+    mock_manager.get.return_value = {"some_config"}
+    result = runner.invoke(cli.app, ["init", "--profile", "existing_profile"])
+    assert "already exists" in result.stdout
