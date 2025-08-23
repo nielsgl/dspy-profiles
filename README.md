@@ -18,7 +18,7 @@ A companion tool for the [DSPy framework](https://github.com/stanfordnlp/dspy) t
 - **Profile Management**: A user-friendly CLI to manage your configuration profiles.
 - **Centralized Configuration**: Keep all your DSPy settings in a single `~/.dspy/profiles.toml` file.
 - **Secure Secret Management**: Automatically load API keys from environment variables and `.env` files.
-- **Python API**: Use profiles in your code via a `with profile(...)` context manager. (Coming soon!)
+- **Python API**: Use profiles in your code via a `with profile(...)` context manager and `@with_profile(...)` decorator.
 
 ## Installation
 
@@ -45,6 +45,47 @@ pip install dspy-profiles
     dspy-profiles show default
     ```
 
+## Python API Usage
+
+You can activate profiles directly in your Python code using the `profile` context manager or the `with_profile` decorator.
+
+### `with profile(...)`
+
+The context manager is ideal for applying a profile to a specific block of code.
+
+```python
+import dspy
+from dspy_profiles import profile
+
+# No LM is configured globally
+assert dspy.settings.lm is None
+
+with profile("production"):
+    # The 'production' profile is active within this block
+    # Assuming the 'production' profile sets model='gpt-3.5-turbo'
+    assert dspy.settings.lm.kwargs.get("model") == "gpt-3.5-turbo"
+
+# The global settings are restored
+assert dspy.settings.lm is None
+```
+
+### `@with_profile(...)`
+
+The decorator is useful for applying a profile to an entire function.
+
+```python
+import dspy
+from dspy_profiles import with_profile
+
+@with_profile("testing")
+def my_dspy_program():
+    # The 'testing' profile is active here
+    # Assuming the 'testing' profile sets model='gpt-4'
+    assert dspy.settings.lm.kwargs.get("model") == "gpt-4"
+
+my_dspy_program()
+```
+
 ## CLI Usage
 
 ### `dspy-profiles list`
@@ -67,7 +108,7 @@ Deletes a profile.
 -   [x] **Core CLI**: Implement `init`, `set`, `list`, `show`, and `delete` commands.
 -   [x] **Interactive `init`**: An interactive wizard for creating new profiles.
 -   [x] **Secret Management**: Load API keys and other secrets from environment variables and `.env` files.
--   [ ] **Python API**: Implement `with profile(...)` and `@with_profile(...)` for using profiles in code.
+-   [x] **Python API**: Implement `with profile(...)` and `@with_profile(...)` for using profiles in code.
 -   [ ] **`run` Command**: Implement `dspy-profiles run --profile <name> -- your_script.py` to execute scripts with a specific profile.
 -   [ ] **Custom Providers**: Support for configuring custom DSPy providers.
 
