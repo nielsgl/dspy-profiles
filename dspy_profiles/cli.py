@@ -69,17 +69,48 @@ def set(profile_name: str, key: str, value: str):
 
 @app.command()
 def init(
-    profile_name: str = typer.Option("default", "--profile", "-p"),
+    profile_name: str = typer.Option(
+        "default", "--profile", "-p", prompt="Enter a name for the new profile"
+    ),
     force: bool = typer.Option(False, "--force", "-f"),
 ):
-    """Initializes a new profile."""
+    """Initializes a new profile interactively."""
     manager = get_manager()
     if manager.get(profile_name) and not force:
         console.print(f"Profile '{profile_name}' already exists. Use --force to overwrite.")
         return
 
-    manager.set(profile_name, {})
-    console.print(f"Profile '{profile_name}' initialized successfully.")
+    console.print(f"Configuring profile: [bold]{profile_name}[/bold]")
+
+    model = typer.prompt("Enter the language model (e.g., openai/gpt-4o-mini)")
+    api_base = typer.prompt(
+        "Enter the API base (optional, for local models)", default="", show_default=False
+    )
+
+    new_config = {"lm": {"model": model}}
+    if api_base:
+        new_config["lm"]["api_base"] = api_base
+
+    manager.set(profile_name, new_config)
+
+    # Provide guidance on setting the API key
+    provider = model.split("/")[0].upper()
+    if provider not in ["OPENAI", "ANTHROPIC", "COHERE"]:  # Add more as needed
+        console.print(
+            f"\n[yellow]Warning:[/] Could not determine the API key for provider '{provider}'."
+        )
+        console.print(
+            "Please consult your provider's documentation and set the appropriate"
+            " environment variable."
+        )
+    else:
+        console.print(f"\n[bold green]Success![/bold green] Profile '{profile_name}' saved.")
+        console.print(
+            f"To use this profile, make sure to set the [bold]{provider}_API_KEY[/bold]"
+            " environment variable."
+        )
+
+    console.print(f"You can view your new profile with: dspy-profiles show {profile_name}")
 
 
 def main():

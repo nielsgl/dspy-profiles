@@ -19,12 +19,16 @@ def test_cli_lifecycle(mock_get_manager: MagicMock):
     result = runner.invoke(cli.app, ["list"])
     assert "No profiles found" in result.stdout
 
-    # 2. Init a profile
-    mock_manager.get.return_value = None  # Ensure it doesn't think the profile exists
-    result = runner.invoke(cli.app, ["init", "--profile", "test_profile"])
+    # 2. Init a profile interactively
+    mock_manager.get.return_value = None
+    result = runner.invoke(
+        cli.app,
+        ["init", "--profile", "test_profile"],
+        input="openai/gpt-4o-mini\n\n",  # model, then empty for api_base
+    )
     assert result.exit_code == 0
-    assert "initialized successfully" in result.stdout
-    mock_manager.set.assert_called_with("test_profile", {})
+    assert "OPENAI_API_KEY" in result.stdout
+    mock_manager.set.assert_called_with("test_profile", {"lm": {"model": "openai/gpt-4o-mini"}})
     mock_manager.reset_mock()
 
     # 3. Set a value
