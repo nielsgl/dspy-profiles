@@ -1,3 +1,5 @@
-from .cli import main
+"""dspy-profiles package."""
 
-__all__ = ["main"]
+from .core import profile, with_profile
+
+__all__ = ["profile", "with_profile"]
