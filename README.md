@@ -17,8 +17,8 @@ A companion tool for the [DSPy framework](https://github.com/stanfordnlp/dspy) t
 
 - **Profile Management**: A user-friendly CLI to manage your configuration profiles.
 - **Centralized Configuration**: Keep all your DSPy settings in a single `~/.dspy/profiles.toml` file.
-- **Secure**: Keep your API keys and other secrets out of your configuration files. (Coming soon!)
-- **Python API**: Use profiles directly in your Python code with a simple context manager. (Coming soon!)
+- **Secure Secret Management**: Automatically load API keys from environment variables and `.env` files.
+- **Python API**: Use profiles in your code via a `with profile(...)` context manager. (Coming soon!)
 
 ## Installation
 
@@ -28,11 +28,11 @@ pip install dspy-profiles
 
 ## Quickstart
 
-1.  **Initialize a default profile:**
+1.  **Initialize a default profile interactively:**
     ```bash
     dspy-profiles init
     ```
-    This will create an empty `default` profile in `~/.dspy/profiles.toml`.
+    This will launch an interactive prompt to help you configure your first profile.
 
 2.  **Set configuration values:**
     ```bash
@@ -54,7 +54,7 @@ Lists all available profiles.
 Displays the configuration for a specific profile.
 
 ### `dspy-profiles init --profile <name>`
-Initializes a new, empty profile.
+Initializes a new profile interactively.
 
 ### `dspy-profiles set <profile_name> <key> <value>`
 Sets a configuration value in a profile using dot notation (e.g., `lm.model`).
@@ -65,11 +65,11 @@ Deletes a profile.
 ## Roadmap
 
 -   [x] **Core CLI**: Implement `init`, `set`, `list`, `show`, and `delete` commands.
--   [ ] **Secret Management**: Load API keys and other secrets from environment variables and `.env` files.
+-   [x] **Interactive `init`**: An interactive wizard for creating new profiles.
+-   [x] **Secret Management**: Load API keys and other secrets from environment variables and `.env` files.
 -   [ ] **Python API**: Implement `with profile(...)` and `@with_profile(...)` for using profiles in code.
 -   [ ] **`run` Command**: Implement `dspy-profiles run --profile <name> -- your_script.py` to execute scripts with a specific profile.
 -   [ ] **Custom Providers**: Support for configuring custom DSPy providers.
--   [ ] **Interactive `init`**: An interactive wizard for creating new profiles.
 
 ## Contributing
 
