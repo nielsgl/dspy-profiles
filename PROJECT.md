@@ -105,9 +105,6 @@ dspy-profiles list
 # Show the configuration of a specific profile
 dspy-profiles show prod
 
-# Set the default profile to use
-dspy-profiles use prod
-
 # Delete a profile
 dspy-profiles delete staging
 
