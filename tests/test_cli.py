@@ -1,3 +1,4 @@
+import subprocess
 from unittest.mock import MagicMock, patch
 
 from typer.testing import CliRunner
@@ -79,6 +80,16 @@ def test_error_cases(mock_get_manager: MagicMock):
     result = runner.invoke(cli.app, ["init", "--profile", "existing_profile"])
     assert "already exists" in result.stdout
 
+    # Init with a non-standard provider
+    mock_manager.get.return_value = None
+    result = runner.invoke(
+        cli.app,
+        ["init", "--profile", "custom_profile"],
+        input="custom/model\n\n",
+    )
+    assert "Warning:" in result.stdout
+    assert "CUSTOM_API_KEY" not in result.stdout
+
 
 @patch("dspy_profiles.cli.subprocess.run")
 def test_run_command(mock_subprocess_run: MagicMock):
@@ -103,3 +114,10 @@ def test_run_command(mock_subprocess_run: MagicMock):
     result = runner.invoke(cli.app, ["run", "--profile", "test_profile", "nonexistent_command"])
     assert "Command not found" in result.stdout
     assert result.exit_code == 1
+    mock_subprocess_run.reset_mock()
+
+    # Test command fails
+    mock_subprocess_run.side_effect = subprocess.CalledProcessError(123, "cmd")
+    result = runner.invoke(cli.app, ["run", "--profile", "test_profile", "failing_command"])
+    assert "failed with exit code 123" in result.stdout
+    assert result.exit_code == 123
