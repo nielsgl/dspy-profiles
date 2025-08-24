@@ -12,8 +12,9 @@ def mock_profile():
     """Returns a mock ResolvedProfile for testing."""
     return ResolvedProfile(
         name="test_profile",
-        config={"lm": {"model": "gpt-4o-mini"}},
+        config={"lm": {"model": "gpt-4o-mini"}, "settings": {"temperature": 0.7}},
         lm={"model": "gpt-4o-mini"},
+        settings={"temperature": 0.7},
     )
 
 
@@ -27,9 +28,12 @@ def test_profile_context_manager(mock_profile):
         with profile("test_profile"):
             assert dspy.settings.lm is not None
             assert dspy.settings.lm.model == "gpt-4o-mini"
+            assert dspy.settings.temperature == 0.7
             mock_get_config.assert_called_once()
 
         assert dspy.settings.lm is None
+        with pytest.raises(AttributeError):
+            _ = dspy.settings.temperature
 
 
 def test_with_profile_decorator(mock_profile):

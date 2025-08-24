@@ -25,8 +25,8 @@ def profile(profile_name: str):
         # This will be implemented when we add custom provider support.
         pass
 
-    # TODO: Add support for other settings from resolved_profile.settings
-    with dspy.context(lm=lm, rm=rm):
+    settings = resolved_profile.settings or {}
+    with dspy.context(lm=lm, rm=rm, **settings):
         yield
 
 
