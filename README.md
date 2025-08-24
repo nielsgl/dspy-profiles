@@ -103,13 +103,20 @@ Sets a configuration value in a profile using dot notation (e.g., `lm.model`).
 ### `dspy-profiles delete <profile_name>`
 Deletes a profile.
 
+### `dspy-profiles run`
+Executes a command with a specific profile activated.
+
+```bash
+dspy-profiles run --profile prod -- python my_script.py --arg1 --arg2
+```
+
 ## Roadmap
 
 -   [x] **Core CLI**: Implement `init`, `set`, `list`, `show`, and `delete` commands.
 -   [x] **Interactive `init`**: An interactive wizard for creating new profiles.
 -   [x] **Secret Management**: Load API keys and other secrets from environment variables and `.env` files.
 -   [x] **Python API**: Implement `with profile(...)` and `@with_profile(...)` for using profiles in code.
--   [ ] **`run` Command**: Implement `dspy-profiles run --profile <name> -- your_script.py` to execute scripts with a specific profile.
+-   [x] **`run` Command**: Implement `dspy-profiles run --profile <name> -- your_script.py` to execute scripts with a specific profile.
 -   [ ] **Configuration Validation**: Add Pydantic-based validation for profiles.
 
 ## Contributing
