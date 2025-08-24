@@ -12,7 +12,7 @@ The core goal is to move configuration out of the code and into a centralized, m
 2.  **Context Managers & Decorators**: Pythonic `with profile(...)` and `@with_profile(...)` constructs to apply profiles in code.
 3.  **CLI Integration**: A `dspy-profiles` command-line interface for managing profiles and running scripts under a specific profile.
 4.  **Secure Secret Management**: Seamless integration with environment variables and `.env` files for API keys and other secrets.
-5.  **Extensibility**: Support for custom providers to accommodate any DSPy setup.
+5.  **Configuration Validation**: Robust validation of profile schemas to prevent misconfiguration.
 
 ## Configuration (`~/.dspy/profiles.toml`)
 
@@ -36,14 +36,11 @@ Profiles are stored in a TOML file located at `~/.dspy/profiles.toml` (or `$XDG_
   [default.settings]
   track_usage = true
 
-# Production profile with a custom provider
+# Production profile
 [prod]
   [prod.lm]
-  model = "self-hosted/llama3-70b"
-
-  [prod.provider]
-  class = "my_custom_providers.MyProvider"
-  api_base = "https://my-api.com/v1"
+  model = "cohere/command-r"
+  api_key = "${COHERE_API_KEY}" # Example of secret injection
 
   [prod.settings]
   num_threads = 32
@@ -116,7 +113,7 @@ dspy-profiles run --profile prod my_script.py
 
 *   **Concurrency**: The `with profile(...)` context manager will be a wrapper around `dspy.context`, making it safe for use in multi-threaded and async applications by leveraging `contextvars`.
 *   **`dspy-profiles run` Implementation**: This command will work by setting an environment variable (e.g., `DSPY_PROFILE=prod`) and then executing the user's script in a subprocess. The library's Python components will be designed to automatically detect and use this environment variable.
-*   **Dynamic Imports**: Custom providers will be loaded dynamically using their full import path, allowing for maximum flexibility.
+*   **Schema Validation**: Pydantic models will be used to validate the structure of `profiles.toml`, ensuring all keys and value types are correct before they are used.
 
 ## Development Roadmap
 
@@ -124,7 +121,7 @@ dspy-profiles run --profile prod my_script.py
 2.  **Core Logic**: Implement the profile loading, saving, and validation logic.
 3.  **Secret Management**: Implement `.env` file loading.
 4.  **Context Manager & Decorator**: Build the `with profile(...)` and `@with_profile(...)` features, ensuring they correctly wrap `dspy.context`.
-5.  **Custom Provider Support**: Implement the dynamic class loading for providers.
+5.  **Configuration Validation**: Implement Pydantic models for profile validation.
 6.  **CLI Implementation**: Build out all the `dspy-profiles` commands.
 7.  **Testing**: Write a comprehensive test suite, including tests for precedence, concurrency, `.env` loading, and custom providers.
 8.  **Documentation**: Create user-friendly documentation with clear examples.

@@ -110,7 +110,7 @@ Deletes a profile.
 -   [x] **Secret Management**: Load API keys and other secrets from environment variables and `.env` files.
 -   [x] **Python API**: Implement `with profile(...)` and `@with_profile(...)` for using profiles in code.
 -   [ ] **`run` Command**: Implement `dspy-profiles run --profile <name> -- your_script.py` to execute scripts with a specific profile.
--   [ ] **Custom Providers**: Support for configuring custom DSPy providers.
+-   [ ] **Configuration Validation**: Add Pydantic-based validation for profiles.
 
 ## Contributing
 
