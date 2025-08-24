@@ -12,8 +12,8 @@ def profile(profile_name: str):
     Args:
         profile_name: The name of the profile to activate.
     """
-    loader = ProfileLoader(profile_name=profile_name)
-    resolved_profile = loader.get_config()
+    loader = ProfileLoader()
+    resolved_profile = loader.get_config(profile_name)
 
     lm = None
     if resolved_profile.lm:

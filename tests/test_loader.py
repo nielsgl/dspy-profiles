@@ -33,8 +33,8 @@ def test_load_named_profile(mock_profile_manager, mock_profiles):
     """Tests loading a specifically named profile."""
     mock_manager_instance = mock_profile_manager.return_value
     mock_manager_instance.load.return_value = mock_profiles
-    loader = ProfileLoader(profile_name="prod")
-    config = loader.get_config()
+    loader = ProfileLoader()
+    config = loader.get_config("prod")
     assert config.name == "prod"
     assert config.lm is not None
     assert config.lm["model"] == "prod_model"
@@ -60,8 +60,9 @@ def test_profile_not_found(mock_profile_manager):
     """Tests that a ValueError is raised for a non-existent profile."""
     mock_manager_instance = mock_profile_manager.return_value
     mock_manager_instance.load.return_value = {}
+    loader = ProfileLoader()
     with pytest.raises(ValueError, match="Profile 'nonexistent' not found"):
-        ProfileLoader(profile_name="nonexistent")
+        loader.get_config("nonexistent")
 
 
 @patch("dspy_profiles.loader.ProfileManager")

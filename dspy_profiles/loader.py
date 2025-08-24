@@ -21,40 +21,41 @@ class ResolvedProfile:
 class ProfileLoader:
     """Resolves a profile by merging settings from files and the environment."""
 
-    def __init__(self, profile_name: str | None = None):
-        self.profile_name = profile_name or os.getenv("DSPY_PROFILE") or "default"
+    def __init__(self):
         self._load_dotenv()
-        self.profile_config = self._load_profile_config()
 
     def _load_dotenv(self):
         """Loads environment variables from a .env file if present."""
         load_dotenv()
 
-    def _load_profile_config(self) -> dict[str, Any]:
+    def _load_profile_config(self, profile_name: str) -> dict[str, Any]:
         """Loads the specified profile from the config file."""
         manager = ProfileManager(PROFILES_PATH)
         all_profiles = manager.load()
-        if self.profile_name not in all_profiles:
-            if self.profile_name == "default":
+        if profile_name not in all_profiles:
+            if profile_name == "default":
                 return {}  # It's okay if the default profile doesn't exist
-            raise ValueError(f"Profile '{self.profile_name}' not found.")
-        return all_profiles.get(self.profile_name, {})
+            raise ValueError(f"Profile '{profile_name}' not found.")
+        return all_profiles.get(profile_name, {})
 
-    def get_config(self) -> ResolvedProfile:
+    def get_config(self, profile_name: str | None = None) -> ResolvedProfile:
         """
         Resolves and returns the final profile configuration.
         Secrets are loaded from the environment.
         """
+        profile_name = profile_name or os.getenv("DSPY_PROFILE") or "default"
+        profile_config = self._load_profile_config(profile_name)
+
         # For now, we'll just pass the profile through.
         # In the next step, we'll add secret injection and object instantiation.
 
-        lm_config = self.profile_config.get("lm", {})
-        rm_config = self.profile_config.get("rm", {})
-        settings_config = self.profile_config.get("settings", {})
+        lm_config = profile_config.get("lm", {})
+        rm_config = profile_config.get("rm", {})
+        settings_config = profile_config.get("settings", {})
 
         return ResolvedProfile(
-            name=self.profile_name,
-            config=self.profile_config,
+            name=profile_name,
+            config=profile_config,
             lm=lm_config,
             rm=rm_config,
             settings=settings_config,

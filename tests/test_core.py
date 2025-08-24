@@ -29,7 +29,7 @@ def test_profile_context_manager(mock_profile):
             assert dspy.settings.lm is not None
             assert dspy.settings.lm.model == "gpt-4o-mini"
             assert dspy.settings.temperature == 0.7
-            mock_get_config.assert_called_once()
+            mock_get_config.assert_called_once_with("test_profile")
 
         assert dspy.settings.lm is None
         with pytest.raises(AttributeError):
@@ -49,7 +49,7 @@ def test_with_profile_decorator(mock_profile):
     ) as mock_get_config:
         assert dspy.settings.lm is None
         my_dspy_program()
-        mock_get_config.assert_called_once()
+        mock_get_config.assert_called_once_with("test_profile")
         assert dspy.settings.lm is None
 
 
