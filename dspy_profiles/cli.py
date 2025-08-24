@@ -1,3 +1,5 @@
+import subprocess
+
 import rich
 from rich.console import Console
 from rich.table import Table
@@ -115,3 +117,29 @@ def init(
 
 def main():
     app()
+
+
+@app.command(context_settings={"allow_extra_args": True, "ignore_unknown_options": True})
+def run(
+    ctx: typer.Context,
+    profile_name: str = typer.Option(..., "--profile", "-p", help="The profile to use."),
+):
+    """Runs a command with the specified profile activated."""
+    import os
+
+    command = ctx.args
+    if not command:
+        console.print("[bold red]Error:[/] No command provided to run.")
+        raise typer.Exit(code=1)
+
+    env = os.environ.copy()
+    env["DSPY_PROFILE"] = profile_name
+
+    try:
+        subprocess.run(command, env=env, check=True)
+    except FileNotFoundError:
+        console.print(f"[bold red]Error:[/] Command not found: '{command[0]}'")
+        raise typer.Exit(code=1)
+    except subprocess.CalledProcessError as e:
+        console.print(f"[bold red]Error:[/] Command failed with exit code {e.returncode}.")
+        raise typer.Exit(code=e.returncode)

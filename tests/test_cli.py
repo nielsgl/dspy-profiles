@@ -78,3 +78,28 @@ def test_error_cases(mock_get_manager: MagicMock):
     mock_manager.get.return_value = {"some_config"}
     result = runner.invoke(cli.app, ["init", "--profile", "existing_profile"])
     assert "already exists" in result.stdout
+
+
+@patch("dspy_profiles.cli.subprocess.run")
+def test_run_command(mock_subprocess_run: MagicMock):
+    """Tests the run command."""
+    # Test successful run
+    result = runner.invoke(cli.app, ["run", "--profile", "test_profile", "python", "my_script.py"])
+    assert result.exit_code == 0
+    mock_subprocess_run.assert_called_once()
+    args, kwargs = mock_subprocess_run.call_args
+    assert args[0] == ["python", "my_script.py"]
+    assert kwargs["env"]["DSPY_PROFILE"] == "test_profile"
+    mock_subprocess_run.reset_mock()
+
+    # Test no command provided
+    result = runner.invoke(cli.app, ["run", "--profile", "test_profile"])
+    assert "No command provided" in result.stdout
+    assert result.exit_code == 1
+    mock_subprocess_run.assert_not_called()
+
+    # Test command not found
+    mock_subprocess_run.side_effect = FileNotFoundError
+    result = runner.invoke(cli.app, ["run", "--profile", "test_profile", "nonexistent_command"])
+    assert "Command not found" in result.stdout
+    assert result.exit_code == 1
