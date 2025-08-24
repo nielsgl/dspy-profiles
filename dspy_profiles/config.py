@@ -1,7 +1,10 @@
 from pathlib import Path
 from typing import Any
 
+from pydantic import ValidationError
 import toml
+
+from dspy_profiles.schemas import Profiles
 
 CONFIG_DIR = Path.home() / ".dspy"
 PROFILES_PATH = CONFIG_DIR / "profiles.toml"
@@ -30,11 +33,16 @@ class ProfileManager:
         self.path.touch(exist_ok=True)
 
     def load(self) -> dict[str, Any]:
-        """Loads all profiles from the file."""
+        """Loads and validates all profiles from the file."""
         with self.path.open("r") as f:
             try:
-                return toml.load(f)
-            except toml.TomlDecodeError:
+                data = toml.load(f)
+                if not data:
+                    return {}
+                validated_profiles = Profiles.model_validate(data)
+                return validated_profiles.model_dump()
+            except (toml.TomlDecodeError, ValidationError):
+                # Consider logging the error `e` here
                 return {}
 
     def save(self, profiles: dict[str, Any]):

@@ -36,3 +36,17 @@ def test_load_corrupt_file(tmp_path: Path):
     config_path.write_text("this is not valid toml")
     manager = ProfileManager(config_path)
     assert manager.load() == {}
+
+
+def test_load_invalid_schema(tmp_path: Path):
+    """Tests that loading a file with an invalid schema returns an empty dict."""
+    config_path = tmp_path / "profiles.toml"
+    invalid_profile = """
+[default]
+  [default.lm]
+  model = "gpt-4o-mini"
+  temperature = "not-a-float"
+"""
+    config_path.write_text(invalid_profile)
+    manager = ProfileManager(config_path)
+    assert manager.load() == {}
