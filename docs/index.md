@@ -7,10 +7,10 @@
 ## The Problem
 
 When working with DSPy, you often need to switch between different language models, retrieval models, and settings. For example:
-- Using a cheap, fast model like `gpt-4o-mini` in development.
-- Using a powerful model like `claude-3-opus` in production.
-- Pointing to a staging database for your retrieval model.
-- Toggling settings like `track_usage`.
+* Using a cheap, fast model like `gpt-4o-mini` in development.
+* Using a powerful model like `claude-3-opus` in production.
+* Pointing to a staging database for your retrieval model.
+* Toggling settings like `track_usage`.
 
 Managing this configuration directly in your code can be messy, error-prone, and insecure.
 

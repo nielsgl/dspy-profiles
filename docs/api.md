@@ -68,3 +68,4 @@ def run_test_prediction():
 
 # The 'testing' profile is active only for the duration of this function call
 result = run_test_prediction()
+```

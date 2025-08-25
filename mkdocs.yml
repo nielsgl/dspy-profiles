@@ -21,4 +21,5 @@ nav:
   - Home: index.md
   - 'User Guide':
     - 'Quickstart': quickstart.md
+    - 'Reference': cli-reference.md
   - 'API Reference': api.md

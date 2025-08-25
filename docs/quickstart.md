@@ -25,7 +25,8 @@ This command will ask you a few questions and then create the configuration file
 You can view the contents of any profile with the `show` command:
 
 ```bash
-dspy-profiles show default```
+dspy-profiles show default
+```
 
 ## 4. Use in Python with the Context Manager
 
@@ -50,6 +51,7 @@ Any DSPy calls made inside the `with` block will use the settings from your `def
 For running entire scripts, the `run` command is the most convenient option. It activates a profile for the entire duration of the script's execution.
 
 Create a file named `my_script.py`:
+
 ```python
 # my_script.py
 import dspy
@@ -61,5 +63,6 @@ print(f"The capital of Spain is {result.answer}.")
 ```
 
 Now, run it with your profile:
+
 ```bash
 dspy-profiles run --profile default -- python my_script.py
