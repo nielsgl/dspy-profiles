@@ -1,73 +1,109 @@
-from unittest.mock import patch
+import os
 
 import dspy
 import pytest
 
 from dspy_profiles.core import profile, with_profile
-from dspy_profiles.loader import ResolvedProfile
 
 
+# Fixture to manage environment variables
 @pytest.fixture
-def mock_profile():
-    """Returns a mock ResolvedProfile for testing."""
-    return ResolvedProfile(
-        name="test_profile",
-        config={"lm": {"model": "gpt-4o-mini"}, "settings": {"temperature": 0.7}},
-        lm={"model": "gpt-4o-mini"},
-        settings={"temperature": 0.7},
-        rm={"url": "http://localhost:8893/api/search"},
+def manage_env_var():
+    original_value = os.environ.get("DSPY_PROFILE")
+    yield
+    if original_value is not None:
+        os.environ["DSPY_PROFILE"] = original_value
+    elif "DSPY_PROFILE" in os.environ:
+        del os.environ["DSPY_PROFILE"]
+
+
+def test_profile_context_manager_activates_profile(profile_manager):
+    """Tests that the profile() context manager correctly activates a profile."""
+    profile_manager.save({"test_profile": {"lm": {"model": "test_model_context"}}})
+
+    with profile("test_profile", config_path=profile_manager.path):
+        assert dspy.settings.lm.model == "test_model_context"
+
+    assert dspy.settings.lm is None
+
+
+def test_dspy_profile_env_var_has_precedence(profile_manager, manage_env_var):
+    """Tests that DSPY_PROFILE environment variable overrides the context manager."""
+    profile_manager.save(
+        {
+            "env_profile": {"lm": {"model": "env_model"}},
+            "other_profile": {"lm": {"model": "other_model"}},
+        }
     )
+    os.environ["DSPY_PROFILE"] = "env_profile"
+
+    # When DSPY_PROFILE is set, calling profile() should load that profile
+    with profile("other_profile", config_path=profile_manager.path):
+        assert dspy.settings.lm.model == "env_model"
 
 
-def test_profile_context_manager(mock_profile):
-    """Tests that the profile context manager correctly applies settings."""
-    with patch(
-        "dspy_profiles.core.ProfileLoader.get_config", return_value=mock_profile
-    ) as mock_get_config:
+def test_force_overrides_dspy_profile_env_var(profile_manager, manage_env_var):
+    """Tests that force=True in the context manager overrides DSPY_PROFILE."""
+    profile_manager.save(
+        {
+            "env_profile": {"lm": {"model": "env_model"}},
+            "forced_profile": {"lm": {"model": "forced_model"}},
+        }
+    )
+    os.environ["DSPY_PROFILE"] = "env_profile"
+
+    with profile("forced_profile", force=True, config_path=profile_manager.path):
+        assert dspy.settings.lm.model == "forced_model"
+
+
+def test_with_profile_decorator(profile_manager):
+    """Tests that the @with_profile decorator works."""
+    profile_manager.save({"decorator_profile": {"lm": {"model": "decorator_model"}}})
+
+    @with_profile("decorator_profile", config_path=profile_manager.path)
+    def my_function():
+        return dspy.settings.lm.model
+
+    assert my_function() == "decorator_model"
+    assert dspy.settings.lm is None
+
+
+def test_with_profile_decorator_respects_env_var(profile_manager, manage_env_var):
+    """Tests that the @with_profile decorator respects DSPY_PROFILE."""
+    profile_manager.save(
+        {
+            "env_profile": {"lm": {"model": "env_model_decorator"}},
+            "other_profile": {"lm": {"model": "other_model_decorator"}},
+        }
+    )
+    os.environ["DSPY_PROFILE"] = "env_profile"
+
+    @with_profile("other_profile", config_path=profile_manager.path)
+    def my_function():
+        return dspy.settings.lm.model
+
+    assert my_function() == "env_model_decorator"
+
+
+def test_with_profile_decorator_force_overrides_env_var(profile_manager, manage_env_var):
+    """Tests that force=True in the decorator overrides DSPY_PROFILE."""
+    profile_manager.save(
+        {
+            "env_profile": {"lm": {"model": "env_model_decorator_force"}},
+            "forced_profile": {"lm": {"model": "forced_model_decorator"}},
+        }
+    )
+    os.environ["DSPY_PROFILE"] = "env_profile"
+
+    @with_profile("forced_profile", force=True, config_path=profile_manager.path)
+    def my_function():
+        return dspy.settings.lm.model
+
+    assert my_function() == "forced_model_decorator"
+
+
+def test_profile_no_profile_found(profile_manager):
+    """Tests that nothing happens when no profile is found."""
+    profile_manager.save({})
+    with profile(config_path=profile_manager.path):
         assert dspy.settings.lm is None
-
-        with profile("test_profile"):
-            assert dspy.settings.lm is not None
-            assert dspy.settings.lm.model == "gpt-4o-mini"
-            assert dspy.settings.temperature == 0.7
-            assert dspy.settings.rm is not None
-            assert dspy.settings.rm.url == "http://localhost:8893/api/search"
-            mock_get_config.assert_called_once_with("test_profile")
-
-        assert dspy.settings.lm is None
-        with pytest.raises(AttributeError):
-            _ = dspy.settings.temperature
-
-
-def test_with_profile_decorator(mock_profile):
-    """Tests that the @with_profile decorator correctly applies settings."""
-
-    @with_profile("test_profile")
-    def my_dspy_program():
-        assert dspy.settings.lm is not None
-        assert dspy.settings.lm.model == "gpt-4o-mini"
-
-    with patch(
-        "dspy_profiles.core.ProfileLoader.get_config", return_value=mock_profile
-    ) as mock_get_config:
-        assert dspy.settings.lm is None
-        my_dspy_program()
-        mock_get_config.assert_called_once_with("test_profile")
-        assert dspy.settings.lm is None
-
-
-def test_profile_not_found():
-    """Tests that a ValueError is raised for a non-existent profile."""
-    with patch("dspy_profiles.loader.ProfileManager.load", return_value={}):
-        with pytest.raises(ValueError, match="Profile 'non_existent_profile' not found."):
-            with profile("non_existent_profile"):
-                pass
-
-
-def test_profile_with_no_lm_or_rm():
-    """Tests that the context manager handles profiles with no lm or rm."""
-    mock_profile = ResolvedProfile(name="test_profile", config={}, settings={})
-    with patch("dspy_profiles.core.ProfileLoader.get_config", return_value=mock_profile):
-        with profile("test_profile"):
-            assert dspy.settings.lm is None
-            assert dspy.settings.rm is None

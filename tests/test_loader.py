@@ -22,7 +22,7 @@ def test_load_default_profile(mock_profile_manager, mock_profiles):
     mock_manager_instance = mock_profile_manager.return_value
     mock_manager_instance.load.return_value = mock_profiles
     loader = ProfileLoader()
-    config = loader.get_config()
+    config = loader.get_config()  # No profile name, should fall back to default
     assert config.name == "default"
     assert config.lm is not None
     assert config.lm["model"] == "default_model"
@@ -49,7 +49,7 @@ def test_load_profile_from_env(mock_profile_manager, mock_profiles, monkeypatch)
     mock_manager_instance = mock_profile_manager.return_value
     mock_manager_instance.load.return_value = mock_profiles
     loader = ProfileLoader()
-    config = loader.get_config()
+    config = loader.get_config()  # No profile name, should use env var
     assert config.name == "prod"
     assert config.lm is not None
     assert config.lm["model"] == "prod_model"
@@ -83,4 +83,4 @@ def test_load_default_profile_not_found(mock_profile_manager):
     loader = ProfileLoader()
     config = loader.get_config("default")
     assert config.name == "default"
-    assert config.lm == {}
+    assert config.lm is None

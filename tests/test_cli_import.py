@@ -56,3 +56,19 @@ def test_import_profile_already_exists(mock_get_manager: MagicMock, tmp_path):
     assert result.exit_code == 1
     assert "already exists" in result.stdout
     mock_manager.set.assert_not_called()
+
+
+@patch("dspy_profiles.cli.get_manager")
+def test_import_profile_file_not_found(mock_get_manager: MagicMock):
+    """Tests that import fails if the --from file does not exist."""
+    mock_manager = MagicMock(spec=ProfileManager)
+    mock_get_manager.return_value = mock_manager
+
+    result = runner.invoke(
+        cli.app,
+        ["import", "--profile", "any_profile", "--from", "nonexistent.env"],
+    )
+
+    assert result.exit_code == 2  # Typer's exit code for file not found
+    assert "Invalid value" in result.stderr
+    mock_manager.set.assert_not_called()
