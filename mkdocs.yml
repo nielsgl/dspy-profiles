@@ -1,0 +1,24 @@
+site_name: dspy-profiles
+theme:
+  name: material
+  palette:
+    # Palette toggle for light vs dark mode
+    - scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Palette toggle for dark vs light mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - content.code.copy
+    - content.code.annotate
+    - navigation.tabs
+    - navigation.top
+nav:
+  - Home: index.md
+  - 'User Guide':
+    - 'Quickstart': quickstart.md
+  - 'API Reference': api.md
