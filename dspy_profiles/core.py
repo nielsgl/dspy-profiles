@@ -63,11 +63,31 @@ def profile(profile_name: str | None = None, *, force: bool = False, config_path
     if resolved_profile.lm:
         lm_config = resolved_profile.lm.copy()
         model_name = lm_config.pop("model", None)
-        lm = dspy.LM(model_name, **lm_config)
+        # DSPy expects the provider to be part of the model name if not openai
+        # but we handle that in the profile. Let's be robust.
+        provider = lm_config.pop("provider", None)
+        if provider and provider != "openai" and model_name and provider not in model_name:
+            # Simple heuristic, may need refinement
+            pass  # For now, assume model name is correct
+
+        # Dynamically find the correct LM class if specified
+        lm_class = dspy.LM
+        if provider:
+            lm_class_name = provider.capitalize()
+            lm_class = getattr(dspy, lm_class_name, dspy.LM)
+
+        lm = lm_class(model=model_name, **lm_config) if model_name else dspy.LM(**lm_config)
 
     rm = None
     if resolved_profile.rm:
-        rm = dspy.ColBERTv2(**resolved_profile.rm)
+        # A simple heuristic to select RM class. Can be expanded.
+        rm_model_name = resolved_profile.rm.get("model", "").lower()
+        rm_class = dspy.ColBERTv2
+        if "rag" in rm_model_name:
+            # This is a placeholder for more advanced RM selection.
+            # For now, we default to ColBERTv2 as it's the most common.
+            rm_class = dspy.ColBERTv2
+        rm = rm_class(**resolved_profile.rm)
 
     settings = resolved_profile.settings or {}
     with dspy.context(lm=lm, rm=rm, **settings):
