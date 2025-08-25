@@ -1,4 +1,3 @@
-import subprocess
 from unittest.mock import MagicMock, patch
 
 from typer.testing import CliRunner
@@ -94,34 +93,44 @@ def test_error_cases(mock_get_manager: MagicMock):
 
 
 @patch("dspy_profiles.cli.subprocess.run")
-def test_run_command(mock_subprocess_run: MagicMock):
-    """Tests the run command."""
-    # Test successful run
-    result = runner.invoke(cli.app, ["run", "--profile", "test_profile", "python", "my_script.py"])
+def test_run_command_success(mock_subprocess_run: MagicMock):
+    """Tests a successful run command."""
+    mock_subprocess_run.return_value = MagicMock(returncode=0)
+    result = runner.invoke(
+        cli.app, ["run", "--profile", "test_profile", "--", "python", "my_script.py"]
+    )
     assert result.exit_code == 0
     mock_subprocess_run.assert_called_once()
     args, kwargs = mock_subprocess_run.call_args
-    assert args[0] == ["python", "my_script.py"]
+    assert args == (["python", "my_script.py"],)
     assert kwargs["env"]["DSPY_PROFILE"] == "test_profile"
-    mock_subprocess_run.reset_mock()
 
-    # Test no command provided
+
+@patch("dspy_profiles.cli.subprocess.run")
+def test_run_no_command_provided(mock_subprocess_run: MagicMock):
+    """Tests that the run command exits if no command is provided."""
     result = runner.invoke(cli.app, ["run", "--profile", "test_profile"])
     assert "No command provided" in result.stdout
     assert result.exit_code == 1
     mock_subprocess_run.assert_not_called()
 
-    # Test command not found
+
+@patch("dspy_profiles.cli.subprocess.run")
+def test_run_command_not_found(mock_subprocess_run: MagicMock):
+    """Tests the run command when the executable is not found."""
     mock_subprocess_run.side_effect = FileNotFoundError
-    result = runner.invoke(cli.app, ["run", "--profile", "test_profile", "nonexistent_command"])
+    result = runner.invoke(
+        cli.app, ["run", "--profile", "test_profile", "--", "nonexistent_command"]
+    )
     assert "Command not found" in result.stdout
     assert result.exit_code == 1
-    mock_subprocess_run.reset_mock()
 
-    # Test command fails
-    mock_subprocess_run.side_effect = subprocess.CalledProcessError(123, "cmd")
-    result = runner.invoke(cli.app, ["run", "--profile", "test_profile", "failing_command"])
-    assert "failed with exit code 123" in result.stdout
+
+@patch("dspy_profiles.cli.subprocess.run")
+def test_run_command_fails(mock_subprocess_run: MagicMock):
+    """Tests the run command when the subprocess fails."""
+    mock_subprocess_run.return_value = MagicMock(returncode=123)
+    result = runner.invoke(cli.app, ["run", "--profile", "test_profile", "--", "failing_command"])
     assert result.exit_code == 123
 
 

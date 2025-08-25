@@ -227,27 +227,33 @@ def diff(
     console.print(diff_text)
 
 
-@app.command(context_settings={"allow_extra_args": True, "ignore_unknown_options": True})
-def run(
+@app.command(
+    name="run",
+    context_settings={"allow_extra_args": True, "ignore_unknown_options": True},
+)
+def run_command(
     ctx: typer.Context,
-    profile_name: str = typer.Option(..., "--profile", "-p", help="The profile to use."),
+    profile_name: str = typer.Option(..., "--profile", "-p", help="The profile to activate."),
 ):
-    """Runs a command with the specified profile activated."""
-    import os
-
+    """Executes a command with the specified profile activated."""
     command = ctx.args
     if not command:
-        console.print("[bold red]Error:[/] No command provided to run.")
-        raise typer.Exit(code=1)
+        console.print("[bold red]Error:[/bold red] No command provided to run.")
+        raise typer.Exit(1)
+
+    import os
 
     env = os.environ.copy()
     env["DSPY_PROFILE"] = profile_name
 
     try:
-        subprocess.run(command, env=env, check=True)
+        result = subprocess.run(command, env=env, check=False, capture_output=True, text=True)
+        if result.stdout:
+            console.print(result.stdout)
+        if result.stderr:
+            console.print(result.stderr, style="bold red")
+        if result.returncode != 0:
+            raise typer.Exit(result.returncode)
     except FileNotFoundError:
-        console.print(f"[bold red]Error:[/] Command not found: '{command[0]}'")
-        raise typer.Exit(code=1)
-    except subprocess.CalledProcessError as e:
-        console.print(f"[bold red]Error:[/] Command failed with exit code {e.returncode}.")
-        raise typer.Exit(code=e.returncode)
+        console.print(f"[bold red]Error:[/] Command not found: '{command}'")
+        raise typer.Exit(1)
