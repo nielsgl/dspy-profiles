@@ -3,7 +3,7 @@ import os
 import dspy
 import pytest
 
-from dspy_profiles.core import profile, with_profile
+from dspy_profiles.core import current_profile, profile, with_profile
 
 
 # Fixture to manage environment variables
@@ -73,6 +73,42 @@ def test_with_profile_decorator_force_overrides_env_var(profile_manager, manage_
         return dspy.settings.lm.model
 
     assert my_function() == "forced_model"
+
+
+def test_current_profile_utility(profile_manager):
+    """Tests the current_profile() introspection utility."""
+    # Outside any context, it should be None
+    assert current_profile() is None
+
+    with profile("test_profile", config_path=profile_manager.path, lm={"temperature": 0.9}):
+        active_profile = current_profile()
+        assert active_profile is not None
+        assert active_profile.name == "test_profile"
+        assert active_profile.config["lm"]["model"] == "test_model_context"
+        assert active_profile.config["lm"]["temperature"] == 0.9  # Check override
+
+        # Check that the LM is an instantiated object
+        assert isinstance(dspy.settings.lm, dspy.LM)
+
+    # After the context exits, it should be None again
+    assert current_profile() is None
+
+
+def test_current_profile_with_decorator(profile_manager):
+    """Tests that current_profile() works with the @with_profile decorator."""
+
+    @with_profile("decorator_profile", config_path=profile_manager.path)
+    def my_function():
+        active_profile = current_profile()
+        assert active_profile is not None
+        assert active_profile.name == "decorator_profile"
+        return active_profile
+
+    # Before calling, no profile should be active
+    assert current_profile() is None
+    my_function()
+    # After calling, it should be reset
+    assert current_profile() is None
 
 
 def test_profile_no_profile_found(profile_manager):

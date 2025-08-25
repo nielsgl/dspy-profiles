@@ -1,9 +1,13 @@
 import contextlib
+from contextvars import ContextVar
 import os
 
 import dspy
 
 from dspy_profiles.loader import ProfileLoader, ResolvedProfile
+
+# Context variable to hold the currently active ResolvedProfile.
+_CURRENT_PROFILE: ContextVar[ResolvedProfile | None] = ContextVar("current_profile", default=None)
 
 
 def _deep_merge(parent: dict, child: dict) -> dict:
@@ -90,8 +94,12 @@ def profile(profile_name: str | None = None, *, force: bool = False, config_path
         rm = rm_class(**resolved_profile.rm)
 
     settings = resolved_profile.settings or {}
-    with dspy.context(lm=lm, rm=rm, **settings):
-        yield
+    token = _CURRENT_PROFILE.set(resolved_profile)
+    try:
+        with dspy.context(lm=lm, rm=rm, **settings):
+            yield
+    finally:
+        _CURRENT_PROFILE.reset(token)
 
 
 def with_profile(profile_name: str, *, force: bool = False, config_path=None, **overrides):
@@ -123,3 +131,17 @@ def with_profile(profile_name: str, *, force: bool = False, config_path=None, **
         return wrapper
 
     return decorator
+
+
+def current_profile() -> ResolvedProfile | None:
+    """Returns the currently active profile, if any.
+
+    This function provides an introspection utility to see the fully resolved
+    settings of the profile that is currently active via the `profile`
+
+    context manager or `@with_profile` decorator.
+
+    Returns:
+        The active ResolvedProfile, or None if no profile is active.
+    """
+    return _CURRENT_PROFILE.get()

@@ -69,3 +69,33 @@ def run_test_prediction():
 # The 'testing' profile is active only for the duration of this function call
 result = run_test_prediction()
 ```
+
+
+## `current_profile`
+
+A utility function to inspect the currently active profile.
+
+```python
+from dspy_profiles import current_profile
+
+profile = current_profile()
+```
+
+### Return Value
+
+-   **`ResolvedProfile` (object | None)**: Returns the `ResolvedProfile` object for the currently active profile. This object contains the profile's name and its fully resolved configuration, including any applied overrides. If no profile is active, it returns `None`.
+
+### Example
+
+```python
+from dspy_profiles import profile, current_profile
+
+with profile("staging", temperature=0.9):
+    active_profile = current_profile()
+    if active_profile:
+        print(f"Active Profile: {active_profile.name}")
+        print(f"Resolved LM Config: {active_profile.config['lm']}")
+
+# Outside the context, this will print None
+print(current_profile())
+```
