@@ -66,3 +66,4 @@ Now, run it with your profile:
 
 ```bash
 dspy-profiles run --profile default -- python my_script.py
+```
