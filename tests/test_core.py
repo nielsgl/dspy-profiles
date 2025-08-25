@@ -19,8 +19,6 @@ def manage_env_var():
 
 def test_profile_context_manager_activates_profile(profile_manager):
     """Tests that the profile() context manager correctly activates a profile."""
-    profile_manager.save({"test_profile": {"lm": {"model": "test_model_context"}}})
-
     with profile("test_profile", config_path=profile_manager.path):
         assert dspy.settings.lm.model == "test_model_context"
 
@@ -29,12 +27,6 @@ def test_profile_context_manager_activates_profile(profile_manager):
 
 def test_dspy_profile_env_var_has_precedence(profile_manager, manage_env_var):
     """Tests that DSPY_PROFILE environment variable overrides the context manager."""
-    profile_manager.save(
-        {
-            "env_profile": {"lm": {"model": "env_model"}},
-            "other_profile": {"lm": {"model": "other_model"}},
-        }
-    )
     os.environ["DSPY_PROFILE"] = "env_profile"
 
     # When DSPY_PROFILE is set, calling profile() should load that profile
@@ -44,12 +36,6 @@ def test_dspy_profile_env_var_has_precedence(profile_manager, manage_env_var):
 
 def test_force_overrides_dspy_profile_env_var(profile_manager, manage_env_var):
     """Tests that force=True in the context manager overrides DSPY_PROFILE."""
-    profile_manager.save(
-        {
-            "env_profile": {"lm": {"model": "env_model"}},
-            "forced_profile": {"lm": {"model": "forced_model"}},
-        }
-    )
     os.environ["DSPY_PROFILE"] = "env_profile"
 
     with profile("forced_profile", force=True, config_path=profile_manager.path):
@@ -58,7 +44,6 @@ def test_force_overrides_dspy_profile_env_var(profile_manager, manage_env_var):
 
 def test_with_profile_decorator(profile_manager):
     """Tests that the @with_profile decorator works."""
-    profile_manager.save({"decorator_profile": {"lm": {"model": "decorator_model"}}})
 
     @with_profile("decorator_profile", config_path=profile_manager.path)
     def my_function():
@@ -70,40 +55,27 @@ def test_with_profile_decorator(profile_manager):
 
 def test_with_profile_decorator_respects_env_var(profile_manager, manage_env_var):
     """Tests that the @with_profile decorator respects DSPY_PROFILE."""
-    profile_manager.save(
-        {
-            "env_profile": {"lm": {"model": "env_model_decorator"}},
-            "other_profile": {"lm": {"model": "other_model_decorator"}},
-        }
-    )
     os.environ["DSPY_PROFILE"] = "env_profile"
 
     @with_profile("other_profile", config_path=profile_manager.path)
     def my_function():
         return dspy.settings.lm.model
 
-    assert my_function() == "env_model_decorator"
+    assert my_function() == "env_model"
 
 
 def test_with_profile_decorator_force_overrides_env_var(profile_manager, manage_env_var):
     """Tests that force=True in the decorator overrides DSPY_PROFILE."""
-    profile_manager.save(
-        {
-            "env_profile": {"lm": {"model": "env_model_decorator_force"}},
-            "forced_profile": {"lm": {"model": "forced_model_decorator"}},
-        }
-    )
     os.environ["DSPY_PROFILE"] = "env_profile"
 
     @with_profile("forced_profile", force=True, config_path=profile_manager.path)
     def my_function():
         return dspy.settings.lm.model
 
-    assert my_function() == "forced_model_decorator"
+    assert my_function() == "forced_model"
 
 
 def test_profile_no_profile_found(profile_manager):
     """Tests that nothing happens when no profile is found."""
-    profile_manager.save({})
     with profile(config_path=profile_manager.path):
         assert dspy.settings.lm is None

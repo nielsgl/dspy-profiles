@@ -30,15 +30,39 @@ class ProfileLoader:
         """Loads environment variables from a .env file if present."""
         load_dotenv()
 
-    def _load_profile_config(self, profile_name: str) -> dict[str, Any]:
-        """Loads the specified profile from the config file."""
-        manager = ProfileManager(self.config_path)
-        all_profiles = manager.load()
+    def _deep_merge(self, parent: dict, child: dict) -> dict:
+        """Recursively merges two dictionaries. Child values override parent values."""
+        merged = parent.copy()
+        for key, value in child.items():
+            if key in merged and isinstance(merged[key], dict) and isinstance(value, dict):
+                merged[key] = self._deep_merge(merged[key], value)
+            else:
+                merged[key] = value
+        return merged
+
+    def _load_profile_config(
+        self, profile_name: str, all_profiles: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
+        """Loads and recursively merges the specified profile from the config."""
+        if all_profiles is None:
+            manager = ProfileManager(self.config_path)
+            all_profiles = manager.load()
+
         if profile_name not in all_profiles:
             if profile_name == "default":
                 return {}  # It's okay if the default profile doesn't exist
             raise ValueError(f"Profile '{profile_name}' not found.")
-        return all_profiles.get(profile_name, {})
+
+        profile_data = all_profiles.get(profile_name, {}).copy()
+        parent_name = profile_data.pop("extends", None)
+
+        if parent_name:
+            if parent_name == profile_name:
+                raise ValueError(f"Profile '{profile_name}' cannot extend itself.")
+            parent_config = self._load_profile_config(parent_name, all_profiles)
+            return self._deep_merge(parent_config, profile_data)
+
+        return profile_data
 
     def get_config(self, profile_name: str | None = None) -> ResolvedProfile:
         """

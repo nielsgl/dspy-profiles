@@ -166,3 +166,4 @@ dspy-profiles run --profile prod -- python my_app.py --input data.json
 
 # Run pytest for your DSPy tests with a dedicated 'test' profile
 dspy-profiles run --profile test -- pytest -v tests/
+```
