@@ -21,9 +21,7 @@ def profile(profile_name: str):
 
     rm = None
     if resolved_profile.rm:
-        # Placeholder for RM instantiation.
-        # This will be implemented when we add custom provider support.
-        pass
+        rm = dspy.ColBERTv2(**resolved_profile.rm)
 
     settings = resolved_profile.settings or {}
     with dspy.context(lm=lm, rm=rm, **settings):

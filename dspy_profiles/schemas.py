@@ -20,7 +20,7 @@ class RMConfig(BaseModel):
 
     # This is a placeholder. We'll need to define the actual
     # fields for a retrieval model when we add support for it.
-    pass
+    url: str
 
 
 class Profile(BaseModel):
