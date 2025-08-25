@@ -167,10 +167,10 @@ dspy-profiles run --profile prod my_script.py
 
 ### Phase 2: Core CLI & Env Var Enhancements
 
-6.  **`.env` Import**: Implement `dspy profiles import --from .env`.
-7.  **Profile Diffing**: Implement `dspy profiles diff <profile_a> <profile_b>`.
-8.  **`DSPY_PROFILE` Env Var**: Add support for the `DSPY_PROFILE` environment variable.
-9.  **`run` Command**: Enhance the `dspy-profiles run` command.
+6.  **`.env` Import**: [x] Implement `dspy profiles import --from .env`.
+7.  **Profile Diffing**: [x] Implement `dspy profiles diff <profile_a> <profile_b>`.
+8.  **`DSPY_PROFILE` Env Var**: [x] Add support for the `DSPY_PROFILE` environment variable.
+9.  **`run` Command**: [x] Enhance the `dspy-profiles run` command.
 
 ### Phase 3: Advanced Profile Features
 

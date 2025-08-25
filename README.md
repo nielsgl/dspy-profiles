@@ -100,6 +100,12 @@ Sets a configuration value in a profile using dot notation (e.g., `lm.model`).
 ### `dspy-profiles delete <profile_name>`
 Deletes a profile.
 
+### `dspy-profiles diff <profile_a> <profile_b>`
+Compares two profiles and shows the differences.
+
+### `dspy-profiles import --from .env`
+Creates a new profile from a `.env` file.
+
 ### `dspy-profiles run`
 Executes a command with a specific profile activated.
 
@@ -112,7 +118,7 @@ dspy-profiles run --profile prod -- python my_script.py --arg1 --arg2
 The project has a comprehensive roadmap organized into five phases. See the [PROJECT.md](PROJECT.md) file for detailed specifications.
 
 -   **[x] Phase 1: DX, Packaging & Documentation**: Professional PyPI packaging, CI/CD for publishing, and a full documentation site with MkDocs.
--   **Phase 2: Core CLI & Env Var Enhancements**: `dspy-profiles import --from .env`, `dspy-profiles diff`, and robust activation precedence rules with `DSPY_PROFILE`.
+-   **[x] Phase 2: Core CLI & Env Var Enhancements**: `dspy-profiles import --from .env`, `dspy-profiles diff`, and robust activation precedence rules with `DSPY_PROFILE`.
 -   **Phase 3: Advanced Profile Features**: Profile composition (`extends`), inline overrides, optional OS keyring support, and `validate`/`test` commands.
 -   **Phase 4: Python API & Runtime Utilities**: Programmatic shortcuts like `lm("prod")`, runtime introspection with `current_profile()`, and a notebook magic command.
 -   **Phase 5: QoL & Advanced Workflows**: An interactive `init` wizard, profile import/export, and async-friendly decorators.
