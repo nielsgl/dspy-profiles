@@ -13,12 +13,14 @@ A companion tool for the [DSPy framework](https://github.com/stanfordnlp/dspy) t
 
 `dspy-profiles` allows you to define, switch between, and manage different DSPy configurations for various environments (e.g., development, staging, production) without cluttering your code.
 
-## Features
+## Key Features
 
-- **Profile Management**: A user-friendly CLI to manage your configuration profiles.
-- **Centralized Configuration**: Keep all your DSPy settings in a single `~/.dspy/profiles.toml` file.
-- **Secure Secret Management**: Automatically load API keys from environment variables and `.env` files.
-- **Python API**: Use profiles in your code via a `with profile(...)` context manager and `@with_profile(...)` decorator.
+-   **Centralized Configuration**: Manage all your DSPy settings in a single `~/.dspy/profiles.toml` file, moving configuration out of your code.
+-   **Environment Switching**: Seamlessly switch between profiles for `dev`, `staging`, and `prod` environments.
+-   **Powerful Python API**: A flexible `with profile(...)` context manager and `@with_profile(...)` decorator with support for composition and inline overrides.
+-   **Full-Featured CLI**: An intuitive command-line interface for initializing, managing, validating, and testing profiles.
+-   **Secure Secret Management**: Load secrets from `.env` files, environment variables, or (optionally) your operating system's native keyring for enhanced security.
+-   **Advanced Workflows**: Features like profile diffing, import/export, and profile-aware caching streamline complex development and team-based workflows.
 
 ## Installation
 
@@ -51,39 +53,34 @@ You can activate profiles directly in your Python code using the `profile` conte
 
 ### `with profile(...)`
 
-The context manager is ideal for applying a profile to a specific block of code.
+The context manager is ideal for applying a profile to a specific block of code. It also supports **inline overrides** for quick experiments.
 
 ```python
 import dspy
 from dspy_profiles import profile
 
-# No LM is configured globally
-assert dspy.settings.lm is None
+# Use the 'staging' profile, but override the temperature for this block
+with profile("staging", temperature=0.9):
+    response = dspy.Predict("Question -> Answer")("What is the capital of France?")
 
-with profile("production"):
-    # The 'production' profile is active within this block
-    # Assuming the 'production' profile sets model='gpt-3.5-turbo'
-    assert dspy.settings.lm.kwargs.get("model") == "gpt-3.5-turbo"
-
-# The global settings are restored
-assert dspy.settings.lm is None
+# The global settings are restored outside the block
 ```
 
 ### `@with_profile(...)`
 
-The decorator is useful for applying a profile to an entire function.
+The decorator is useful for applying a profile to an entire function and supports the same inline overrides. It is also fully **async-friendly**.
 
 ```python
 import dspy
 from dspy_profiles import with_profile
 
-@with_profile("testing")
-def my_dspy_program():
-    # The 'testing' profile is active here
-    # Assuming the 'testing' profile sets model='gpt-4'
-    assert dspy.settings.lm.kwargs.get("model") == "gpt-4"
+@with_profile("testing", max_tokens=4000)
+async def my_async_program():
+    # This async function runs with the 'testing' profile,
+    # but with max_tokens overridden to 4000.
+    ...
 
-my_dspy_program()
+await my_async_program()
 ```
 
 ## CLI Usage
@@ -112,12 +109,13 @@ dspy-profiles run --profile prod -- python my_script.py --arg1 --arg2
 
 ## Roadmap
 
--   [x] **Core CLI**: Implement `init`, `set`, `list`, `show`, and `delete` commands.
--   [x] **Interactive `init`**: An interactive wizard for creating new profiles.
--   [x] **Secret Management**: Load API keys and other secrets from environment variables and `.env` files.
--   [x] **Python API**: Implement `with profile(...)` and `@with_profile(...)` for using profiles in code.
--   [x] **`run` Command**: Implement `dspy-profiles run --profile <name> -- your_script.py` to execute scripts with a specific profile.
--   [ ] **Configuration Validation**: Add Pydantic-based validation for profiles.
+The project has a comprehensive roadmap organized into five phases. See the [PROJECT.md](PROJECT.md) file for detailed specifications.
+
+-   **Phase 1: DX, Packaging & Documentation**: Professional PyPI packaging, CI/CD for publishing, and a full documentation site with MkDocs.
+-   **Phase 2: Core CLI & Env Var Enhancements**: `dspy-profiles import --from .env`, `dspy-profiles diff`, and robust activation precedence rules with `DSPY_PROFILE`.
+-   **Phase 3: Advanced Profile Features**: Profile composition (`extends`), inline overrides, optional OS keyring support, and `validate`/`test` commands.
+-   **Phase 4: Python API & Runtime Utilities**: Programmatic shortcuts like `lm("prod")`, runtime introspection with `current_profile()`, and a notebook magic command.
+-   **Phase 5: QoL & Advanced Workflows**: An interactive `init` wizard, profile import/export, and async-friendly decorators.
 
 ## Contributing
 

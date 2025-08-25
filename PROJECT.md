@@ -46,21 +46,26 @@ Profiles are stored in a TOML file located at `~/.dspy/profiles.toml` (or `$XDG_
   num_threads = 32
 ```
 
-## Precedence and Scoping Rules
+## Activation Precedence Rules
 
-The system is designed to be predictable and respect DSPy's own scoping rules. The order of precedence is as follows (from highest to lowest):
+The system has a clearly defined hierarchy to determine which profile is active at any given time. This ensures predictable behavior across different usage patterns, from CI/CD environments to interactive notebooks.
 
-1.  **Innermost `dspy.context`**: A direct call to `with dspy.context(...)` will always have the final say, even inside a `with profile(...)` block.
-2.  **`with profile(...)` / `@with_profile(...)`**: The profile applied via the context manager or decorator.
-3.  **Global `dspy.configure()`**: Any global configuration set in the code.
-4.  **Default Profile**: The profile designated as `default` in the `profiles.toml` file.
+The order of precedence is as follows (from highest to lowest):
+
+1.  **Forced Code (`with profile("Y", force=True)`)**: An explicit call in the code with `force=True` has the absolute highest priority. It will override any other setting, including the environment variable. This is intended for developers who need to guarantee a specific profile is used in a block of code, regardless of the execution environment.
+2.  **Environment Variable (`DSPY_PROFILE`)**: If a profile is specified via the `DSPY_PROFILE` environment variable (e.g., set by `dspy-profiles run`), it will take precedence over any normal, non-forced code. This allows operators and CI/CD systems to enforce a specific configuration for a script run, ensuring operational safety.
+3.  **Normal Code (`with profile("Y")`)**: A standard, non-forced call to the context manager or decorator. This will only take effect if the `DSPY_PROFILE` environment variable is *not* set.
+4.  **Default Profile**: If none of the above are active, the system will look for and use the `[default]` profile in the `profiles.toml` file.
+5.  **DSPy Library Defaults**: If no profiles are configured or activated, the system falls back to the standard defaults of the underlying DSPy library.
 
 ## Secret Management
 
-*   **No Secrets on Disk**: API keys and other secrets are **never** stored in the `profiles.toml` file.
-*   **Environment Loading**: Secrets are loaded from environment variables.
-*   **`.env` File Support**: For local development, the library will automatically detect and load a `.env` file from the current working directory.
-*   **Precedence**: System-level environment variables will always override any values set in a `.env` file.
+*   **No Secrets in Config**: API keys and other secrets are **never** stored in the `profiles.toml` file. They are referenced via environment variable placeholders (e.g., `api_key = "${OPENAI_API_KEY}"`).
+*   **Environment Loading**: Secrets are loaded on-demand from environment variables.
+*   **`.env` File Support**: For local development, the library automatically detects and loads a `.env` file from the current working directory. System-level environment variables always override values in a `.env` file.
+*   **OS Keyring (Optional)**: For enhanced security, secrets can be stored in the operating system's native keyring. This functionality is an optional feature (`pip install dspy-profiles[keyring]`).
+    *   Secrets are referenced in profiles using a special syntax (e.g., `api_key = "keyring:service/username"`).
+    *   A secure CLI command, `dspy-profiles set-secret`, will prompt interactively for credentials to store them in the keyring without exposing them in shell history.
 
 ## Python API
 
@@ -75,15 +80,31 @@ with profile("prod"):
     response = dspy.Predict("Question -> Answer")("What is the capital of France?")
 ```
 
+### `with profile(...)` Overrides & Composition
+
+The context manager supports powerful composition and override features:
+
+*   **Profile Extension**: A profile can inherit from another using `extends = "basename"`. Settings are merged, with the extending profile's values taking precedence.
+*   **Inline Overrides**: Provide keyword arguments to dynamically override settings for the scope of the block (e.g., `with profile("prod", temperature=0.9)`).
+
+The layering logic is applied in a specific order:
+1.  The base profile (from `extends`) is loaded.
+2.  The main profile's settings are merged on top.
+3.  The inline keyword arguments are applied as the final override.
+
 ### `@with_profile(...)` Decorator
+
+The decorator supports the same override and composition features as the context manager.
 
 ```python
 from dspy_profiles import with_profile
 
-@with_profile("prod")
-def my_dspy_function():
-    # This function will run with the 'prod' profile
-    ...```
+@with_profile("prod", temperature=0.9)
+async def my_async_dspy_function():
+    # This function will run with the 'prod' profile, but with temperature=0.9
+    ...
+```
+*   **Async Support**: The decorator is designed to be fully compatible with `async def` functions.
 
 ## Command-Line Interface (CLI)
 
@@ -109,19 +130,63 @@ dspy-profiles delete staging
 dspy-profiles run --profile prod my_script.py
 ```
 
+### Additional CLI Commands
+
+*   **`dspy-profiles diff <A> <B>`**: Provides a color-coded diff of two profiles to easily compare configurations.
+*   **`dspy-profiles import --from .env`**: Creates a new profile by mapping variables from a `.env` file using a `DSPY_` prefix convention (e.g., `DSPY_LM_MODEL` -> `lm.model`).
+*   **`dspy-profiles export/import`**: Allows users to share profile configurations. The `import` command will interactively prompt on conflicts (overwrite/skip/rename). `export` will scrub secrets by default.
+*   **`dspy-profiles validate`**: Lints the `profiles.toml` file, checking for schema errors, unknown keys, and deprecated keys (suggesting alternatives).
+*   **`dspy-profiles test <profile>`**: Performs a live dry run by loading a profile and attempting a minimal API call to verify connectivity and credentials.
+
 ## Technical Design Notes
 
 *   **Concurrency**: The `with profile(...)` context manager will be a wrapper around `dspy.context`, making it safe for use in multi-threaded and async applications by leveraging `contextvars`.
-*   **`dspy-profiles run` Implementation**: This command will work by setting an environment variable (e.g., `DSPY_PROFILE=prod`) and then executing the user's script in a subprocess. The library's Python components will be designed to automatically detect and use this environment variable.
-*   **Schema Validation**: Pydantic models will be used to validate the structure of `profiles.toml`, ensuring all keys and value types are correct before they are used.
+*   **`dspy-profiles run` Implementation**: This command will set the `DSPY_PROFILE` environment variable and execute the user's script in a subprocess, enabling the precedence rules described above.
+*   **Schema Validation**: Pydantic models will be used to validate the structure of `profiles.toml`.
+*   **Programmatic Shortcuts**:
+    *   `lm("prod")`: A cached factory function to get a pre-configured `dspy.LM` instance. Can be disabled with `lm("prod", cached=False)`.
+    *   `current_profile()`: An introspection utility to see the currently active profile and its resolved settings.
+*   **Notebook Integration**: A session-wide `%profile <name>` magic command will be available for interactive use in IPython/Jupyter.
+
+## Developer Experience & Publishing
+
+*   **PyPI Packaging**: The project will be packaged and distributed via PyPI, making it easily installable with `pip`.
+*   **Automated Publishing**: A GitHub Actions workflow will automate the process of building and publishing the package to PyPI whenever a new version tag is pushed.
+*   **Official Documentation**: A documentation site will be built using MkDocs with the Material theme, providing comprehensive guides, tutorials, and API references. It will be hosted on GitHub Pages.
+*   **Contribution-Friendly**: With clear documentation, automated testing, and a well-defined project structure, the goal is to make it easy for the community to contribute.
 
 ## Development Roadmap
 
-1.  **Project Setup**: Initialize the project with `uv`, `typer`, `rich`, `toml`, and `python-dotenv`.
-2.  **Core Logic**: Implement the profile loading, saving, and validation logic.
-3.  **Secret Management**: Implement `.env` file loading.
-4.  **Context Manager & Decorator**: Build the `with profile(...)` and `@with_profile(...)` features, ensuring they correctly wrap `dspy.context`.
-5.  **Configuration Validation**: Implement Pydantic models for profile validation.
-6.  **CLI Implementation**: Build out all the `dspy-profiles` commands.
-7.  **Testing**: Write a comprehensive test suite, including tests for precedence, concurrency, `.env` loading, and custom providers.
-8.  **Documentation**: Create user-friendly documentation with clear examples.
+### Phase 1: DX, Packaging & Documentation
+
+1.  **Packaging**: Configure `pyproject.toml` for PyPI publishing.
+2.  **CI/CD**: Implement a GitHub Actions workflow for automated publishing to PyPI.
+3.  **Documentation Setup**: Add and configure MkDocs with the Material theme.
+4.  **Content Scaffolding**: Create the initial documentation structure and placeholder pages.
+5.  **Project Vision Alignment**: Update `README.md` and `PROJECT.md` to reflect the full scope.
+
+### Phase 2: Core CLI & Env Var Enhancements
+
+6.  **`.env` Import**: Implement `dspy profiles import --from .env`.
+7.  **Profile Diffing**: Implement `dspy profiles diff <profile_a> <profile_b>`.
+8.  **`DSPY_PROFILE` Env Var**: Add support for the `DSPY_PROFILE` environment variable.
+9.  **`run` Command**: Enhance the `dspy-profiles run` command.
+
+### Phase 3: Advanced Profile Features
+
+10. **Profile Composition**: Implement `extends` functionality for profile inheritance.
+11. **Inline Overrides**: Allow `with profile("name", key=value)` overrides.
+12. **Keyring Support**: Integrate optional OS keyring support for secrets.
+13. **Validation & Testing**: Add `dspy profiles validate` and `dspy profiles test` commands.
+
+### Phase 4: Python API & Runtime Utilities
+
+14. **Runtime Introspection**: Create a `current_profile()` utility.
+15. **LM Shortcuts**: Implement `from dspy_profiles import lm`.
+16. **Profile-Aware Caching**: Isolate cache directories per profile.
+
+### Phase 5: Quality-of-Life and Final Touches
+
+17. **Interactive Wizard**: Enhance `dspy profiles init` into a full setup wizard.
+18. **Decorator Enhancements**: Add `async` and `kwargs` support to `@with_profile`.
+19. **Export/Import**: Implement `dspy profiles export` and `import`.
