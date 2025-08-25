@@ -125,6 +125,20 @@ def test_lm_shortcut(profile_manager):
     assert lm("no_lm_profile", config_path=profile_manager.path) is None
 
 
+def test_profile_aware_caching(profile_manager):
+    """Tests that the cache_dir is set correctly based on the profile."""
+    with profile("test_profile", config_path=profile_manager.path):
+        expected_path = os.path.expanduser("~/.dspy/cache/test_profile")
+        assert dspy.settings.cache_dir == expected_path
+
+    # A profile with a custom cache_dir should use that value
+    profile_manager.load.return_value["custom_cache"] = {
+        "settings": {"cache_dir": "/tmp/my_custom_cache"}
+    }
+    with profile("custom_cache", config_path=profile_manager.path):
+        assert dspy.settings.cache_dir == "/tmp/my_custom_cache"
+
+
 def test_current_profile_with_decorator(profile_manager):
     """Tests that current_profile() works with the @with_profile decorator."""
 

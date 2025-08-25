@@ -63,6 +63,15 @@ def profile(profile_name: str | None = None, *, force: bool = False, config_path
         settings=final_config.get("settings"),
     )
 
+    # Profile-aware caching
+    # If cache_dir is not set in the profile, default to ~/.dspy/cache/<profile_name>
+    if "settings" not in final_config:
+        final_config["settings"] = {}
+    if "cache_dir" not in final_config["settings"]:
+        final_config["settings"]["cache_dir"] = os.path.expanduser(
+            f"~/.dspy/cache/{loaded_profile.name}"
+        )
+
     lm = None
     if resolved_profile.lm:
         lm_config = resolved_profile.lm.copy()
@@ -94,9 +103,16 @@ def profile(profile_name: str | None = None, *, force: bool = False, config_path
         rm = rm_class(**resolved_profile.rm)
 
     settings = resolved_profile.settings or {}
+    # Ensure the profile-aware cache directory is part of the settings
+    if "cache_dir" in final_config.get("settings", {}):
+        settings["cache_dir"] = final_config["settings"]["cache_dir"]
+
     token = _CURRENT_PROFILE.set(resolved_profile)
     try:
         with dspy.context(lm=lm, rm=rm, **settings):
+            # Also configure the cache_dir directly
+            if "cache_dir" in settings:
+                dspy.settings.configure(cache_dir=settings["cache_dir"])
             yield
     finally:
         _CURRENT_PROFILE.reset(token)

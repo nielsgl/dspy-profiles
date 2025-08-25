@@ -132,3 +132,17 @@ prod_lm = lm("prod")
 # Get a new, non-cached instance with a custom temperature
 staging_lm = lm("staging", cached=False, temperature=0.8)
 ```
+
+
+## Profile-Aware Caching
+
+To prevent cache collisions between different profiles, `dspy-profiles` automatically manages a separate cache directory for each profile.
+
+By default, the cache for a profile named `my_profile` will be stored at `~/.dspy/cache/my_profile/`.
+
+You can override this behavior by setting the `cache_dir` key in the `[settings]` section of your profile in `profiles.toml`:
+
+```toml
+[my_profile.settings]
+cache_dir = "/path/to/custom/cache"
+```
