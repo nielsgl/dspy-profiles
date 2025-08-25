@@ -32,6 +32,7 @@ MOCK_PROFILES = {
     "env_profile_decorator": {"lm": {"model": "env_model_decorator"}},
     "other_profile_decorator": {"lm": {"model": "other_model_decorator"}},
     "forced_profile_decorator": {"lm": {"model": "forced_model_decorator"}},
+    "no_lm_profile": {"rm": {"model": "some-rm"}},
 }
 
 

@@ -3,7 +3,7 @@ import os
 import dspy
 import pytest
 
-from dspy_profiles.core import current_profile, profile, with_profile
+from dspy_profiles.core import _LM_CACHE, current_profile, lm, profile, with_profile
 
 
 # Fixture to manage environment variables
@@ -92,6 +92,37 @@ def test_current_profile_utility(profile_manager):
 
     # After the context exits, it should be None again
     assert current_profile() is None
+
+
+def test_lm_shortcut(profile_manager):
+    """Tests the lm() shortcut utility."""
+    # Clear the cache before the test
+    _LM_CACHE.clear()
+
+    # Get a cached instance
+    lm_instance1 = lm("test_profile", config_path=profile_manager.path)
+    assert isinstance(lm_instance1, dspy.LM)
+    assert lm_instance1.model == "test_model_context"
+
+    # Get it again, should be the same cached object
+    lm_instance2 = lm("test_profile", config_path=profile_manager.path)
+    assert lm_instance1 is lm_instance2
+
+    # Force a new instance with cached=False
+    lm_instance3 = lm("test_profile", cached=False, config_path=profile_manager.path)
+    assert lm_instance1 is not lm_instance3
+
+    # Test with overrides, which should create a new, cached instance
+    lm_instance4 = lm("test_profile", temperature=0.99, config_path=profile_manager.path)
+    assert lm_instance4 is not None
+    assert lm_instance4.kwargs["temperature"] == 0.99
+
+    # Getting it again with the same overrides should return the cached instance
+    lm_instance5 = lm("test_profile", temperature=0.99, config_path=profile_manager.path)
+    assert lm_instance4 is lm_instance5
+
+    # A profile with no LM should return None
+    assert lm("no_lm_profile", config_path=profile_manager.path) is None
 
 
 def test_current_profile_with_decorator(profile_manager):

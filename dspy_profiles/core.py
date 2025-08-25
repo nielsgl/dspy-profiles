@@ -145,3 +145,62 @@ def current_profile() -> ResolvedProfile | None:
         The active ResolvedProfile, or None if no profile is active.
     """
     return _CURRENT_PROFILE.get()
+
+
+_LM_CACHE = {}
+
+
+def lm(profile_name: str, cached: bool = True, **overrides) -> dspy.LM | None:
+    """Gets a pre-configured dspy.LM instance for a given profile.
+
+    This is a convenience utility to quickly get a language model instance
+    without needing the full context manager.
+
+    Args:
+        profile_name: The name of the profile to use.
+        cached: If True, a cached LM instance will be returned if available.
+                Set to False to force a new instance to be created.
+        **overrides: Keyword arguments to override profile settings.
+
+    Returns:
+        A configured dspy.LM instance, or None if the profile has no LM.
+    """
+    cache_key = (profile_name, tuple(sorted(overrides.items())))
+
+    if cached and cache_key in _LM_CACHE:
+        return _LM_CACHE[cache_key]
+
+    loader = ProfileLoader()
+    loaded_profile = loader.get_config(profile_name)
+    final_config = loaded_profile.config.copy()
+
+    if overrides:
+        # We need to be careful to merge the overrides into the 'lm' section
+        # if they are LM-specific parameters. A simple heuristic is to assume
+        # that any kwarg not in the other main sections is an LM parameter.
+        known_sections = {"rm", "settings", "config_path"}
+        lm_overrides = {k: v for k, v in overrides.items() if k not in known_sections}
+        if lm_overrides:
+            if "lm" not in final_config:
+                final_config["lm"] = {}
+            final_config["lm"] = _deep_merge(final_config["lm"], lm_overrides)
+
+    lm_config = final_config.get("lm")
+    if not lm_config:
+        return None
+
+    lm_config = lm_config.copy()
+    model_name = lm_config.pop("model", None)
+    provider = lm_config.pop("provider", None)
+
+    lm_class = dspy.LM
+    if provider:
+        lm_class_name = provider.capitalize()
+        lm_class = getattr(dspy, lm_class_name, dspy.LM)
+
+    instance = lm_class(model=model_name, **lm_config) if model_name else dspy.LM(**lm_config)
+
+    if cached:
+        _LM_CACHE[cache_key] = instance
+
+    return instance

@@ -99,3 +99,36 @@ with profile("staging", temperature=0.9):
 # Outside the context, this will print None
 print(current_profile())
 ```
+
+
+## `lm`
+
+A shortcut function to get a pre-configured `dspy.LM` instance for a specific profile.
+
+```python
+from dspy_profiles import lm
+
+lm_instance = lm(profile_name: str, cached: bool = True, **overrides)
+```
+
+### Parameters
+
+-   **`profile_name` (str)**: The name of the profile to use.
+-   **`cached` (bool)**: If `True` (the default), a cached LM instance will be returned if available. Set to `False` to force a new instance to be created.
+-   **`**overrides`**: Keyword arguments to override any settings in the profile's `lm` section (e.g., `temperature=0.9`).
+
+### Return Value
+
+-   **`dspy.LM` (object | None)**: Returns a configured `dspy.LM` instance, or `None` if the profile does not have an `lm` section.
+
+### Example
+
+```python
+from dspy_profiles import lm
+
+# Get a cached LM instance for the 'prod' profile
+prod_lm = lm("prod")
+
+# Get a new, non-cached instance with a custom temperature
+staging_lm = lm("staging", cached=False, temperature=0.8)
+```
