@@ -159,11 +159,11 @@ dspy-profiles run --profile prod my_script.py
 
 ### Phase 1: DX, Packaging & Documentation
 
-1.  **Packaging**: Configure `pyproject.toml` for PyPI publishing.
-2.  **CI/CD**: Implement a GitHub Actions workflow for automated publishing to PyPI.
-3.  **Documentation Setup**: Add and configure MkDocs with the Material theme.
-4.  **Content Scaffolding**: Create the initial documentation structure and placeholder pages.
-5.  **Project Vision Alignment**: Update `README.md` and `PROJECT.md` to reflect the full scope.
+1.  **Packaging**: [x] Configure `pyproject.toml` for PyPI publishing.
+2.  **CI/CD**: [x] Implement a GitHub Actions workflow for automated publishing to PyPI.
+3.  **Documentation Setup**: [x] Add and configure MkDocs with the Material theme.
+4.  **Content Scaffolding**: [x] Create the initial documentation structure and placeholder pages.
+5.  **Project Vision Alignment**: [x] Update `README.md` and `PROJECT.md` to reflect the full scope.
 
 ### Phase 2: Core CLI & Env Var Enhancements
 
