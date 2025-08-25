@@ -15,6 +15,7 @@ def mock_profile():
         config={"lm": {"model": "gpt-4o-mini"}, "settings": {"temperature": 0.7}},
         lm={"model": "gpt-4o-mini"},
         settings={"temperature": 0.7},
+        rm={"url": "http://localhost:8893/api/search"},
     )
 
 
@@ -29,6 +30,8 @@ def test_profile_context_manager(mock_profile):
             assert dspy.settings.lm is not None
             assert dspy.settings.lm.model == "gpt-4o-mini"
             assert dspy.settings.temperature == 0.7
+            assert dspy.settings.rm is not None
+            assert dspy.settings.rm.url == "http://localhost:8893/api/search"
             mock_get_config.assert_called_once_with("test_profile")
 
         assert dspy.settings.lm is None
@@ -59,3 +62,12 @@ def test_profile_not_found():
         with pytest.raises(ValueError, match="Profile 'non_existent_profile' not found."):
             with profile("non_existent_profile"):
                 pass
+
+
+def test_profile_with_no_lm_or_rm():
+    """Tests that the context manager handles profiles with no lm or rm."""
+    mock_profile = ResolvedProfile(name="test_profile", config={}, settings={})
+    with patch("dspy_profiles.core.ProfileLoader.get_config", return_value=mock_profile):
+        with profile("test_profile"):
+            assert dspy.settings.lm is None
+            assert dspy.settings.rm is None

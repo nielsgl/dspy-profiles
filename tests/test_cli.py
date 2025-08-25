@@ -25,11 +25,13 @@ def test_cli_lifecycle(mock_get_manager: MagicMock):
     result = runner.invoke(
         cli.app,
         ["init", "--profile", "test_profile"],
-        input="openai/gpt-4o-mini\n\n",  # model, then empty for api_base
+        input="openai/gpt-4o-mini\nhttp://localhost:8000\n",
     )
     assert result.exit_code == 0
     assert "OPENAI_API_KEY" in result.stdout
-    mock_manager.set.assert_called_with("test_profile", {"lm": {"model": "openai/gpt-4o-mini"}})
+    mock_manager.set.assert_called_with(
+        "test_profile", {"lm": {"model": "openai/gpt-4o-mini", "api_base": "http://localhost:8000"}}
+    )
     mock_manager.reset_mock()
 
     # 3. Set a value
@@ -121,3 +123,10 @@ def test_run_command(mock_subprocess_run: MagicMock):
     result = runner.invoke(cli.app, ["run", "--profile", "test_profile", "failing_command"])
     assert "failed with exit code 123" in result.stdout
     assert result.exit_code == 123
+
+
+@patch("dspy_profiles.cli.app")
+def test_main(mock_app: MagicMock):
+    """Tests the main function."""
+    cli.main()
+    mock_app.assert_called_once()

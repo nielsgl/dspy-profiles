@@ -50,3 +50,12 @@ def test_load_invalid_schema(tmp_path: Path):
     config_path.write_text(invalid_profile)
     manager = ProfileManager(config_path)
     assert manager.load() == {}
+
+
+def test_get_manager_singleton():
+    """Tests that get_manager returns a singleton instance."""
+    from dspy_profiles import config
+
+    manager1 = config.get_manager()
+    manager2 = config.get_manager()
+    assert manager1 is manager2

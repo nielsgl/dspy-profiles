@@ -73,3 +73,14 @@ def test_dotenv_loading(mock_load_dotenv, mock_profile_manager):
     mock_manager_instance.load.return_value = {}
     ProfileLoader()
     mock_load_dotenv.assert_called_once()
+
+
+@patch("dspy_profiles.loader.ProfileManager")
+def test_load_default_profile_not_found(mock_profile_manager):
+    """Tests that an empty dict is returned when the default profile is not found."""
+    mock_manager_instance = mock_profile_manager.return_value
+    mock_manager_instance.load.return_value = {}
+    loader = ProfileLoader()
+    config = loader.get_config("default")
+    assert config.name == "default"
+    assert config.lm == {}
