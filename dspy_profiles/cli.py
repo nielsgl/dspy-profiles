@@ -2,12 +2,15 @@ from pathlib import Path
 import subprocess
 
 from dotenv import dotenv_values
+from pydantic import ValidationError
 import rich
 from rich.console import Console
 from rich.table import Table
+import toml
 import typer
 
-from dspy_profiles.config import get_manager
+from dspy_profiles.config import PROFILES_PATH, get_manager
+from dspy_profiles.validation import ProfilesFile
 
 app = typer.Typer()
 console = Console()
@@ -225,6 +228,90 @@ def diff(
             diff_text.append(line)
 
     console.print(diff_text)
+
+
+@app.command()
+def validate(
+    config_path: Path = typer.Option(
+        PROFILES_PATH,
+        "--config",
+        "-c",
+        help="Path to the profiles.toml file.",
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        readable=True,
+        resolve_path=True,
+    ),
+):
+    """Validate the profiles.toml file against the schema."""
+    console.print(f"Validating profiles at: [cyan]{config_path}[/cyan]")
+    try:
+        with open(config_path) as f:
+            data = toml.load(f)
+
+        # Pydantic model expects a top-level key, let's call it 'profiles'
+        # The TOML file structure is [profile.name], which toml loads as {'profile': {'name': ...}}
+        # We need to restructure it for the model.
+        if "profile" in data:
+            profiles_data = {"profiles": data["profile"]}
+        else:
+            profiles_data = {"profiles": {}}
+
+        ProfilesFile.model_validate(profiles_data)
+        console.print("[bold green]✅ Success![/bold green] All profiles are valid.")
+
+    except FileNotFoundError:
+        console.print(f"[bold red]Error:[/] Configuration file not found at '{config_path}'.")
+        raise typer.Exit(1)
+    except toml.TomlDecodeError as e:
+        console.print(f"[bold red]Error:[/] Invalid TOML format in '{config_path}':")
+        console.print(f"  {e}")
+        raise typer.Exit(1)
+    except ValidationError as e:
+        console.print(f"[bold red]❌ Validation Failed:[/] Found {e.error_count()} error(s).")
+        for error in e.errors():
+            loc = " -> ".join(map(str, error["loc"]))
+            console.print(f"  - [bold cyan]{loc}[/bold cyan]: {error['msg']}")
+        raise typer.Exit(1)
+    except Exception as e:
+        console.print(f"[bold red]An unexpected error occurred:[/] {e}")
+        raise typer.Exit(1)
+
+
+@app.command()
+def test(
+    profile_name: str = typer.Argument(..., help="The name of the profile to test."),
+):
+    """Tests the connectivity for a given profile."""
+    from dspy_profiles.core import profile as activate_profile
+
+    console.print(f"Testing profile: [bold cyan]{profile_name}[/bold cyan]...")
+
+    try:
+        with activate_profile(profile_name):
+            import dspy
+
+            lm = dspy.settings.lm
+            if not lm:
+                console.print(
+                    f"[bold red]Error:[/] No language model (LM) configured for profile "
+                    f"'{profile_name}'."
+                )
+                raise typer.Exit(1)
+
+            console.print(f"  - Using model: [yellow]{lm.model}[/yellow]")
+            # A simple, low-token request to test connectivity
+            lm("Say 'ok'")
+
+        console.print("[bold green]✅ Success![/bold green] Connectivity test passed.")
+
+    except Exception as e:
+        console.print(
+            f"\n[bold red]❌ Test Failed:[/] Could not connect using profile '{profile_name}'."
+        )
+        console.print(f"  [bold]Reason:[/] {e}")
+        raise typer.Exit(1)
 
 
 @app.command(
