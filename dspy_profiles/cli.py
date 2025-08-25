@@ -1,5 +1,7 @@
+from pathlib import Path
 import subprocess
 
+from dotenv import dotenv_values
 import rich
 from rich.console import Console
 from rich.table import Table
@@ -117,6 +119,54 @@ def init(
 
 def main():
     app()
+
+
+@app.command(name="import")
+def import_profile(
+    profile_name: str = typer.Option(..., "--profile", "-p", help="The name for the new profile."),
+    from_path: Path = typer.Option(
+        ".env",
+        "--from",
+        help="The path to the .env file to import from.",
+        exists=True,
+        readable=True,
+        dir_okay=False,
+    ),
+):
+    """Imports a profile from a .env file."""
+    manager = get_manager()
+    if manager.get(profile_name):
+        console.print(f"[bold red]Error:[/] Profile '{profile_name}' already exists.")
+        raise typer.Exit(code=1)
+
+    env_values = dotenv_values(from_path)
+    if not env_values:
+        console.print(f"No values found in '{from_path}'.")
+        return
+
+    new_profile = {}
+    for key, value in env_values.items():
+        if key.upper().startswith("DSPY_"):
+            parts = key.upper().split("_")[1:]  # Remove DSPY_ and split
+            if len(parts) < 2:
+                continue  # Must have at least a section and a key (e.g., LM_MODEL)
+
+            section = parts[0].lower()
+            config_key = "_".join(parts[1:]).lower()
+
+            if section not in new_profile:
+                new_profile[section] = {}
+            new_profile[section][config_key] = value
+
+    if not new_profile:
+        console.print(f"No variables with the 'DSPY_' prefix found in '{from_path}'.")
+        return
+
+    manager.set(profile_name, new_profile)
+    console.print(
+        f"[bold green]Success![/bold green] Profile '{profile_name}' imported from '{from_path}'."
+    )
+    console.print(f"You can view the new profile with: dspy-profiles show {profile_name}")
 
 
 @app.command(context_settings={"allow_extra_args": True, "ignore_unknown_options": True})
