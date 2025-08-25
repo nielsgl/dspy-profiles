@@ -167,3 +167,52 @@ dspy-profiles run --profile prod -- python my_app.py --input data.json
 # Run pytest for your DSPy tests with a dedicated 'test' profile
 dspy-profiles run --profile test -- pytest -v tests/
 ```
+
+
+## `dspy-profiles validate`
+
+Checks your `profiles.toml` file for syntax errors, schema compliance, and deprecated keys. This is useful for ensuring your configuration is up-to-date and error-free.
+
+**Usage:**
+
+```bash
+dspy-profiles validate [OPTIONS]
+```
+
+**Options:**
+
+*   `-c`, `--config PATH`: Specifies the path to the `profiles.toml` file. Defaults to `~/.dspy/profiles.toml`.
+
+**Example:**
+
+```bash
+# Validate the default profiles file
+dspy-profiles validate
+
+# Validate a specific profiles file
+dspy-profiles validate --config ./my-project/profiles.toml
+```
+
+## `dspy-profiles test`
+
+Performs a live connectivity test for a specified profile. This command will activate the profile and attempt a simple, low-token request to the configured language model to ensure the endpoint is reachable and the API key is valid.
+
+**Usage:**
+
+```bash
+dspy-profiles test <profile_name>
+```
+
+**Arguments:**
+
+*   `<profile_name>`: The name of the profile to test (required).
+
+**Example:**
+
+```bash
+# Test the 'default' profile
+dspy-profiles test default
+
+# Test a profile named 'ollama'
+dspy-profiles test ollama
+```

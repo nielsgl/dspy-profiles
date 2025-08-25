@@ -177,7 +177,7 @@ dspy-profiles run --profile prod my_script.py
 10. **Profile Composition**: Implement `extends` functionality for profile inheritance.
 11. **Inline Overrides**: Allow `with profile("name", key=value)` overrides.
 12. **Keyring Support**: Integrate optional OS keyring support for secrets.
-13. **Validation & Testing**: Add `dspy profiles validate` and `dspy profiles test` commands.
+13. **Validation & Testing**: [x] Add `dspy profiles validate` and `dspy profiles test` commands.
 
 ### Phase 4: Python API & Runtime Utilities
 

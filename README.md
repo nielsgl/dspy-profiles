@@ -109,6 +109,12 @@ Creates a new profile from a `.env` file.
 ### `dspy-profiles run`
 Executes a command with a specific profile activated.
 
+### `dspy-profiles validate`
+Validates the `profiles.toml` file against the schema.
+
+### `dspy-profiles test <profile_name>`
+Performs a live connectivity test for a given profile.
+
 ```bash
 dspy-profiles run --profile prod -- python my_script.py --arg1 --arg2
 ```
@@ -119,7 +125,7 @@ The project has a comprehensive roadmap organized into five phases. See the [PRO
 
 -   **[x] Phase 1: DX, Packaging & Documentation**: Professional PyPI packaging, CI/CD for publishing, and a full documentation site with MkDocs.
 -   **[x] Phase 2: Core CLI & Env Var Enhancements**: `dspy-profiles import --from .env`, `dspy-profiles diff`, and robust activation precedence rules with `DSPY_PROFILE`.
--   **Phase 3: Advanced Profile Features**: Profile composition (`extends`), inline overrides, optional OS keyring support, and `validate`/`test` commands.
+-   **[x] Phase 3: Advanced Profile Features**: Profile composition (`extends`), inline overrides, optional OS keyring support, and `validate`/`test` commands.
 -   **Phase 4: Python API & Runtime Utilities**: Programmatic shortcuts like `lm("prod")`, runtime introspection with `current_profile()`, and a notebook magic command.
 -   **Phase 5: QoL & Advanced Workflows**: An interactive `init` wizard, profile import/export, and async-friendly decorators.
 
