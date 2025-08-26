@@ -79,12 +79,10 @@ class ProfileManager:
         with self.path.open("r") as f:
             try:
                 data = toml.load(f)
-                if not data or "profile" not in data:
+                if not data:
                     return {}
-                # Restructure for validation
-                profiles_data = {"profiles": data.get("profile", {})}
-                validated_profiles = ProfilesFile.model_validate(profiles_data)
-                return validated_profiles.model_dump()["profiles"]
+                validated_profiles = ProfilesFile.model_validate(data)
+                return validated_profiles.model_dump()
             except (toml.TomlDecodeError, ValidationError):
                 return {}
 
@@ -119,7 +117,7 @@ class ProfileManager:
         """
         profiles = self.load()
         profiles[profile_name] = config
-        self.save({"profile": profiles})
+        self.save(profiles)
 
     def delete(self, profile_name: str) -> bool:
         """Deletes a profile by name.
@@ -133,6 +131,6 @@ class ProfileManager:
         profiles = self.load()
         if profile_name in profiles:
             del profiles[profile_name]
-            self.save({"profile": profiles})
+            self.save(profiles)
             return True
         return False

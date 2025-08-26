@@ -83,7 +83,7 @@ The project is under active development. All core features are implemented and s
 -   **[x] Phase 3: Advanced Profile Features**: Profile composition (`extends`), inline overrides, and `validate`/`test` commands.
 -   **[x] Phase 4: Python API & Runtime Utilities**: Programmatic shortcuts like `lm()` and runtime introspection with `current_profile()`.
 -   **[x] Phase 5: Developer Experience Overhaul**: A major refactor of the CLI, API, and documentation for clarity, stability, and ease of use.
--   **[ ] Phase 6: QoL & Advanced Workflows**: An interactive `init` wizard, profile import/export, and async-friendly decorators.
+-   **[x] Phase 6: QoL & Advanced Workflows**: An interactive `init` wizard, profile import/export, and async-friendly decorators.
 
 See the [PROJECT.md](PROJECT.md) file for detailed specifications.
 

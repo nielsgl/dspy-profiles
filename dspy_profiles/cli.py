@@ -274,12 +274,7 @@ def validate(
         with open(config_path) as f:
             data = toml.load(f)
 
-        if "profile" in data:
-            profiles_data = {"profiles": data["profile"]}
-        else:
-            profiles_data = {"profiles": {}}
-
-        ProfilesFile.model_validate(profiles_data)
+        ProfilesFile.model_validate(data)
         console.print("[bold green]✅ Success![/bold green] All profiles are valid.")
 
     except FileNotFoundError:

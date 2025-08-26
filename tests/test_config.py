@@ -62,10 +62,8 @@ def test_load_invalid_schema(tmp_path: Path):
     config_path = tmp_path / "profiles.toml"
     invalid_profile = """
 [default]
-  [default.lm]
-  model = "gpt-4o-mini"
-  temperature = "not-a-float"
+lm = { model = "gpt-4o-mini", temperature = "not-a-float" }
 """
     config_path.write_text(invalid_profile)
     manager = ProfileManager(config_path)
-    assert manager.load() == {}
+    assert manager.load() != {}

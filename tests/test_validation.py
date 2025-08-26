@@ -12,16 +12,14 @@ runner = CliRunner()
 def valid_profiles_file(tmp_path: Path) -> Path:
     """Creates a valid profiles.toml file."""
     content = """
-[profile.default]
-lm.model = "gpt-4o-mini"
-lm.api_base = "https://api.openai.com/v1"
+[default]
+lm = { model = "gpt-4o-mini", api_base = "https://api.openai.com/v1" }
 
-[profile.ollama]
+[ollama]
 extends = "default"
-lm.model = "ollama/llama3"
-lm.api_base = "http://localhost:11434/v1"
-rm.model = "colbertv2.0"
-cache.enabled = true
+lm = { model = "ollama/llama3", api_base = "http://localhost:11434/v1" }
+rm = { model = "colbertv2.0" }
+cache = { enabled = true }
 """
     file_path = tmp_path / "profiles.toml"
     file_path.write_text(content)
@@ -32,15 +30,15 @@ cache.enabled = true
 def invalid_profiles_file(tmp_path: Path) -> Path:
     """Creates an invalid profiles.toml file."""
     content = """
-[profile.bad_lm]
-lm.model = 123  # Invalid type
+[bad_lm]
+lm = { model = 123 }  # Invalid type
 
-[profile.bad_rm]
-rm.model = false # Invalid type
+[bad_rm]
+rm = { model = false } # Invalid type
 
-[profile.unknown_toplevel]
-cache.enabled = true
-storage.type = "local"
+[unknown_toplevel]
+cache = { enabled = true }
+storage = { type = "local" }
 """
     file_path = tmp_path / "profiles.toml"
     file_path.write_text(content)
@@ -51,7 +49,7 @@ storage.type = "local"
 def malformed_toml_file(tmp_path: Path) -> Path:
     """Creates a malformed profiles.toml file."""
     content = """
-[profile.default]
+[default]
   model = "missing_section"
   is_malformed =
 """
@@ -73,9 +71,9 @@ def test_validate_invalid_file(invalid_profiles_file: Path):
     result = runner.invoke(app, ["validate", "--config", str(invalid_profiles_file)])
     assert result.exit_code == 1
     assert "❌ Validation Failed" in result.stdout
-    assert "profiles -> bad_lm -> lm -> model" in result.stdout
+    assert "bad_lm -> lm -> model" in result.stdout
     assert "Input should be a valid string" in result.stdout
-    assert "profiles -> bad_rm -> rm -> model" in result.stdout
+    assert "bad_rm -> rm -> model" in result.stdout
 
 
 def test_validate_nonexistent_file():

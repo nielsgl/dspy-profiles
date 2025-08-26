@@ -11,10 +11,11 @@ While the `init` command is great for getting started, your `profiles.toml` file
 You can configure any language model that DSPy supports. Here's an example of configuring a local Ollama model:
 
 ```toml title="~/.dspy/profiles.toml"
-[profile.local_mistral]
-lm.class_name = "dspy.OllamaLocal"
-lm.model = "mistral"
-lm.max_tokens = 4096
+[local_mistral]
+[local_mistral.lm]
+class_name = "dspy.OllamaLocal"
+model = "mistral"
+max_tokens = 4096
 ```
 
 ### Configuring Retrieval Models
@@ -22,9 +23,10 @@ lm.max_tokens = 4096
 Configuring a retrieval model like `ColBERTv2` is just as easy. This is where profiles become incredibly powerful, as you can switch your entire retrieval backend with a single word.
 
 ```toml title="~/.dspy/profiles.toml"
-[profile.dev_retrieval]
-rm.class_name = "dspy.ColBERTv2"
-rm.url = "http://localhost:8893/api/search"
+[dev_retrieval]
+[dev_retrieval.rm]
+class_name = "dspy.ColBERTv2"
+url = "http://localhost:8893/api/search"
 ```
 
 ## Activation Precedence

@@ -40,15 +40,19 @@
     Define all your environment settings in a clear, human-readable TOML file.
 
     ```toml title="~/.dspy/profiles.toml"
-    [profile.dev]
-    lm.model = "openai/gpt-4o-mini"
-    lm.temperature = 0.7
-    settings.cache_dir = ".cache"
+    [dev.lm]
+    model = "openai/gpt-4o-mini"
+    temperature = 0.7
 
-    [profile.prod]
+    [dev.settings]
+    cache_dir = ".cache"
+
+    [prod]
     extends = "dev"
-    lm.model = "anthropic/claude-3-opus"
-    lm.temperature = 0.0
+
+    [prod.lm]
+    model = "anthropic/claude-3-opus"
+    temperature = 0.0
     ```
 
 === "Powerful CLI"

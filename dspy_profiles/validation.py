@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, Field, HttpUrl
+from pydantic import BaseModel, ConfigDict, Field, HttpUrl, RootModel
 
 
 class LanguageModelSettings(BaseModel):
@@ -57,15 +57,11 @@ class Profile(BaseModel):
     model_config = ConfigDict(extra="allow")
 
 
-class ProfilesFile(BaseModel):
+class ProfilesFile(RootModel):
     """Schema for the entire `profiles.toml` file.
 
-    This is the root model for validating the TOML configuration file. It expects
-    a top-level `profiles` key containing a dictionary of individual profiles.
-
-    Attributes:
-        profiles (dict[str, Profile]): A dictionary where each key is a profile
-            name and each value is a `Profile` object.
+    This is the root model for validating the TOML configuration file. It directly
+    represents the dictionary of profiles, where each key is a profile name.
     """
 
-    profiles: dict[str, Profile] = Field(..., description="A dictionary of all profiles.")
+    root: dict[str, Profile]

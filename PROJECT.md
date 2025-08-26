@@ -27,23 +27,21 @@ Profiles are stored in a TOML file located at `~/.dspy/profiles.toml` (or `$XDG_
 
 ```toml
 # Default profile, used when no other is specified
-[default]
-  [default.lm]
-  model = "openai/gpt-4o-mini"
-  temperature = 0.7
-  max_tokens = 4000
+[default.lm]
+model = "openai/gpt-4o-mini"
+temperature = 0.7
+max_tokens = 4000
 
-  [default.settings]
-  track_usage = true
+[default.settings]
+track_usage = true
 
 # Production profile
-[prod]
-  [prod.lm]
-  model = "cohere/command-r"
-  api_key = "${COHERE_API_KEY}" # Example of secret injection
+[prod.lm]
+model = "cohere/command-r"
+api_key = "${COHERE_API_KEY}" # Example of secret injection
 
-  [prod.settings]
-  num_threads = 32
+[prod.settings]
+num_threads = 32
 ```
 
 ## Activation Precedence Rules
