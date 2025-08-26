@@ -1,45 +1,59 @@
+from difflib import unified_diff
+import json
+import os
 from pathlib import Path
 import subprocess
+from typing import Annotated
 
 from dotenv import dotenv_values
 from pydantic import ValidationError
 import rich
 from rich.console import Console
 from rich.table import Table
+from rich.text import Text
 import toml
 import typer
 
 from dspy_profiles.config import PROFILES_PATH, get_manager
 from dspy_profiles.validation import ProfilesFile
 
-app = typer.Typer()
+app = typer.Typer(
+    name="dspy-profiles",
+    help="A CLI for managing DSPy profiles.",
+    no_args_is_help=True,
+    add_completion=False,
+    rich_markup_mode="markdown",
+)
 console = Console()
 
 
 @app.command()
 def list():
-    """Lists all available profiles."""
+    """Lists all available profiles and their core details."""
     manager = get_manager()
     all_profiles = manager.load()
     if not all_profiles:
-        console.print("No profiles found.")
+        console.print("[yellow]No profiles found. Use 'dspy-profiles init' to create one.[/yellow]")
         return
 
-    table = Table("Profile Name", "Details")
+    table = Table("Profile Name", "Language Model (LM)", "Extends")
     for name, profile_data in all_profiles.items():
-        details = f"LM: {profile_data.get('lm', {}).get('model', 'Not set')}"
-        table.add_row(name, details)
+        lm = profile_data.get("lm", {}).get("model", "[grey50]Not set[/grey50]")
+        extends = profile_data.get("extends", "[grey50]None[/grey50]")
+        table.add_row(name, lm, extends)
 
     console.print(table)
 
 
 @app.command()
-def show(profile_name: str):
-    """Shows the details of a specific profile."""
+def show(
+    profile_name: Annotated[str, typer.Argument(help="The name of the profile to display.")],
+):
+    """Shows the full configuration details of a specific profile."""
     manager = get_manager()
     profile_data = manager.get(profile_name)
     if not profile_data:
-        console.print(f"Profile '{profile_name}' not found.")
+        console.print(f"[bold red]Error:[/] Profile '{profile_name}' not found.")
         raise typer.Exit(code=1)
 
     console.print(f"[bold]Profile: {profile_name}[/bold]")
@@ -47,19 +61,25 @@ def show(profile_name: str):
 
 
 @app.command()
-def delete(profile_name: str):
-    """Deletes a profile."""
+def delete(
+    profile_name: Annotated[str, typer.Argument(help="The name of the profile to delete.")],
+):
+    """Deletes a specified profile."""
     manager = get_manager()
     if not manager.delete(profile_name):
-        console.print(f"Profile '{profile_name}' not found.")
+        console.print(f"[bold red]Error:[/] Profile '{profile_name}' not found.")
         raise typer.Exit(code=1)
 
-    console.print(f"Profile '{profile_name}' deleted successfully.")
+    console.print(f"[bold green]Success![/bold green] Profile '{profile_name}' deleted.")
 
 
 @app.command()
-def set(profile_name: str, key: str, value: str):
-    """Sets a configuration value in a profile."""
+def set(
+    profile_name: Annotated[str, typer.Argument(help="The name of the profile to modify.")],
+    key: Annotated[str, typer.Argument(help="The configuration key to set (e.g., 'lm.model').")],
+    value: Annotated[str, typer.Argument(help="The value to set for the key.")],
+):
+    """Sets a configuration value for a given profile."""
     manager = get_manager()
     profile_data = manager.get(profile_name) or {}
 
@@ -71,21 +91,34 @@ def set(profile_name: str, key: str, value: str):
     current_level[keys[-1]] = value
 
     manager.set(profile_name, profile_data)
-    console.print(f"Updated '{key}' in profile '{profile_name}'.")
+    console.print(f"Updated [bold cyan]{key}[/bold cyan] in profile '{profile_name}'.")
 
 
 @app.command()
 def init(
-    profile_name: str = typer.Option(
-        "default", "--profile", "-p", prompt="Enter a name for the new profile"
-    ),
-    force: bool = typer.Option(False, "--force", "-f"),
+    profile_name: Annotated[
+        str,
+        typer.Option(
+            "--profile", "-p", help="The name for the new profile.", show_default="default"
+        ),
+    ] = "default",
+    force: Annotated[
+        bool,
+        typer.Option(
+            "--force",
+            "-f",
+            help="Overwrite the profile if it already exists.",
+        ),
+    ] = False,
 ):
     """Initializes a new profile interactively."""
     manager = get_manager()
     if manager.get(profile_name) and not force:
-        console.print(f"Profile '{profile_name}' already exists. Use --force to overwrite.")
-        return
+        console.print(
+            f"[bold red]Error:[/] Profile '{profile_name}' already exists. "
+            "Use --force to overwrite."
+        )
+        raise typer.Exit(code=1)
 
     console.print(f"Configuring profile: [bold]{profile_name}[/bold]")
 
@@ -100,41 +133,34 @@ def init(
 
     manager.set(profile_name, new_config)
 
-    # Provide guidance on setting the API key
     provider = model.split("/")[0].upper()
-    if provider not in ["OPENAI", "ANTHROPIC", "COHERE"]:  # Add more as needed
-        console.print(
-            f"\n[yellow]Warning:[/] Could not determine the API key for provider '{provider}'."
-        )
-        console.print(
-            "Please consult your provider's documentation and set the appropriate"
-            " environment variable."
-        )
-    else:
-        console.print(f"\n[bold green]Success![/bold green] Profile '{profile_name}' saved.")
-        console.print(
-            f"To use this profile, make sure to set the [bold]{provider}_API_KEY[/bold]"
-            " environment variable."
-        )
+    api_key_name = f"{provider}_API_KEY"
 
-    console.print(f"You can view your new profile with: dspy-profiles show {profile_name}")
-
-
-def main():
-    app()
+    console.print(f"\n[bold green]Success![/bold green] Profile '{profile_name}' saved.")
+    console.print(
+        f"To use this profile, make sure to set the [bold]{api_key_name}[/bold] "
+        "environment variable."
+    )
+    console.print(
+        f"You can view your new profile with: [bold]dspy-profiles show {profile_name}[/bold]"
+    )
 
 
 @app.command(name="import")
 def import_profile(
-    profile_name: str = typer.Option(..., "--profile", "-p", help="The name for the new profile."),
-    from_path: Path = typer.Option(
-        ".env",
-        "--from",
-        help="The path to the .env file to import from.",
-        exists=True,
-        readable=True,
-        dir_okay=False,
-    ),
+    profile_name: Annotated[
+        str, typer.Option(..., "--profile", "-p", help="The name for the new profile.")
+    ],
+    from_path: Annotated[
+        Path,
+        typer.Option(
+            "--from",
+            help="The path to the .env file to import from.",
+            exists=True,
+            readable=True,
+            dir_okay=False,
+        ),
+    ] = Path(".env"),
 ):
     """Imports a profile from a .env file."""
     manager = get_manager()
@@ -144,15 +170,15 @@ def import_profile(
 
     env_values = dotenv_values(from_path)
     if not env_values:
-        console.print(f"No values found in '{from_path}'.")
+        console.print(f"[yellow]Warning:[/] No values found in '{from_path}'.")
         return
 
     new_profile = {}
     for key, value in env_values.items():
         if key.upper().startswith("DSPY_"):
-            parts = key.upper().split("_")[1:]  # Remove DSPY_ and split
+            parts = key.upper().split("_")[1:]
             if len(parts) < 2:
-                continue  # Must have at least a section and a key (e.g., LM_MODEL)
+                continue
 
             section = parts[0].lower()
             config_key = "_".join(parts[1:]).lower()
@@ -162,22 +188,24 @@ def import_profile(
             new_profile[section][config_key] = value
 
     if not new_profile:
-        console.print(f"No variables with the 'DSPY_' prefix found in '{from_path}'.")
+        console.print(
+            f"[yellow]Warning:[/] No variables with the 'DSPY_' prefix found in '{from_path}'."
+        )
         return
 
     manager.set(profile_name, new_profile)
     console.print(
         f"[bold green]Success![/bold green] Profile '{profile_name}' imported from '{from_path}'."
     )
-    console.print(f"You can view the new profile with: dspy-profiles show {profile_name}")
+    console.print(f"You can view it with: [bold]dspy-profiles show {profile_name}[/bold]")
 
 
 @app.command()
 def diff(
-    profile_a_name: str = typer.Argument(..., help="The first profile to compare."),
-    profile_b_name: str = typer.Argument(..., help="The second profile to compare."),
+    profile_a_name: Annotated[str, typer.Argument(help="The first profile to compare.")],
+    profile_b_name: Annotated[str, typer.Argument(help="The second profile to compare.")],
 ):
-    """Compares two profiles and shows the differences."""
+    """Compares two profiles and highlights their differences."""
     manager = get_manager()
     profile_a = manager.get(profile_a_name)
     profile_b = manager.get(profile_b_name)
@@ -188,11 +216,6 @@ def diff(
     if not profile_b:
         console.print(f"[bold red]Error:[/] Profile '{profile_b_name}' not found.")
         raise typer.Exit(code=1)
-
-    from difflib import unified_diff
-    import json
-
-    from rich.text import Text
 
     json_a = json.dumps(profile_a, indent=2, sort_keys=True)
     json_b = json.dumps(profile_b, indent=2, sort_keys=True)
@@ -209,21 +232,13 @@ def diff(
     )
 
     diff_text = Text()
-    diff_iterator = iter(diff)
-    try:
-        # Skip the '---' and '+++' header lines
-        next(diff_iterator)
-        next(diff_iterator)
-    except StopIteration:
-        pass  # Handle cases with very short diffs
-
-    for line in diff_iterator:
+    for line in diff:
         if line.startswith("+"):
             diff_text.append(line, style="green")
         elif line.startswith("-"):
             diff_text.append(line, style="red")
-        elif line.startswith("?"):
-            continue  # Skip the line number info
+        elif line.startswith("@@") or line.startswith("---") or line.startswith("+++"):
+            diff_text.append(line, style="cyan")
         else:
             diff_text.append(line)
 
@@ -232,27 +247,26 @@ def diff(
 
 @app.command()
 def validate(
-    config_path: Path = typer.Option(
-        PROFILES_PATH,
-        "--config",
-        "-c",
-        help="Path to the profiles.toml file.",
-        exists=True,
-        file_okay=True,
-        dir_okay=False,
-        readable=True,
-        resolve_path=True,
-    ),
+    config_path: Annotated[
+        Path,
+        typer.Option(
+            "--config",
+            "-c",
+            help="Path to the profiles.toml file.",
+            exists=True,
+            file_okay=True,
+            dir_okay=False,
+            readable=True,
+            resolve_path=True,
+        ),
+    ] = PROFILES_PATH,
 ):
-    """Validate the profiles.toml file against the schema."""
+    """Validates the structure and content of the profiles.toml file."""
     console.print(f"Validating profiles at: [cyan]{config_path}[/cyan]")
     try:
         with open(config_path) as f:
             data = toml.load(f)
 
-        # Pydantic model expects a top-level key, let's call it 'profiles'
-        # The TOML file structure is [profile.name], which toml loads as {'profile': {'name': ...}}
-        # We need to restructure it for the model.
         if "profile" in data:
             profiles_data = {"profiles": data["profile"]}
         else:
@@ -265,8 +279,7 @@ def validate(
         console.print(f"[bold red]Error:[/] Configuration file not found at '{config_path}'.")
         raise typer.Exit(1)
     except toml.TomlDecodeError as e:
-        console.print(f"[bold red]Error:[/] Invalid TOML format in '{config_path}':")
-        console.print(f"  {e}")
+        console.print(f"[bold red]Error:[/] Invalid TOML format in '{config_path}':\n  {e}")
         raise typer.Exit(1)
     except ValidationError as e:
         console.print(f"[bold red]❌ Validation Failed:[/] Found {e.error_count()} error(s).")
@@ -281,9 +294,9 @@ def validate(
 
 @app.command()
 def test(
-    profile_name: str = typer.Argument(..., help="The name of the profile to test."),
+    profile_name: Annotated[str, typer.Argument(help="The name of the profile to test.")],
 ):
-    """Tests the connectivity for a given profile."""
+    """Tests connectivity to the language model for a given profile."""
     from dspy_profiles.core import profile as activate_profile
 
     console.print(f"Testing profile: [bold cyan]{profile_name}[/bold cyan]...")
@@ -295,13 +308,12 @@ def test(
             lm = dspy.settings.lm
             if not lm:
                 console.print(
-                    f"[bold red]Error:[/] No language model (LM) configured for profile "
+                    f"[bold red]Error:[/] No language model configured for profile "
                     f"'{profile_name}'."
                 )
                 raise typer.Exit(1)
 
             console.print(f"  - Using model: [yellow]{lm.model}[/yellow]")
-            # A simple, low-token request to test connectivity
             lm("Say 'ok'")
 
         console.print("[bold green]✅ Success![/bold green] Connectivity test passed.")
@@ -320,15 +332,16 @@ def test(
 )
 def run_command(
     ctx: typer.Context,
-    profile_name: str = typer.Option(..., "--profile", "-p", help="The profile to activate."),
+    profile_name: Annotated[
+        str,
+        typer.Option(..., "--profile", "-p", help="The profile to activate for the command."),
+    ],
 ):
-    """Executes a command with the specified profile activated."""
+    """Executes a command with the specified profile's environment variables."""
     command = ctx.args
     if not command:
-        console.print("[bold red]Error:[/bold red] No command provided to run.")
+        console.print("[bold red]Error:[/] No command provided to run.")
         raise typer.Exit(1)
-
-    import os
 
     env = os.environ.copy()
     env["DSPY_PROFILE"] = profile_name
@@ -336,11 +349,16 @@ def run_command(
     try:
         result = subprocess.run(command, env=env, check=False, capture_output=True, text=True)
         if result.stdout:
-            console.print(result.stdout)
+            console.print(result.stdout, end="")
         if result.stderr:
-            console.print(result.stderr, style="bold red")
+            console.print(result.stderr, style="bold red", end="")
         if result.returncode != 0:
             raise typer.Exit(result.returncode)
     except FileNotFoundError:
-        console.print(f"[bold red]Error:[/] Command not found: '{command}'")
+        cmd_str = " ".join(command)
+        console.print(f"[bold red]Error:[/] Command not found: '{cmd_str}'")
         raise typer.Exit(1)
+
+
+def main():
+    app()

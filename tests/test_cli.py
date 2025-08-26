@@ -53,7 +53,7 @@ def test_cli_lifecycle(mock_get_manager: MagicMock):
     # 6. Delete the profile
     mock_manager.delete.return_value = True
     result = runner.invoke(cli.app, ["delete", "test_profile"])
-    assert "deleted successfully" in result.stdout
+    assert "Success!" in result.stdout and "deleted" in result.stdout
     mock_manager.delete.assert_called_with("test_profile")
 
 
@@ -88,8 +88,8 @@ def test_error_cases(mock_get_manager: MagicMock):
         ["init", "--profile", "custom_profile"],
         input="custom/model\n\n",
     )
-    assert "Warning:" in result.stdout
-    assert "CUSTOM_API_KEY" not in result.stdout
+    assert "Success!" in result.stdout
+    assert "CUSTOM_API_KEY" in result.stdout
 
 
 @patch("dspy_profiles.cli.subprocess.run")

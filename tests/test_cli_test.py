@@ -73,7 +73,7 @@ def test_test_command_no_lm(mock_get_manager, profile_manager):
             result = runner.invoke(app, ["test", "no_lm_profile"])
 
     assert result.exit_code == 1, result.stdout
-    assert "No language model (LM) configured" in result.stdout
+    assert "No language model configured" in result.stdout
 
 
 @patch("dspy_profiles.config.get_manager")
