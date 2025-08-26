@@ -22,15 +22,15 @@ def _deep_merge(parent: dict, child: dict) -> dict:
 
 
 @contextlib.contextmanager
-def profile(profile_name: str | None = None, *, force: bool = False, config_path=None, **overrides):
-    """A context manager to temporarily apply a dspy-profiles configuration.
-    Args:
-        profile_name: The name of the profile to activate.
-        force: If True, this profile will override any profile set via
-               the DSPY_PROFILE environment variable.
-        config_path: Path to the profiles.toml file. If None, uses the default path.
-        **overrides: Keyword arguments to override profile settings (e.g., lm, rm).
-    """
+def profile(
+    profile_name: str | None = None,
+    *,
+    force: bool = False,
+    loader: ProfileLoader | None = None,
+    config_path: str | None = None,
+    **overrides,
+):
+    """A context manager to temporarily apply a dspy-profiles configuration."""
     env_profile = os.getenv("DSPY_PROFILE")
     profile_to_load = None
 
@@ -47,8 +47,14 @@ def profile(profile_name: str | None = None, *, force: bool = False, config_path
         yield
         return
 
-    loader = ProfileLoader(config_path=config_path) if config_path else ProfileLoader()
-    loaded_profile = loader.get_config(profile_to_load)
+    # Use the provided loader or create a new one
+    if loader:
+        active_loader = loader
+    elif config_path:
+        active_loader = ProfileLoader(config_path=config_path)
+    else:
+        active_loader = ProfileLoader()
+    loaded_profile = active_loader.get_config(profile_to_load)
 
     # Apply inline overrides
     final_config = loaded_profile.config.copy()
@@ -72,35 +78,15 @@ def profile(profile_name: str | None = None, *, force: bool = False, config_path
             f"~/.dspy/cache/{loaded_profile.name}"
         )
 
-    lm = None
-    if resolved_profile.lm:
-        lm_config = resolved_profile.lm.copy()
-        model_name = lm_config.pop("model", None)
-        # DSPy expects the provider to be part of the model name if not openai
-        # but we handle that in the profile. Let's be robust.
-        provider = lm_config.pop("provider", None)
-        if provider and provider != "openai" and model_name and provider not in model_name:
-            # Simple heuristic, may need refinement
-            pass  # For now, assume model name is correct
-
-        # Dynamically find the correct LM class if specified
-        lm_class = dspy.LM
-        if provider:
-            lm_class_name = provider.capitalize()
-            lm_class = getattr(dspy, lm_class_name, dspy.LM)
-
-        lm = lm_class(model=model_name, **lm_config) if model_name else dspy.LM(**lm_config)
+    lm = dspy.LM(**final_config["lm"]) if final_config.get("lm") else None
 
     rm = None
     if resolved_profile.rm:
-        # A simple heuristic to select RM class. Can be expanded.
-        rm_model_name = resolved_profile.rm.get("model", "").lower()
-        rm_class = dspy.ColBERTv2
-        if "rag" in rm_model_name:
-            # This is a placeholder for more advanced RM selection.
-            # For now, we default to ColBERTv2 as it's the most common.
-            rm_class = dspy.ColBERTv2
-        rm = rm_class(**resolved_profile.rm)
+        rm_config = resolved_profile.rm.copy()
+        if "url" in rm_config:
+            rm = dspy.ColBERTv2(rm_config.pop("url"), **rm_config)
+        else:
+            rm = dspy.Retrieve(**rm_config)
 
     settings = resolved_profile.settings or {}
     # Ensure the profile-aware cache directory is part of the settings
@@ -108,25 +94,28 @@ def profile(profile_name: str | None = None, *, force: bool = False, config_path
         settings["cache_dir"] = final_config["settings"]["cache_dir"]
 
     token = _CURRENT_PROFILE.set(resolved_profile)
+    original_settings = dspy.settings.copy()
     try:
         with dspy.context(lm=lm, rm=rm, **settings):
+            dspy.configure(lm=lm, rm=rm, **settings)
             # Also configure the cache_dir directly
             if "cache_dir" in settings:
                 dspy.settings.configure(cache_dir=settings["cache_dir"])
             yield
     finally:
         _CURRENT_PROFILE.reset(token)
+        dspy.settings.configure(**original_settings)
 
 
-def with_profile(profile_name: str, *, force: bool = False, config_path=None, **overrides):
-    """A decorator to apply a dspy-profiles configuration to a function.
-    Args:
-        profile_name: The name of the profile to activate.
-        force: If True, this profile will override any profile set via
-               the DSPY_PROFILE environment variable.
-        config_path: Path to the profiles.toml file. If None, uses the default path.
-        **overrides: Keyword arguments to override profile settings.
-    """
+def with_profile(
+    profile_name: str,
+    *,
+    force: bool = False,
+    loader: ProfileLoader | None = None,
+    config_path: str | None = None,
+    **overrides,
+):
+    """A decorator to apply a dspy-profiles configuration to a function."""
 
     def decorator(func):
         def wrapper(*args, **kwargs):
@@ -141,7 +130,13 @@ def with_profile(profile_name: str, *, force: bool = False, config_path=None, **
             if func_overrides:
                 final_overrides = _deep_merge(final_overrides, func_overrides)
 
-            with profile(profile_name, force=force, config_path=config_path, **final_overrides):
+            with profile(
+                profile_name,
+                force=force,
+                loader=loader,
+                config_path=config_path,
+                **final_overrides,
+            ):
                 return func(*args, **func_args)
 
         return wrapper

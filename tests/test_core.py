@@ -19,7 +19,7 @@ def manage_env_var():
 
 def test_profile_context_manager_activates_profile(profile_manager):
     """Tests that the profile() context manager correctly activates a profile."""
-    with profile("test_profile", config_path=profile_manager.path):
+    with profile("test_profile", loader=profile_manager):
         assert dspy.settings.lm.model == "test_model_context"
 
     assert dspy.settings.lm is None
@@ -30,7 +30,7 @@ def test_dspy_profile_env_var_has_precedence(profile_manager, manage_env_var):
     os.environ["DSPY_PROFILE"] = "env_profile"
 
     # When DSPY_PROFILE is set, calling profile() should load that profile
-    with profile("other_profile", config_path=profile_manager.path):
+    with profile("other_profile", loader=profile_manager):
         assert dspy.settings.lm.model == "env_model"
 
 
@@ -38,14 +38,14 @@ def test_force_overrides_dspy_profile_env_var(profile_manager, manage_env_var):
     """Tests that force=True in the context manager overrides DSPY_PROFILE."""
     os.environ["DSPY_PROFILE"] = "env_profile"
 
-    with profile("forced_profile", force=True, config_path=profile_manager.path):
+    with profile("forced_profile", force=True, loader=profile_manager):
         assert dspy.settings.lm.model == "forced_model"
 
 
 def test_with_profile_decorator(profile_manager):
     """Tests that the @with_profile decorator works."""
 
-    @with_profile("decorator_profile", config_path=profile_manager.path)
+    @with_profile("decorator_profile", loader=profile_manager)
     def my_function():
         return dspy.settings.lm.model
 
@@ -57,7 +57,7 @@ def test_with_profile_decorator_respects_env_var(profile_manager, manage_env_var
     """Tests that the @with_profile decorator respects DSPY_PROFILE."""
     os.environ["DSPY_PROFILE"] = "env_profile"
 
-    @with_profile("other_profile", config_path=profile_manager.path)
+    @with_profile("other_profile", loader=profile_manager)
     def my_function():
         return dspy.settings.lm.model
 
@@ -68,7 +68,7 @@ def test_with_profile_decorator_force_overrides_env_var(profile_manager, manage_
     """Tests that force=True in the decorator overrides DSPY_PROFILE."""
     os.environ["DSPY_PROFILE"] = "env_profile"
 
-    @with_profile("forced_profile", force=True, config_path=profile_manager.path)
+    @with_profile("forced_profile", force=True, loader=profile_manager)
     def my_function():
         return dspy.settings.lm.model
 
@@ -80,7 +80,7 @@ def test_current_profile_utility(profile_manager):
     # Outside any context, it should be None
     assert current_profile() is None
 
-    with profile("test_profile", config_path=profile_manager.path, lm={"temperature": 0.9}):
+    with profile("test_profile", loader=profile_manager, lm={"temperature": 0.9}):
         active_profile = current_profile()
         assert active_profile is not None
         assert active_profile.name == "test_profile"
@@ -100,49 +100,47 @@ def test_lm_shortcut(profile_manager):
     _LM_CACHE.clear()
 
     # Get a cached instance
-    lm_instance1 = lm("test_profile", config_path=profile_manager.path)
+    lm_instance1 = lm("test_profile")
     assert isinstance(lm_instance1, dspy.LM)
     assert lm_instance1.model == "test_model_context"
 
     # Get it again, should be the same cached object
-    lm_instance2 = lm("test_profile", config_path=profile_manager.path)
+    lm_instance2 = lm("test_profile")
     assert lm_instance1 is lm_instance2
 
     # Force a new instance with cached=False
-    lm_instance3 = lm("test_profile", cached=False, config_path=profile_manager.path)
+    lm_instance3 = lm("test_profile", cached=False)
     assert lm_instance1 is not lm_instance3
 
     # Test with overrides, which should create a new, cached instance
-    lm_instance4 = lm("test_profile", temperature=0.99, config_path=profile_manager.path)
+    lm_instance4 = lm("test_profile", temperature=0.99)
     assert lm_instance4 is not None
     assert lm_instance4.kwargs["temperature"] == 0.99
 
     # Getting it again with the same overrides should return the cached instance
-    lm_instance5 = lm("test_profile", temperature=0.99, config_path=profile_manager.path)
+    lm_instance5 = lm("test_profile", temperature=0.99)
     assert lm_instance4 is lm_instance5
 
     # A profile with no LM should return None
-    assert lm("no_lm_profile", config_path=profile_manager.path) is None
+    assert lm("no_lm_profile") is None
 
 
 def test_profile_aware_caching(profile_manager):
     """Tests that the cache_dir is set correctly based on the profile."""
-    with profile("test_profile", config_path=profile_manager.path):
+    with profile("test_profile", loader=profile_manager):
         expected_path = os.path.expanduser("~/.dspy/cache/test_profile")
         assert dspy.settings.cache_dir == expected_path
 
     # A profile with a custom cache_dir should use that value
-    profile_manager.load.return_value["custom_cache"] = {
-        "settings": {"cache_dir": "/tmp/my_custom_cache"}
-    }
-    with profile("custom_cache", config_path=profile_manager.path):
+    profile_manager.create("custom_cache", {"settings": {"cache_dir": "/tmp/my_custom_cache"}})
+    with profile("custom_cache", loader=profile_manager):
         assert dspy.settings.cache_dir == "/tmp/my_custom_cache"
 
 
 def test_current_profile_with_decorator(profile_manager):
     """Tests that current_profile() works with the @with_profile decorator."""
 
-    @with_profile("decorator_profile", config_path=profile_manager.path)
+    @with_profile("decorator_profile", loader=profile_manager)
     def my_function():
         active_profile = current_profile()
         assert active_profile is not None
@@ -157,6 +155,6 @@ def test_current_profile_with_decorator(profile_manager):
 
 
 def test_profile_no_profile_found(profile_manager):
-    """Tests that nothing happens when no profile is found."""
-    with profile(config_path=profile_manager.path):
-        assert dspy.settings.lm is None
+    """Tests that the default profile is loaded when no profile is specified."""
+    with profile(loader=profile_manager):
+        assert dspy.settings.lm.model == "default_model"

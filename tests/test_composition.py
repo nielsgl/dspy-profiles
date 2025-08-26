@@ -3,13 +3,11 @@ from dspy.utils.dummies import DummyLM
 import pytest
 
 from dspy_profiles.core import profile, with_profile
-from dspy_profiles.loader import ProfileLoader
 
 
 def test_simple_inheritance(profile_manager):
     """Tests that a child profile correctly inherits and overrides from a base profile."""
-    loader = ProfileLoader()
-    resolved = loader.get_config("child")
+    resolved = profile_manager.get_config("child")
 
     assert resolved.name == "child"
     assert resolved.lm is not None
@@ -23,8 +21,7 @@ def test_simple_inheritance(profile_manager):
 
 def test_multi_level_inheritance(profile_manager):
     """Tests that settings are correctly inherited through multiple levels."""
-    loader = ProfileLoader()
-    resolved = loader.get_config("grandchild")
+    resolved = profile_manager.get_config("grandchild")
 
     assert resolved.name == "grandchild"
     assert resolved.lm is not None
@@ -39,9 +36,8 @@ def test_multi_level_inheritance(profile_manager):
 
 def test_circular_dependency_error(profile_manager):
     """Tests that a circular 'extends' reference raises a ValueError."""
-    loader = ProfileLoader()
     with pytest.raises(ValueError, match="cannot extend itself"):
-        loader.get_config("circular")
+        profile_manager.get_config("circular")
 
 
 def test_context_manager_with_inline_overrides(profile_manager):
@@ -49,7 +45,12 @@ def test_context_manager_with_inline_overrides(profile_manager):
     # This DummyLM will be overridden by the profile context.
     dspy.settings.configure(lm=DummyLM([{"answer": "Should not be called"}]))
 
-    with profile("child", lm={"temperature": 0.9, "max_tokens": 100}, settings={"retries": 10}):
+    with profile(
+        "child",
+        loader=profile_manager,
+        lm={"temperature": 0.9, "max_tokens": 100},
+        settings={"retries": 10},
+    ):
         # The LM configured inside the context should be a dspy.LM instance
         # Let's inspect it to ensure our settings were applied.
         configured_lm = dspy.settings.lm
@@ -65,7 +66,7 @@ def test_context_manager_with_inline_overrides(profile_manager):
 def test_decorator_with_inline_overrides(profile_manager):
     """Tests that the @with_profile decorator applies inline overrides."""
 
-    @with_profile("base", lm={"model": "decorator_override"})
+    @with_profile("base", loader=profile_manager, lm={"model": "decorator_override"})
     def my_function():
         return dspy.settings.lm
 
@@ -78,7 +79,7 @@ def test_decorator_with_inline_overrides(profile_manager):
 def test_decorator_with_function_kwargs_overrides(profile_manager):
     """Tests that kwargs passed to the decorated function take precedence."""
 
-    @with_profile("base", lm={"model": "decorator_override"})
+    @with_profile("base", loader=profile_manager, lm={"model": "decorator_override"})
     def my_function(lm=None):
         # The 'lm' kwarg should be handled by the decorator, not passed to the function
         return dspy.settings.lm

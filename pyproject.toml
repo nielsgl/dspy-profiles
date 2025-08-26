@@ -20,6 +20,7 @@ classifiers = [
 keywords = ["dspy", "llm", "configuration", "profiles", "ai"]
 dependencies = [
     "dspy>=3.0.2",
+    "ipython>=9.4.0",
     "pydantic>=2.11.7",
     "python-dotenv>=1.1.1",
     "rich>=14.1.0",
@@ -70,6 +71,9 @@ force-sort-within-sections = true
 
 [tool.pytest.ini_options]
 addopts = "--cov=dspy_profiles --cov-report=term-missing"
+markers = [
+    "ipython: tests that require an IPython environment"
+]
 
 [tool.coverage.run]
 source = ["dspy_profiles"]

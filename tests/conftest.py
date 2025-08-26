@@ -1,5 +1,4 @@
 import copy
-from unittest.mock import patch
 
 import dspy
 from dspy.dsp.utils.settings import DEFAULT_CONFIG
@@ -33,6 +32,7 @@ MOCK_PROFILES = {
     "other_profile_decorator": {"lm": {"model": "other_model_decorator"}},
     "forced_profile_decorator": {"lm": {"model": "forced_model_decorator"}},
     "no_lm_profile": {"rm": {"model": "some-rm"}},
+    "default": {"lm": {"model": "default_model"}},
 }
 
 
@@ -44,22 +44,77 @@ def clear_settings():
 
 
 @pytest.fixture
-def profile_manager():
+def profile_manager(monkeypatch):
     """
-    Mocks the ProfileManager to provide a consistent, in-memory dictionary of profiles
+    Provides a stateful, in-memory mock of ProfileLoader and ProfileManager
     that can be safely manipulated by tests without affecting the filesystem.
     """
-    # Use a deepcopy to ensure each test gets a fresh, isolated version of the profiles
-    profiles_copy = copy.deepcopy(MOCK_PROFILES)
 
-    def mock_save(data):
-        profiles_copy.update(data)
+    class MockProfileManager:
+        def __init__(self, initial_profiles):
+            self.profiles = copy.deepcopy(initial_profiles)
+            self.path = "/tmp/dummy_path_for_tests"
 
-    with patch("dspy_profiles.loader.ProfileManager") as mock:
-        instance = mock.return_value
-        instance.load.return_value = profiles_copy
-        # Mock the save method to update our in-memory dictionary
-        instance.save = mock_save
-        # Also mock the path attribute to avoid filesystem interactions
-        instance.path = "/tmp/dummy_profiles.toml"
-        yield instance
+        def load(self):
+            return self.profiles
+
+        def _load_profile_config(self, profile_name, history=None):
+            if history is None:
+                history = set()
+            if profile_name in history:
+                raise ValueError("Circular dependency detected")
+            history.add(profile_name)
+
+            if profile_name not in self.profiles:
+                raise ValueError(f"Profile '{profile_name}' not found.")
+
+            config = copy.deepcopy(self.profiles[profile_name])
+            if "extends" in config:
+                if config["extends"] == profile_name:
+                    raise ValueError(f"Profile '{profile_name}' cannot extend itself.")
+                base_config = self._load_profile_config(config.pop("extends"), history)
+                # A simplified deep merge for tests
+                for key, value in config.items():
+                    if (
+                        key in base_config
+                        and isinstance(base_config[key], dict)
+                        and isinstance(value, dict)
+                    ):
+                        base_config[key].update(value)
+                    else:
+                        base_config[key] = value
+                config = base_config
+            return config
+
+        def get_config(self, profile_name, **overrides):
+            from dspy_profiles.loader import ResolvedProfile
+
+            config = self._load_profile_config(profile_name)
+            if overrides:
+                if "lm" in overrides and "lm" in config:
+                    config["lm"].update(overrides)
+                else:
+                    config.update(overrides)
+            return ResolvedProfile(
+                name=profile_name,
+                config=config,
+                lm=config.get("lm"),
+                rm=config.get("rm"),
+                settings=config.get("settings"),
+            )
+
+        def create(self, profile_name, data):
+            self.profiles[profile_name] = data
+
+    mock_instance = MockProfileManager(MOCK_PROFILES)
+
+    # Patch both ProfileLoader and ProfileManager to return our mock instance
+    monkeypatch.setattr(
+        "dspy_profiles.loader.ProfileLoader", lambda config_path=None: mock_instance
+    )
+    monkeypatch.setattr(
+        "dspy_profiles.loader.ProfileManager", lambda config_path=None: mock_instance
+    )
+    monkeypatch.setattr("dspy_profiles.core.ProfileLoader", lambda config_path=None: mock_instance)
+
+    return mock_instance
