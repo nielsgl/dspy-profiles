@@ -37,11 +37,19 @@ def list():
         console.print("[yellow]No profiles found. Use 'dspy-profiles init' to create one.[/yellow]")
         return
 
-    table = Table("Profile Name", "Language Model (LM)", "Extends")
+    table = Table("Profile Name", "Language Model (LM)", "API Base", "API Key", "Extends")
     for name, profile_data in all_profiles.items():
-        lm = profile_data.get("lm", {}).get("model", "[grey50]Not set[/grey50]")
+        lm_section = profile_data.get("lm", {})
+        model = lm_section.get("model", "[grey50]Not set[/grey50]")
+        api_base_value = lm_section.get("api_base")
+        api_base = str(api_base_value) if api_base_value else "[grey50]Not set[/grey50]"
+        api_key = lm_section.get("api_key")
+        if api_key:
+            api_key_display = f"{api_key[:4]}...{api_key[-4:]}"
+        else:
+            api_key_display = "[grey50]Not set[/grey50]"
         extends = profile_data.get("extends", "[grey50]None[/grey50]")
-        table.add_row(name, lm, extends)
+        table.add_row(name, model, api_base, api_key_display, extends)
 
     console.print(table)
 
@@ -128,23 +136,25 @@ def init(
     console.print(f"Configuring profile: [bold]{profile_name}[/bold]")
 
     model = typer.prompt("Enter the language model (e.g., openai/gpt-4o-mini)")
+    api_key = typer.prompt(
+        "Enter your API key (optional)", default="", show_default=False, hide_input=True
+    )
     api_base = typer.prompt(
         "Enter the API base (optional, for local models)", default="", show_default=False
     )
 
     new_config = {"lm": {"model": model}}
+    if api_key:
+        new_config["lm"]["api_key"] = api_key
     if api_base:
         new_config["lm"]["api_base"] = api_base
 
     manager.set(profile_name, new_config)
 
-    provider = model.split("/")[0].upper()
-    api_key_name = f"{provider}_API_KEY"
-
     console.print(f"\n[bold green]Success![/bold green] Profile '{profile_name}' saved.")
     console.print(
-        f"To use this profile, make sure to set the [bold]{api_key_name}[/bold] "
-        "environment variable."
+        "[yellow]Warning:[/] Your API key is stored in plaintext. "
+        "Ensure the configuration file is secured."
     )
     console.print(
         f"You can view your new profile with: [bold]dspy-profiles show {profile_name}[/bold]"

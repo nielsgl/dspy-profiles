@@ -22,10 +22,21 @@ def test_list_command(tmp_path: Path, monkeypatch):
 
     # 2. Add a profile and test again
     manager = ProfileManager(config_path)
-    manager.set("test_profile", {"lm": {"model": "gpt-4"}})
+    manager.set(
+        "test_profile",
+        {
+            "lm": {
+                "model": "gpt-4",
+                "api_key": "sk-1234567890abcdef1234567890abcdef",
+                "api_base": "https://api.openai.com/v1",
+            }
+        },
+    )
     result = runner.invoke(cli.app, ["list"])
     assert "test_profile" in result.stdout
     assert "gpt-4" in result.stdout
+    assert "sk-1...cdef" in result.stdout
+    assert "https://api.open" in result.stdout
 
 
 def test_show_command(tmp_path: Path, monkeypatch):
@@ -65,40 +76,73 @@ def test_delete_command(tmp_path: Path, monkeypatch):
     assert result.exit_code == 1
 
 
-def test_init_command(tmp_path: Path, monkeypatch):
-    """Tests the init command with an isolated profile manager."""
+def test_init_command_interactive(tmp_path: Path, monkeypatch):
+    """Tests the interactive init command."""
     config_path = tmp_path / "profiles.toml"
     monkeypatch.setattr("dspy_profiles.cli.find_profiles_path", lambda: config_path)
-    manager = ProfileManager(config_path)
 
-    # 1. Test interactive init
+    # Run the init command
     result = runner.invoke(
         cli.app,
         ["init", "--profile", "test_profile"],
-        input="openai/gpt-4o-mini\nhttp://localhost:8000\n",
+        input="openai/gpt-4o-mini\nsk-my-secret-key\nhttp://localhost:8000\n",
     )
     assert result.exit_code == 0
     assert "Success!" in result.stdout
+
+    # Verify the profile was created correctly
+    manager = ProfileManager(config_path)
     profile = manager.get("test_profile")
     assert profile is not None
     assert profile.get("lm", {}).get("model") == "openai/gpt-4o-mini"
+    assert profile.get("lm", {}).get("api_key") == "sk-my-secret-key"
     assert str(profile.get("lm", {}).get("api_base")) == "http://localhost:8000/"
 
-    # 2. Test init with existing profile without --force
+
+def test_init_command_no_optional_values(tmp_path: Path, monkeypatch):
+    """Tests the init command without providing optional values."""
+    config_path = tmp_path / "profiles.toml"
+    monkeypatch.setattr("dspy_profiles.cli.find_profiles_path", lambda: config_path)
+
+    result = runner.invoke(
+        cli.app,
+        ["init", "--profile", "test_profile_no_key"],
+        input="openai/gpt-4o-mini\n\n\n",
+    )
+    assert result.exit_code == 0
+    assert "Success!" in result.stdout
+
+    manager = ProfileManager(config_path)
+    profile = manager.get("test_profile_no_key")
+    assert profile is not None
+    assert profile.get("lm", {}).get("model") == "openai/gpt-4o-mini"
+    assert profile.get("lm", {}).get("api_key") is None
+    assert profile.get("lm", {}).get("api_base") is None
+
+
+def test_init_command_force(tmp_path: Path, monkeypatch):
+    """Tests the --force option of the init command."""
+    config_path = tmp_path / "profiles.toml"
+    monkeypatch.setattr("dspy_profiles.cli.find_profiles_path", lambda: config_path)
+    manager = ProfileManager(config_path)
+    manager.set("test_profile", {"lm": {"model": "old/model"}})
+
+    # Test without --force first
     result = runner.invoke(cli.app, ["init", "--profile", "test_profile"])
     assert "already exists" in result.stdout
     assert result.exit_code == 1
 
-    # 3. Test init with --force
+    # Test with --force
     result = runner.invoke(
         cli.app,
         ["init", "--profile", "test_profile", "--force"],
-        input="new/model\n\n",
+        input="new/model\nnew-key\n\n",
     )
     assert result.exit_code == 0
     profile = manager.get("test_profile")
     assert profile is not None
     assert profile.get("lm", {}).get("model") == "new/model"
+    assert profile.get("lm", {}).get("api_key") == "new-key"
 
 
 def test_set_command(tmp_path: Path, monkeypatch):

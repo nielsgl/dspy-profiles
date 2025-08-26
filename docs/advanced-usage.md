@@ -84,3 +84,53 @@ print(config)
 # Output:
 # {'lm': {'model': 'gpt-4o-mini'}, 'settings': {'temperature': 0.7}}
 ```
+
+## Managing API Keys with Environment Variables
+
+While the interactive `init` command offers to save your API key directly in the `profiles.toml` file for convenience, this is not always the most secure or flexible option. For production environments or shared projects, it is strongly recommended to manage your API keys using environment variables.
+
+### Why Use Environment Variables?
+
+1.  **Security**: It prevents you from committing sensitive credentials to your version control system (like Git).
+2.  **Flexibility**: You can use the same profile across different machines or for different users, with each environment providing its own API key.
+3.  **CI/CD Integration**: It is the standard way to provide credentials in automated deployment and testing pipelines.
+
+### How It Works
+
+DSPy has built-in support for environment variables. If a profile does not contain an `api_key`, DSPy will automatically look for an environment variable based on the model's provider.
+
+For example, if your profile uses an OpenAI model like `openai/gpt-4o-mini`, DSPy will look for the `OPENAI_API_KEY` environment variable.
+
+### Example Workflow
+
+1.  **Create a profile without an API key.**
+
+    You can do this by running `dspy-profiles init` and leaving the API key prompt blank, or by manually editing your `profiles.toml`:
+
+    ```toml title="~/.dspy/profiles.toml"
+    [my_secure_profile]
+    [my_secure_profile.lm]
+    model = "openai/gpt-4o-mini"
+    ```
+
+2.  **Set the environment variable.**
+
+    In your terminal, export the API key before running your application.
+
+    ```bash
+    export OPENAI_API_KEY="sk-your-secret-key-here"
+    ```
+
+    > To make this permanent, you can add this line to your shell's startup file (e.g., `~/.bashrc`, `~/.zshrc`).
+
+3.  **Activate the profile as usual.**
+
+    Now, when you use `my_secure_profile`, DSPy will automatically pick up the key from the environment.
+
+    ```python
+    from dspy_profiles import profile
+
+    with profile("my_secure_profile"):
+        # DSPy will use the OPENAI_API_KEY from the environment
+        ...
+    ```

@@ -47,10 +47,12 @@ graph TD
 The easiest way to get started is with the interactive `init` command. This will create a `default` profile for you.
 
 ```bash
-dspy-profiles init
-```
+dspy-profiles init```
 
-This command will ask you a few questions and then create the configuration file at `~/.dspy/profiles.toml`.
+This command will ask for the language model, and optionally, your API key and an API base. It will then create the configuration file at `~/.dspy/profiles.toml`.
+
+> [!WARNING]
+> If you provide an API key, it will be stored in plaintext in the configuration file. Please ensure that this file is kept secure and is not committed to version control.
 
 ## 4. View Your Profile
 
