@@ -14,7 +14,7 @@ from rich.text import Text
 import toml
 import typer
 
-from dspy_profiles.config import PROFILES_PATH, get_manager
+from dspy_profiles.config import PROFILES_PATH, ProfileManager, find_profiles_path
 from dspy_profiles.validation import ProfilesFile
 
 app = typer.Typer(
@@ -30,7 +30,8 @@ console = Console()
 @app.command()
 def list():
     """Lists all available profiles and their core details."""
-    manager = get_manager()
+    config_path = find_profiles_path()
+    manager = ProfileManager(config_path)
     all_profiles = manager.load()
     if not all_profiles:
         console.print("[yellow]No profiles found. Use 'dspy-profiles init' to create one.[/yellow]")
@@ -50,7 +51,8 @@ def show(
     profile_name: Annotated[str, typer.Argument(help="The name of the profile to display.")],
 ):
     """Shows the full configuration details of a specific profile."""
-    manager = get_manager()
+    config_path = find_profiles_path()
+    manager = ProfileManager(config_path)
     profile_data = manager.get(profile_name)
     if not profile_data:
         console.print(f"[bold red]Error:[/] Profile '{profile_name}' not found.")
@@ -65,7 +67,8 @@ def delete(
     profile_name: Annotated[str, typer.Argument(help="The name of the profile to delete.")],
 ):
     """Deletes a specified profile."""
-    manager = get_manager()
+    config_path = find_profiles_path()
+    manager = ProfileManager(config_path)
     if not manager.delete(profile_name):
         console.print(f"[bold red]Error:[/] Profile '{profile_name}' not found.")
         raise typer.Exit(code=1)
@@ -80,7 +83,8 @@ def set(
     value: Annotated[str, typer.Argument(help="The value to set for the key.")],
 ):
     """Sets a configuration value for a given profile."""
-    manager = get_manager()
+    config_path = find_profiles_path()
+    manager = ProfileManager(config_path)
     profile_data = manager.get(profile_name) or {}
 
     keys = key.split(".")
@@ -112,7 +116,8 @@ def init(
     ] = False,
 ):
     """Initializes a new profile interactively."""
-    manager = get_manager()
+    config_path = find_profiles_path()
+    manager = ProfileManager(config_path)
     if manager.get(profile_name) and not force:
         console.print(
             f"[bold red]Error:[/] Profile '{profile_name}' already exists. "
@@ -163,7 +168,8 @@ def import_profile(
     ] = Path(".env"),
 ):
     """Imports a profile from a .env file."""
-    manager = get_manager()
+    config_path = find_profiles_path()
+    manager = ProfileManager(config_path)
     if manager.get(profile_name):
         console.print(f"[bold red]Error:[/] Profile '{profile_name}' already exists.")
         raise typer.Exit(code=1)
@@ -206,7 +212,8 @@ def diff(
     profile_b_name: Annotated[str, typer.Argument(help="The second profile to compare.")],
 ):
     """Compares two profiles and highlights their differences."""
-    manager = get_manager()
+    config_path = find_profiles_path()
+    manager = ProfileManager(config_path)
     profile_a = manager.get(profile_a_name)
     profile_b = manager.get(profile_b_name)
 
@@ -297,6 +304,12 @@ def test(
     profile_name: Annotated[str, typer.Argument(help="The name of the profile to test.")],
 ):
     """Tests connectivity to the language model for a given profile."""
+    config_path = find_profiles_path()
+    manager = ProfileManager(config_path)
+    if not manager.get(profile_name):
+        console.print(f"[bold red]Error:[/] Profile '{profile_name}' not found.")
+        raise typer.Exit(code=1)
+
     from dspy_profiles.core import profile as activate_profile
 
     console.print(f"Testing profile: [bold cyan]{profile_name}[/bold cyan]...")

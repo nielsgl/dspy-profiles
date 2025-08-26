@@ -24,64 +24,57 @@ def profile_manager(tmp_path):
     return manager
 
 
-@patch("dspy_profiles.config.get_manager")
-def test_test_command_success(mock_get_manager, profile_manager):
+def test_test_command_success(profile_manager):
     """Test the 'test' command with a profile that should succeed."""
-    mock_get_manager.return_value = profile_manager
+    with patch("dspy_profiles.cli.find_profiles_path", return_value=profile_manager.path):
+        with patch("dspy_profiles.core.profile") as mock_profile_context:
+            with patch("dspy.settings") as mock_settings:
+                mock_lm = MagicMock()
+                mock_lm.return_value = "ok"
+                mock_settings.lm = mock_lm
 
-    # We patch the profile context manager in the core module
-    with patch("dspy_profiles.core.profile"):
-        # And we patch dspy.settings.lm to mock the "network call"
-        with patch("dspy.settings") as mock_settings:
-            mock_lm = MagicMock()
-            mock_lm.return_value = "ok"
-            mock_settings.lm = mock_lm
-
-            result = runner.invoke(app, ["test", "test_profile"])
+                result = runner.invoke(app, ["test", "test_profile"])
 
     assert result.exit_code == 0, result.stdout
     assert "✅ Success!" in result.stdout
+    mock_profile_context.assert_called_once_with("test_profile")
     mock_lm.assert_called_once_with("Say 'ok'")
 
 
-@patch("dspy_profiles.config.get_manager")
-def test_test_command_failure(mock_get_manager, profile_manager):
+def test_test_command_failure(profile_manager):
     """Test the 'test' command with a profile that should fail."""
-    mock_get_manager.return_value = profile_manager
+    with patch("dspy_profiles.cli.find_profiles_path", return_value=profile_manager.path):
+        with patch("dspy_profiles.core.profile"):  # as mock_profile_context:
+            with patch("dspy.settings") as mock_settings:
+                mock_lm = MagicMock()
+                mock_lm.side_effect = ConnectionError("Could not connect")
+                mock_settings.lm = mock_lm
 
-    with patch("dspy_profiles.core.profile"):
-        with patch("dspy.settings") as mock_settings:
-            mock_lm = MagicMock()
-            mock_lm.side_effect = ConnectionError("Could not connect")
-            mock_settings.lm = mock_lm
-
-            result = runner.invoke(app, ["test", "test_profile"])
+                result = runner.invoke(app, ["test", "test_profile"])
 
     assert result.exit_code == 1, result.stdout
     assert "❌ Test Failed" in result.stdout
     assert "Could not connect" in result.stdout
 
 
-@patch("dspy_profiles.config.get_manager")
-def test_test_command_no_lm(mock_get_manager, profile_manager):
+def test_test_command_no_lm(profile_manager):
     """Test the 'test' command with a profile that has no LM configured."""
-    mock_get_manager.return_value = profile_manager
-
-    with patch("dspy_profiles.core.profile"):
-        with patch("dspy.settings") as mock_settings:
-            mock_settings.lm = None
-            result = runner.invoke(app, ["test", "no_lm_profile"])
+    with patch("dspy_profiles.cli.find_profiles_path", return_value=profile_manager.path):
+        with patch("dspy_profiles.core.profile"):  # as mock_profile_context:
+            with patch("dspy.settings") as mock_settings:
+                mock_settings.lm = None
+                result = runner.invoke(app, ["test", "no_lm_profile"])
 
     assert result.exit_code == 1, result.stdout
     assert "No language model configured" in result.stdout
 
 
-@patch("dspy_profiles.config.get_manager")
-def test_test_command_profile_not_found(mock_get_manager, profile_manager):
+def test_test_command_profile_not_found(profile_manager):
     """Test the 'test' command with a profile that does not exist."""
-    mock_get_manager.return_value = profile_manager
-
-    result = runner.invoke(app, ["test", "nonexistent_profile"])
+    # This test doesn't need to patch activate_profile because it should fail before that.
+    # We need to patch find_profiles_path to use our isolated manager.
+    with patch("dspy_profiles.cli.find_profiles_path", return_value=profile_manager.path):
+        result = runner.invoke(app, ["test", "nonexistent_profile"])
 
     assert result.exit_code == 1
     assert "Profile 'nonexistent_profile' not found" in result.stdout

@@ -17,7 +17,17 @@
 
 !!! success "The Solution"
 
-    `dspy-profiles` moves this configuration out of your code and into a simple, centralized `~/.dspy/profiles.toml` file. It provides a powerful CLI and a clean Python API to manage and use these profiles seamlessly.
+    `dspy-profiles` moves this configuration out of your code and into a simple, centralized `profiles.toml` file. It provides a powerful CLI and a clean Python API to manage and use these profiles seamlessly.
+
+---
+
+## Configuration Hierarchy
+
+`dspy-profiles` locates your configuration file with a clear, `git`-like precedence:
+
+1.  **Project-Specific File**: It searches for a `profiles.toml` in the current directory and its parent directories. This allows you to commit project-specific profiles directly to your repository.
+2.  **Environment Variable**: You can set the `DSPY_PROFILES_PATH` environment variable to point to a specific configuration file.
+3.  **Global File**: If neither of the above is found, it falls back to the global default at `~/.dspy/profiles.toml`.
 
 ---
 

@@ -1,6 +1,25 @@
 from pathlib import Path
 
-from dspy_profiles.config import ProfileManager
+from dspy_profiles.config import PROFILES_PATH, ProfileManager, find_profiles_path
+
+
+def test_find_profiles_path_hierarchy(tmp_path: Path, monkeypatch):
+    """Tests the hierarchical search logic of find_profiles_path."""
+    # 1. Test fallback to global default
+    assert find_profiles_path() == PROFILES_PATH
+
+    # 2. Test finding local `profiles.toml`
+    project_dir = tmp_path / "project"
+    project_dir.mkdir()
+    local_config = project_dir / "profiles.toml"
+    local_config.touch()
+    monkeypatch.chdir(project_dir)
+    assert find_profiles_path() == local_config
+
+    # 3. Test environment variable override
+    env_config_path = tmp_path / "env_profiles.toml"
+    monkeypatch.setenv("DSPY_PROFILES_PATH", str(env_config_path))
+    assert find_profiles_path() == env_config_path
 
 
 def test_profile_manager_crud(tmp_path: Path):
@@ -50,12 +69,3 @@ def test_load_invalid_schema(tmp_path: Path):
     config_path.write_text(invalid_profile)
     manager = ProfileManager(config_path)
     assert manager.load() == {}
-
-
-def test_get_manager_singleton():
-    """Tests that get_manager returns a singleton instance."""
-    from dspy_profiles import config
-
-    manager1 = config.get_manager()
-    manager2 = config.get_manager()
-    assert manager1 is manager2

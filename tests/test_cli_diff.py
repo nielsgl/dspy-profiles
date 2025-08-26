@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, patch
+from pathlib import Path
 
 from typer.testing import CliRunner
 
@@ -8,70 +8,31 @@ from dspy_profiles.config import ProfileManager
 runner = CliRunner()
 
 
-@patch("dspy_profiles.cli.get_manager")
-def test_diff_identical_profiles(mock_get_manager: MagicMock):
-    """Tests diffing two identical profiles."""
-    mock_manager = MagicMock(spec=ProfileManager)
-    mock_get_manager.return_value = mock_manager
-    mock_manager.get.return_value = {"lm": {"model": "gpt-4"}}
+def test_diff_command(tmp_path: Path, monkeypatch):
+    """Tests the diff command with an isolated profile manager."""
+    config_path = tmp_path / "profiles.toml"
+    monkeypatch.setattr("dspy_profiles.cli.find_profiles_path", lambda: config_path)
+    manager = ProfileManager(config_path)
 
+    # Setup profiles
+    manager.set("profile_a", {"lm": {"model": "gpt-4o-mini"}})
+    manager.set("profile_b", {"lm": {"model": "claude-3-opus"}})
+    manager.set("profile_c", {"lm": {"model": "gpt-4o-mini"}})
+
+    # 1. Test diff between different profiles
     result = runner.invoke(cli.app, ["diff", "profile_a", "profile_b"])
-
-    assert result.exit_code == 0
-    assert "Profiles are identical" in result.stdout
-
-
-@patch("dspy_profiles.cli.get_manager")
-def test_diff_different_profiles(mock_get_manager: MagicMock):
-    """Tests diffing two different profiles."""
-    mock_manager = MagicMock(spec=ProfileManager)
-    mock_get_manager.return_value = mock_manager
-
-    def get_side_effect(profile_name):
-        if profile_name == "profile_a":
-            return {"lm": {"model": "gpt-4o-mini"}}
-        if profile_name == "profile_b":
-            return {"lm": {"model": "claude-3-opus"}}
-        return None
-
-    mock_manager.get.side_effect = get_side_effect
-
-    result = runner.invoke(cli.app, ["diff", "profile_a", "profile_b"])
-
     assert result.exit_code == 0
     assert "gpt-4o-mini" in result.stdout
     assert "claude-3-opus" in result.stdout
-    assert "+" in result.stdout  # Should have additions
-    assert "-" in result.stdout  # Should have deletions
+    assert "+" in result.stdout
+    assert "-" in result.stdout
 
+    # 2. Test diff between identical profiles
+    result = runner.invoke(cli.app, ["diff", "profile_a", "profile_c"])
+    assert result.exit_code == 0
+    assert "Profiles are identical" in result.stdout
 
-@patch("dspy_profiles.cli.get_manager")
-def test_diff_profile_a_not_found(mock_get_manager: MagicMock):
-    """Tests diffing when the first profile does not exist."""
-    mock_manager = MagicMock(spec=ProfileManager)
-    mock_get_manager.return_value = mock_manager
-
-    def get_side_effect(profile_name):
-        if profile_name == "nonexistent":
-            return None
-        return {"lm": {"model": "claude-3-opus"}}
-
-    mock_manager.get.side_effect = get_side_effect
-
-    result = runner.invoke(cli.app, ["diff", "nonexistent", "existent"])
-
+    # 3. Test diff with a non-existent profile
+    result = runner.invoke(cli.app, ["diff", "profile_a", "nonexistent"])
     assert result.exit_code == 1
     assert "Profile 'nonexistent' not found" in result.stdout
-
-
-@patch("dspy_profiles.cli.get_manager")
-def test_diff_profile_b_not_found(mock_get_manager: MagicMock):
-    """Tests diffing when the second profile does not exist."""
-    mock_manager = MagicMock(spec=ProfileManager)
-    mock_get_manager.return_value = mock_manager
-    mock_manager.get.return_value = None
-
-    result = runner.invoke(cli.app, ["diff", "existent", "nonexistent"])
-
-    assert result.exit_code == 1
-    assert "not found" in result.stdout

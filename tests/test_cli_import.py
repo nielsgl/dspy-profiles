@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, patch
+from pathlib import Path
 
 from typer.testing import CliRunner
 
@@ -8,67 +8,40 @@ from dspy_profiles.config import ProfileManager
 runner = CliRunner()
 
 
-@patch("dspy_profiles.cli.get_manager")
-def test_import_profile_success(mock_get_manager: MagicMock, tmp_path):
-    """Tests successfully importing a profile from a .env file."""
-    mock_manager = MagicMock(spec=ProfileManager)
-    mock_get_manager.return_value = mock_manager
-    mock_manager.get.return_value = None  # Profile does not exist yet
+def test_import_profile(tmp_path: Path, monkeypatch):
+    """Tests the import command with an isolated profile manager."""
+    config_path = tmp_path / "profiles.toml"
+    monkeypatch.setattr("dspy_profiles.cli.find_profiles_path", lambda: config_path)
+    manager = ProfileManager(config_path)
 
+    # 1. Test successful import
     env_file = tmp_path / ".env"
     env_file.write_text(
         "DSPY_LM_MODEL=gpt-4o-mini\nDSPY_SETTINGS_TEMPERATURE=0.7\nNOT_DSPY_VAR=should_be_ignored"
     )
-
     result = runner.invoke(
         cli.app,
         ["import", "--profile", "imported_profile", "--from", str(env_file)],
     )
-
     assert result.exit_code == 0
     assert "Success!" in result.stdout
-    assert "imported_profile" in result.stdout
+    profile = manager.get("imported_profile")
+    assert profile is not None
+    assert profile.get("lm", {}).get("model") == "gpt-4o-mini"
+    assert profile.get("settings", {}).get("temperature") == "0.7"
 
-    mock_manager.set.assert_called_once_with(
-        "imported_profile",
-        {
-            "lm": {"model": "gpt-4o-mini"},
-            "settings": {"temperature": "0.7"},
-        },
-    )
-
-
-@patch("dspy_profiles.cli.get_manager")
-def test_import_profile_already_exists(mock_get_manager: MagicMock, tmp_path):
-    """Tests that import fails if the profile already exists."""
-    mock_manager = MagicMock(spec=ProfileManager)
-    mock_get_manager.return_value = mock_manager
-    mock_manager.get.return_value = {"some_data": "exists"}  # Profile exists
-
-    env_file = tmp_path / ".env"
-    env_file.write_text("DSPY_LM_MODEL=gpt-4o-mini")
-
+    # 2. Test import when profile already exists
     result = runner.invoke(
         cli.app,
-        ["import", "--profile", "existing_profile", "--from", str(env_file)],
+        ["import", "--profile", "imported_profile", "--from", str(env_file)],
     )
-
     assert result.exit_code == 1
     assert "already exists" in result.stdout
-    mock_manager.set.assert_not_called()
 
-
-@patch("dspy_profiles.cli.get_manager")
-def test_import_profile_file_not_found(mock_get_manager: MagicMock):
-    """Tests that import fails if the --from file does not exist."""
-    mock_manager = MagicMock(spec=ProfileManager)
-    mock_get_manager.return_value = mock_manager
-
+    # 3. Test import with a non-existent file
     result = runner.invoke(
         cli.app,
         ["import", "--profile", "any_profile", "--from", "nonexistent.env"],
     )
-
     assert result.exit_code == 2  # Typer's exit code for file not found
     assert "Invalid value" in result.stderr
-    mock_manager.set.assert_not_called()

@@ -21,7 +21,7 @@ When working with DSPy, you often need to switch between different language mode
 
 ## The Solution
 
-`dspy-profiles` moves this configuration out of your code and into a simple, centralized `~/.dspy/profiles.toml` file. It provides a powerful CLI and a clean Python API to manage and use these profiles seamlessly.
+`dspy-profiles` moves this configuration out of your code and into a simple `profiles.toml` file. It provides a powerful CLI and a clean Python API to manage and use these profiles seamlessly. The tool will automatically find your `profiles.toml` whether it's in your local project directory or in the global `~/.dspy/` folder.
 
 ---
 

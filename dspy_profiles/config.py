@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from typing import Any
 
@@ -15,20 +16,31 @@ PROFILES_PATH = CONFIG_DIR / "profiles.toml"
 _manager = None
 
 
-def get_manager():
-    """Returns a singleton `ProfileManager` instance.
+def find_profiles_path() -> Path:
+    """Finds the path to the profiles.toml file with a hierarchical search.
 
-    This function ensures that a single instance of the `ProfileManager` is used
-    throughout the application, providing a consistent point of access to the
-    profile configurations.
+    The search order is as follows:
+    1.  `DSPY_PROFILES_PATH` environment variable.
+    2.  Search for `profiles.toml` in the current directory and parent directories.
+    3.  Fall back to the global default path (`~/.dspy/profiles.toml`).
 
     Returns:
-        ProfileManager: The singleton `ProfileManager` instance.
+        Path: The resolved path to the `profiles.toml` file.
     """
-    global _manager
-    if _manager is None:
-        _manager = ProfileManager(PROFILES_PATH)
-    return _manager
+    # 1. Check environment variable
+    if env_path_str := os.getenv("DSPY_PROFILES_PATH"):
+        return Path(env_path_str)
+
+    # 2. Search current and parent directories
+    current_dir = Path.cwd()
+    for directory in [current_dir, *current_dir.parents]:
+        local_path = directory / "profiles.toml"
+        if local_path.exists():
+            return local_path
+
+    # 3. Fallback to global default
+    print(f"{PROFILES_PATH=}")
+    return PROFILES_PATH
 
 
 class ProfileManager:
