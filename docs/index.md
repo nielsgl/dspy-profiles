@@ -4,25 +4,76 @@
 
 `dspy-profiles` allows you to define, switch between, and manage different DSPy configurations for various environments (e.g., development, staging, production) without cluttering your code.
 
-## The Problem
+!!! abstract "The Problem"
 
-When working with DSPy, you often need to switch between different language models, retrieval models, and settings. For example:
-* Using a cheap, fast model like `gpt-4o-mini` in development.
-* Using a powerful model like `claude-3-opus` in production.
-* Pointing to a staging database for your retrieval model.
-* Toggling settings like `track_usage`.
+    When working with DSPy, you often need to switch between different language models, retrieval models, and settings. For example:
 
-Managing this configuration directly in your code can be messy, error-prone, and insecure.
+    -   Using a cheap, fast model like `gpt-4o-mini` in development.
+    -   Using a powerful model like `claude-3-opus` in production.
+    -   Pointing to a staging database for your retrieval model.
+    -   Toggling settings like `track_usage`.
 
-## The Solution
+    Managing this configuration directly in your code can be messy, error-prone, and insecure.
 
-`dspy-profiles` moves this configuration out of your code and into a simple, centralized `~/.dspy/profiles.toml` file. It provides a powerful CLI and a clean Python API to manage and use these profiles seamlessly.
+!!! success "The Solution"
 
-### Key Features Implemented
-*   **Full CLI**: Manage profiles with `init`, `list`, `show`, `set`, and `delete`.
-*   **Profile Activation**: Run any command under a specific profile with `dspy-profiles run`.
-*   **Environment Import**: Create profiles directly from `.env` files with `dspy-profiles import`.
-*   **Configuration Diffing**: Easily compare environments with `dspy-profiles diff`.
-*   **Robust Precedence**: A clear and predictable activation logic ensures the right profile is always used.
+    `dspy-profiles` moves this configuration out of your code and into a simple, centralized `~/.dspy/profiles.toml` file. It provides a powerful CLI and a clean Python API to manage and use these profiles seamlessly.
 
-**For more, see the [Quickstart](quickstart.md) guide.**
+---
+
+## Key Features
+
+`dspy-profiles` is designed to be a comprehensive solution for DSPy configuration management.
+
+=== "Declarative Profiles"
+
+    Define all your environment settings in a clear, human-readable TOML file.
+
+    ```toml title="~/.dspy/profiles.toml"
+    [profile.dev]
+    lm.model = "openai/gpt-4o-mini"
+    lm.temperature = 0.7
+    settings.cache_dir = ".cache"
+
+    [profile.prod]
+    extends = "dev"
+    lm.model = "anthropic/claude-3-opus"
+    lm.temperature = 0.0
+    ```
+
+=== "Powerful CLI"
+
+    A rich command-line interface lets you manage your profiles without ever leaving the terminal.
+
+    -   `dspy-profiles init`: Interactively create a new profile.
+    -   `dspy-profiles list`: See all your available profiles.
+    -   `dspy-profiles show <name>`: View the full configuration of a profile.
+    -   `dspy-profiles diff <a a> <b b>`: Compare two profiles.
+    -   `dspy-profiles run -- ...`: Execute any command with a profile activated.
+
+=== "Seamless Python API"
+
+    Activate profiles in your Python code with an elegant and intuitive API.
+
+    ```python
+    from dspy_profiles import profile
+
+    with profile("prod"):
+        # Your production-grade DSPy code here
+        ...
+    ```
+
+=== "Advanced Features"
+
+    -   **Profile Inheritance**: Create base profiles and extend them for different environments.
+    -   **Environment Precedence**: A clear and predictable activation logic ensures the right profile is always used.
+    -   **Validation**: `dspy-profiles validate` checks your configuration file for correctness.
+    -   **Connectivity Testing**: `dspy-profiles test <name>` ensures your settings are correct and your models are reachable.
+
+---
+
+## Get Started
+
+Ready to streamline your DSPy workflow?
+
+[Get Started with the Quickstart Guide](quickstart.md){ .md-button .md-button--primary }
