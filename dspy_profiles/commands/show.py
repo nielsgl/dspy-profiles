@@ -1,9 +1,10 @@
 """CLI command for showing a profile."""
 
+import json
 from typing import Annotated
 
-import rich
 from rich.console import Console
+from rich.table import Table
 import typer
 
 from dspy_profiles import api
@@ -13,6 +14,10 @@ console = Console()
 
 def show_profile(
     profile_name: Annotated[str, typer.Argument(help="The name of the profile to display.")],
+    output_json: Annotated[
+        bool,
+        typer.Option("--json", help="Output the profile in JSON format."),
+    ] = False,
 ):
     """Shows the full configuration details of a specific profile."""
     profile_data, error = api.get_profile(profile_name)
@@ -20,5 +25,17 @@ def show_profile(
         console.print(f"[bold red]Error:[/] {error}")
         raise typer.Exit(code=1)
 
-    console.print(f"[bold]Profile: {profile_name}[/bold]")
-    rich.print(profile_data)
+    if output_json:
+        console.print(json.dumps(profile_data, indent=2))
+    else:
+        table = Table(
+            title=f"Profile: {profile_name}", show_header=True, header_style="bold magenta"
+        )
+        table.add_column("Key", style="dim", width=20)
+        table.add_column("Value")
+
+        if profile_data:
+            for key, value in profile_data.items():
+                table.add_row(key, str(value))
+
+        console.print(table)

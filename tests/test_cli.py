@@ -19,7 +19,7 @@ def test_list_command(mock_api: MagicMock):
     assert "No profiles found" in result.stdout
 
     # 2. Test with a profile
-    mock_api.list_profiles.return_value = {
+    mock_profiles = {
         "test_profile": {
             "lm": {
                 "model": "gpt-4",
@@ -28,18 +28,27 @@ def test_list_command(mock_api: MagicMock):
             }
         }
     }
+    mock_api.list_profiles.return_value = mock_profiles
     result = runner.invoke(cli.app, ["list"])
     assert "test_profile" in result.stdout
     assert "gpt-4" in result.stdout
     assert "sk-1...cdef" in result.stdout
     assert "https://api.open" in result.stdout
 
+    # 3. Test with --json flag
+    result = runner.invoke(cli.app, ["list", "--json"])
+    assert result.exit_code == 0
+    import json
+
+    assert json.loads(result.stdout) == mock_profiles
+
 
 @patch("dspy_profiles.commands.show.api")
 def test_show_command(mock_api: MagicMock):
     """Tests the show command by mocking the API layer."""
     # 1. Test showing an existing profile
-    mock_api.get_profile.return_value = {"lm": {"model": "gpt-4"}}, None
+    mock_profile_data = {"lm": {"model": "gpt-4"}}
+    mock_api.get_profile.return_value = mock_profile_data, None
     result = runner.invoke(cli.app, ["show", "test_profile"])
     assert result.exit_code == 0
     assert "gpt-4" in result.stdout
@@ -50,6 +59,14 @@ def test_show_command(mock_api: MagicMock):
     result = runner.invoke(cli.app, ["show", "nonexistent"])
     assert result.exit_code == 1
     assert "Error: Profile 'nonexistent' not found." in result.stdout
+
+    # 3. Test with --json flag
+    mock_api.get_profile.return_value = mock_profile_data, None
+    result = runner.invoke(cli.app, ["show", "test_profile", "--json"])
+    assert result.exit_code == 0
+    import json
+
+    assert json.loads(result.stdout) == mock_profile_data
 
 
 @patch("dspy_profiles.commands.delete.api")
