@@ -5,6 +5,7 @@ from typing import Any
 from pydantic import ValidationError
 import toml
 
+from dspy_profiles.utils import normalize_config
 from dspy_profiles.validation import ProfilesFile
 
 CONFIG_DIR = Path.home() / ".dspy"
@@ -81,8 +82,10 @@ class ProfileManager:
                 data = toml.load(f)
                 if not data:
                     return {}
-                validated_profiles = ProfilesFile.model_validate(data)
-                return validated_profiles.model_dump()
+
+                normalized_data = normalize_config(data)
+                validated_profiles = ProfilesFile.model_validate(normalized_data)
+                return validated_profiles.model_dump(exclude_unset=True)
             except (toml.TomlDecodeError, ValidationError):
                 return {}
 
