@@ -79,14 +79,21 @@ class ProfileLoader:
                 return {}  # It's okay if the default profile doesn't exist
             raise ValueError(f"Profile '{profile_name}' not found.")
 
-        profile_data = all_profiles.get(profile_name, {}).copy()
-        parent_name = profile_data.pop("extends", None)
+        profile_data = all_profiles.get(profile_name, {})
+        parent_name = profile_data.get("extends")
 
         if parent_name:
             if parent_name == profile_name:
                 raise ValueError(f"Profile '{profile_name}' cannot extend itself.")
+
             parent_config = self._load_profile_config(parent_name, all_profiles)
-            return self._deep_merge(parent_config, profile_data)
+
+            # Create copies to avoid modifying the original loaded profiles
+            merged_config = parent_config.copy()
+            child_config = profile_data.copy()
+            child_config.pop("extends", None)  # Remove extends from child before merging
+
+            return self._deep_merge(merged_config, child_config)
 
         return profile_data
 

@@ -67,7 +67,7 @@ def profile(
 
     loader = ProfileLoader(config_path=config_path) if config_path else ProfileLoader()
     loaded_profile = loader.get_config(profile_to_load)
-
+    # print(f"DEBUG: Loaded profile config: {loaded_profile.config}")
     final_config = _deep_merge(loaded_profile.config, overrides)
     resolved_profile = ResolvedProfile(
         name=loaded_profile.name,
@@ -95,9 +95,17 @@ def profile(
 
     token = _CURRENT_PROFILE.set(resolved_profile)
     try:
+        # print(
+        #     f"DEBUG: Configuring dspy.context with lm={lm_instance},"
+        #     f"rm={rm_instance}, settings={settings}"
+        # )
+        dspy_settings = settings.copy()
+        if resolved_profile.lm:
+            dspy_settings.update(resolved_profile.lm)
+
+        dspy.settings.configure(**dspy_settings)
+
         with dspy.context(lm=lm_instance, rm=rm_instance, **settings):
-            if "cache_dir" in settings:
-                dspy.settings.configure(cache_dir=settings["cache_dir"])
             yield
     finally:
         _CURRENT_PROFILE.reset(token)
