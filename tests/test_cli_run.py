@@ -8,7 +8,7 @@ from dspy_profiles import cli
 runner = CliRunner()
 
 
-@patch("dspy_profiles.cli.subprocess.run")
+@patch("dspy_profiles.commands.run.subprocess.run")
 def test_run_command_success(mock_subprocess_run: MagicMock):
     """Tests that the run command executes a subprocess with the correct environment."""
     mock_subprocess_run.return_value.returncode = 0
@@ -50,7 +50,7 @@ def test_run_command_actually_runs():
     assert "real_run_profile" in result.stdout
 
 
-@patch("dspy_profiles.cli.subprocess.run")
+@patch("dspy_profiles.commands.run.subprocess.run")
 def test_run_command_propagates_exit_code(mock_subprocess_run: MagicMock):
     """Tests that the exit code from the subprocess is propagated."""
     mock_subprocess_run.return_value.returncode = 123
@@ -71,7 +71,7 @@ def test_run_no_command_provided():
     assert "No command provided" in result.stdout
 
 
-@patch("dspy_profiles.cli.subprocess.run", side_effect=FileNotFoundError)
+@patch("dspy_profiles.commands.run.subprocess.run", side_effect=FileNotFoundError)
 def test_run_command_not_found(mock_subprocess_run: MagicMock):
     """Tests that the command exits if the command is not found."""
     result = runner.invoke(

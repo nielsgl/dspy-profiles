@@ -11,7 +11,7 @@ runner = CliRunner()
 def test_diff_command(tmp_path: Path, monkeypatch):
     """Tests the diff command with an isolated profile manager."""
     config_path = tmp_path / "profiles.toml"
-    monkeypatch.setattr("dspy_profiles.cli.find_profiles_path", lambda: config_path)
+    monkeypatch.setattr("dspy_profiles.commands.diff.find_profiles_path", lambda: config_path)
     manager = ProfileManager(config_path)
 
     # Setup profiles

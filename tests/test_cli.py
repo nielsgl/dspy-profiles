@@ -14,7 +14,7 @@ def test_list_command(tmp_path: Path, monkeypatch):
     config_path = tmp_path / "profiles.toml"
 
     # Patch find_profiles_path to return our temp path
-    monkeypatch.setattr("dspy_profiles.cli.find_profiles_path", lambda: config_path)
+    monkeypatch.setattr("dspy_profiles.commands.list.find_profiles_path", lambda: config_path)
 
     # 1. Test with no profiles
     result = runner.invoke(cli.app, ["list"])
@@ -42,7 +42,7 @@ def test_list_command(tmp_path: Path, monkeypatch):
 def test_show_command(tmp_path: Path, monkeypatch):
     """Tests the show command with an isolated profile manager."""
     config_path = tmp_path / "profiles.toml"
-    monkeypatch.setattr("dspy_profiles.cli.find_profiles_path", lambda: config_path)
+    monkeypatch.setattr("dspy_profiles.commands.show.find_profiles_path", lambda: config_path)
     manager = ProfileManager(config_path)
     manager.set("test_profile", {"lm": {"model": "gpt-4"}})
 
@@ -60,7 +60,7 @@ def test_show_command(tmp_path: Path, monkeypatch):
 def test_delete_command(tmp_path: Path, monkeypatch):
     """Tests the delete command with an isolated profile manager."""
     config_path = tmp_path / "profiles.toml"
-    monkeypatch.setattr("dspy_profiles.cli.find_profiles_path", lambda: config_path)
+    monkeypatch.setattr("dspy_profiles.commands.delete.find_profiles_path", lambda: config_path)
     manager = ProfileManager(config_path)
     manager.set("test_profile", {"lm": {"model": "gpt-4"}})
 
@@ -79,7 +79,7 @@ def test_delete_command(tmp_path: Path, monkeypatch):
 def test_init_command_interactive(tmp_path: Path, monkeypatch):
     """Tests the interactive init command."""
     config_path = tmp_path / "profiles.toml"
-    monkeypatch.setattr("dspy_profiles.cli.find_profiles_path", lambda: config_path)
+    monkeypatch.setattr("dspy_profiles.commands.init.find_profiles_path", lambda: config_path)
 
     # Run the init command
     result = runner.invoke(
@@ -102,7 +102,7 @@ def test_init_command_interactive(tmp_path: Path, monkeypatch):
 def test_init_command_no_optional_values(tmp_path: Path, monkeypatch):
     """Tests the init command without providing optional values."""
     config_path = tmp_path / "profiles.toml"
-    monkeypatch.setattr("dspy_profiles.cli.find_profiles_path", lambda: config_path)
+    monkeypatch.setattr("dspy_profiles.commands.init.find_profiles_path", lambda: config_path)
 
     result = runner.invoke(
         cli.app,
@@ -123,7 +123,7 @@ def test_init_command_no_optional_values(tmp_path: Path, monkeypatch):
 def test_init_command_force(tmp_path: Path, monkeypatch):
     """Tests the --force option of the init command."""
     config_path = tmp_path / "profiles.toml"
-    monkeypatch.setattr("dspy_profiles.cli.find_profiles_path", lambda: config_path)
+    monkeypatch.setattr("dspy_profiles.commands.init.find_profiles_path", lambda: config_path)
     manager = ProfileManager(config_path)
     manager.set("test_profile", {"lm": {"model": "old/model"}})
 
@@ -148,7 +148,7 @@ def test_init_command_force(tmp_path: Path, monkeypatch):
 def test_set_command(tmp_path: Path, monkeypatch):
     """Tests the set command with an isolated profile manager."""
     config_path = tmp_path / "profiles.toml"
-    monkeypatch.setattr("dspy_profiles.cli.find_profiles_path", lambda: config_path)
+    monkeypatch.setattr("dspy_profiles.commands.set.find_profiles_path", lambda: config_path)
     manager = ProfileManager(config_path)
 
     # 1. Set a value in a new profile
@@ -167,7 +167,7 @@ def test_set_command(tmp_path: Path, monkeypatch):
     assert profile.get("lm", {}).get("model") == "gpt-4o"  # Ensure old value is kept
 
 
-@patch("dspy_profiles.cli.subprocess.run")
+@patch("dspy_profiles.commands.run.subprocess.run")
 def test_run_command_success(mock_subprocess_run: MagicMock):
     """Tests a successful run command."""
     mock_subprocess_run.return_value = MagicMock(returncode=0)
@@ -181,7 +181,7 @@ def test_run_command_success(mock_subprocess_run: MagicMock):
     assert kwargs["env"]["DSPY_PROFILE"] == "test_profile"
 
 
-@patch("dspy_profiles.cli.subprocess.run")
+@patch("dspy_profiles.commands.run.subprocess.run")
 def test_run_no_command_provided(mock_subprocess_run: MagicMock):
     """Tests that the run command exits if no command is provided."""
     result = runner.invoke(cli.app, ["run", "--profile", "test_profile"])
@@ -190,7 +190,7 @@ def test_run_no_command_provided(mock_subprocess_run: MagicMock):
     mock_subprocess_run.assert_not_called()
 
 
-@patch("dspy_profiles.cli.subprocess.run")
+@patch("dspy_profiles.commands.run.subprocess.run")
 def test_run_command_not_found(mock_subprocess_run: MagicMock):
     """Tests the run command when the executable is not found."""
     mock_subprocess_run.side_effect = FileNotFoundError
@@ -201,7 +201,7 @@ def test_run_command_not_found(mock_subprocess_run: MagicMock):
     assert result.exit_code == 1
 
 
-@patch("dspy_profiles.cli.subprocess.run")
+@patch("dspy_profiles.commands.run.subprocess.run")
 def test_run_command_fails(mock_subprocess_run: MagicMock):
     """Tests the run command when the subprocess fails."""
     mock_subprocess_run.return_value = MagicMock(returncode=123)

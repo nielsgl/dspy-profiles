@@ -11,7 +11,9 @@ runner = CliRunner()
 def test_import_profile(tmp_path: Path, monkeypatch):
     """Tests the import command with an isolated profile manager."""
     config_path = tmp_path / "profiles.toml"
-    monkeypatch.setattr("dspy_profiles.cli.find_profiles_path", lambda: config_path)
+    monkeypatch.setattr(
+        "dspy_profiles.commands.import_profile.find_profiles_path", lambda: config_path
+    )
     manager = ProfileManager(config_path)
 
     # 1. Test successful import
