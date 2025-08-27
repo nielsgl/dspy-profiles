@@ -4,6 +4,7 @@ from difflib import unified_diff
 import json
 from typing import Annotated
 
+from pydantic import HttpUrl
 from rich.console import Console
 from rich.text import Text
 import typer
@@ -28,9 +29,13 @@ def diff_profiles(
         console.print(f"[bold red]Error:[/] {error_b}")
         raise typer.Exit(code=1)
 
-    # Note: The bug with HttpUrl serialization will be fixed in a later phase.
-    json_a = json.dumps(profile_a, indent=2, sort_keys=True)
-    json_b = json.dumps(profile_b, indent=2, sort_keys=True)
+    def http_url_serializer(obj):
+        if isinstance(obj, HttpUrl):
+            return str(obj)
+        raise TypeError(f"Object of type {obj.__class__.__name__} is not JSON serializable")
+
+    json_a = json.dumps(profile_a, indent=2, sort_keys=True, default=http_url_serializer)
+    json_b = json.dumps(profile_b, indent=2, sort_keys=True, default=http_url_serializer)
 
     if json_a == json_b:
         console.print("[bold green]Profiles are identical.[/bold green]")

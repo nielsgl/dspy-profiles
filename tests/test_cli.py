@@ -68,6 +68,11 @@ def test_delete_command(mock_api: MagicMock):
     assert result.exit_code == 1
     assert "Error: Profile 'nonexistent' not found." in result.stdout
 
+    # 3. Test deleting the 'default' profile, which should fail
+    result = runner.invoke(cli.app, ["delete", "default", "--force"])
+    assert result.exit_code == 1
+    assert "cannot be deleted" in result.stdout
+
 
 @patch("dspy_profiles.commands.init.api")
 def test_init_command_interactive(mock_api: MagicMock):
@@ -226,6 +231,6 @@ def test_delete_command_corruption_bug(tmp_path: Path):
     with open(profiles_file) as f:
         remaining_profiles = toml.load(f)
 
-    assert "default" not in remaining_profiles
+    assert "default" in remaining_profiles
     assert "testing" in remaining_profiles
     assert remaining_profiles["testing"] == {"lm": {"model": "gpt-3.5-turbo"}}

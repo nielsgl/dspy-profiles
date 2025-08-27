@@ -37,3 +37,17 @@ def test_diff_command(mock_api: MagicMock):
     result = runner.invoke(cli.app, ["diff", "profile_a", "nonexistent"])
     assert result.exit_code == 1
     assert "Error: Profile 'nonexistent' not found." in result.stdout
+
+
+@patch("dspy_profiles.commands.diff.api")
+def test_diff_command_with_http_url(mock_api: MagicMock):
+    """Tests the diff command with a profile containing an HttpUrl."""
+    mock_api.get_profile.side_effect = [
+        ({"lm": {"api_base": "HttpUrl('http://localhost:8080')"}}, None),
+        ({"lm": {"api_base": "HttpUrl('http://localhost:8888')"}}, None),
+    ]
+
+    result = runner.invoke(cli.app, ["diff", "profile1", "profile2"])
+    assert result.exit_code == 0
+    assert 'api_base": "HttpUrl(\'http://localhost:8080\')"' in result.stdout
+    assert 'api_base": "HttpUrl(\'http://localhost:8888\')"' in result.stdout

@@ -22,6 +22,10 @@ def delete_profile(
     ] = False,
 ):
     """Deletes a specified profile."""
+    if profile_name == "default":
+        console.print("[bold red]Error:[/] The 'default' profile cannot be deleted.")
+        raise typer.Exit(code=1)
+
     if not force:
         profile, error = api.get_profile(profile_name)
         if error:

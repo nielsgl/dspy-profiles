@@ -57,11 +57,11 @@ def test_get_profile_not_found(mock_profile_manager):
 def test_delete_profile_found(mock_profile_manager):
     """Test deleting an existing profile."""
     mock_instance = mock_profile_manager.return_value
-    mock_instance.delete.return_value = True
+    mock_instance.load.return_value = {"default": {"lm": {"model": "gpt-4"}}}
 
     delete_profile("default")
 
-    mock_instance.delete.assert_called_once_with("default")
+    mock_instance.save.assert_called_once_with({})
 
 
 def test_delete_profile_not_found(mock_profile_manager):
