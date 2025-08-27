@@ -84,3 +84,57 @@ print(config)
 # Output:
 # {'lm': {'model': 'gpt-4o-mini'}, 'settings': {'temperature': 0.7}}
 ```
+
+## Importing from .env Files
+
+The `dspy-profiles import` command allows you to create a new profile directly from a `.env` file. This is particularly useful for migrating existing DSPy projects or for teams that use `.env` files for environment management.
+
+The command works by reading a `.env` file and looking for variables with the `DSPY_` prefix. It then converts these variables into a profile, following a simple mapping logic:
+
+-   `DSPY_LM_MODEL` becomes `[profile.lm] model = "..."`
+-   `DSPY_RM_URL` becomes `[profile.rm] url = "..."`
+-   `DSPY_SETTINGS_CACHE_DIR` becomes `[profile.settings] cache_dir = "..."`
+
+### Example
+
+Imagine you have a `.env` file with the following content:
+
+```bash title=".env"
+# Language Model Settings
+DSPY_LM_MODEL="openai/gpt-4o-mini"
+DSPY_LM_API_KEY="sk-..."
+DSPY_LM_API_BASE="https://api.openai.com/v1"
+
+# Retrieval Model Settings
+DSPY_RM_CLASS_NAME="dspy.ColBERTv2"
+DSPY_RM_URL="http://localhost:8893/api/search"
+
+# Other DSPy Settings
+DSPY_SETTINGS_TEMPERATURE="0.7"
+```
+
+You can import this into a new profile named `from_env` with the following command:
+
+```bash
+dspy-profiles import --profile from_env --from .env
+```
+
+This will create a new `from_env` profile in your `profiles.toml` file. If your `profiles.toml` was empty, it would now look like this:
+
+```toml title="profiles.toml"
+[from_env]
+
+[from_env.lm]
+model = "openai/gpt-4o-mini"
+api_key = "sk-..."
+api_base = "https://api.openai.com/v1"
+
+[from_env.rm]
+class_name = "dspy.ColBERTv2"
+url = "http://localhost:8893/api/search"
+
+[from_env.settings]
+temperature = "0.7"
+```
+
+You can then view the new profile with `dspy-profiles show from_env`.
