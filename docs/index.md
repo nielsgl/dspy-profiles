@@ -90,4 +90,4 @@
 
 Ready to streamline your DSPy workflow?
 
-[Get Started with the Quickstart Guide](quickstart.md){ .md-button .md-button--primary }
+<a href="quickstart.md" class="md-button md-button--primary">Get Started with the Quickstart Guide</a>
