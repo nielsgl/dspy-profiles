@@ -29,6 +29,91 @@ class_name = "dspy.ColBERTv2"
 url = "http://localhost:8893/api/search"
 ```
 
+## Understanding TOML Syntax: Two Ways to Write Your Profiles
+
+When you look at TOML files, you might notice that people structure their data in a couple of different ways, especially when it comes to nested information. `dspy-profiles` is designed to be flexible and understands both common styles right out of the box. Let's break them down.
+
+### Style 1: Nested Table Syntax (The Explicit Way)
+
+This is the most structured way to write your configuration. You can think of it like creating folders and subfolders. For example, to define the `lm` (language model) settings for a profile named `my_profile`, you would create a "folder" called `my_profile.lm`.
+
+This is great for clarity, especially when you have multiple sections in your profile (like `lm`, `rm`, and `settings`).
+
+```toml title="Nested Table Syntax"
+# This creates a 'my_profile' profile with an 'lm' section inside it.
+[my_profile.lm]
+model = "gpt-4o-mini"
+temperature = 0.7
+
+# You could also add a retrieval model like this:
+[my_profile.rm]
+model = "colbertv2.0"
+```
+
+### Style 2: Dotted Key Syntax (The Shortcut)
+
+This style is more concise and is often used for simpler configurations. Instead of creating explicit "subfolders," you use a dot (`.`) in the key to indicate nesting. You can think of it as a shortcut path to a file.
+
+`dspy-profiles` will automatically understand that `lm.model` means "the `model` key inside the `lm` section."
+
+```toml title="Dotted Key Syntax"
+# This creates a 'my_profile' profile and sets the 'model' and 'temperature'
+# keys inside an 'lm' section.
+[my_profile]
+lm.model = "gpt-4o-mini"
+lm.temperature = 0.7
+rm.model = "colbertv2.0"
+```
+
+> **Key Takeaway:** Both of these styles produce the exact same result. You can use whichever one you find more readable, and you can even mix and match them in the same file.
+
+---
+
+## Dry and Maintainable: Using Profile Inheritance
+
+As your project grows, you might find yourself repeating the same settings across multiple profiles. For example, you might have a `dev`, `staging`, and `prod` profile that all use the same `api_key` and `api_base`, but have different `model`s.
+
+Instead of copying and pasting these settings, you can use the `extends` keyword to create a "parent" profile that other "child" profiles can inherit from. This is a powerful feature that helps keep your configuration **DRY** (**D**on't **R**epeat **Y**ourself).
+
+### How It Works
+
+1.  **Create a Base Profile**: First, you create a base profile that contains all the common settings you want to share.
+2.  **Create a Child Profile**: Then, you create a new profile and use the `extends` keyword to tell it which base profile to inherit from.
+3.  **Override as Needed**: The child profile will automatically have all the settings from the base profile. You can then add new settings or override existing ones.
+
+### Example: A Common Use Case
+
+Let's say you want to define a `base_prod` profile that has your production `api_key` and `api_base`. Then, you want to create two child profiles: `creative_prod` for tasks that need a high temperature, and `analytical_prod` for tasks that need a low temperature.
+
+Here's how you would do it:
+
+```toml title="profiles.toml"
+# 1. The Base Profile
+# This contains the common settings that both child profiles will use.
+[base_prod.lm]
+model = "azure/gpt-4o"
+api_key = "your_production_api_key"  # It's better to use env variables for this!
+api_base = "your_production_api_base"
+
+# 2. The Creative Child Profile
+# This profile inherits from 'base_prod' and only changes the temperature.
+[creative_prod]
+extends = "base_prod"
+
+[creative_prod.lm]
+temperature = 0.9
+
+# 3. The Analytical Child Profile
+# This profile also inherits from 'base_prod' but sets a different temperature.
+[analytical_prod]
+extends = "base_prod"
+
+[analytical_prod.lm]
+temperature = 0.0
+```
+
+Now, when you activate the `creative_prod` profile, it will have the `model`, `api_key`, and `api_base` from `base_prod`, but with its own `temperature` of `0.9`. This makes your configuration much cleaner and easier to update in the future.
+
 ## Activation Precedence
 
 `dspy-profiles` uses a clear and predictable order of precedence to determine which profile is active. This ensures that you always know which configuration is being used.
