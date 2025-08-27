@@ -25,7 +25,14 @@ def list_profiles(
         return
 
     if output_json:
-        console.print(json.dumps(all_profiles, indent=2))
+        from pydantic import HttpUrl
+
+        def http_url_serializer(obj):
+            if isinstance(obj, HttpUrl):
+                return str(obj)
+            raise TypeError(f"Object of type {obj.__class__.__name__} is not JSON serializable")
+
+        console.print(json.dumps(all_profiles, indent=2, default=http_url_serializer))
     else:
         table = Table("Profile Name", "Language Model (LM)", "API Base", "API Key", "Extends")
         for name, profile_data in all_profiles.items():

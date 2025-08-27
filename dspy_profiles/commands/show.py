@@ -26,7 +26,14 @@ def show_profile(
         raise typer.Exit(code=1)
 
     if output_json:
-        console.print(json.dumps(profile_data, indent=2))
+        from pydantic import HttpUrl
+
+        def http_url_serializer(obj):
+            if isinstance(obj, HttpUrl):
+                return str(obj)
+            raise TypeError(f"Object of type {obj.__class__.__name__} is not JSON serializable")
+
+        console.print(json.dumps(profile_data, indent=2, default=http_url_serializer))
     else:
         table = Table(
             title=f"Profile: {profile_name}", show_header=True, header_style="bold magenta"
@@ -35,7 +42,14 @@ def show_profile(
         table.add_column("Value")
 
         if profile_data:
-            for key, value in profile_data.items():
-                table.add_row(key, str(value))
+
+            def add_rows(data, prefix=""):
+                for key, value in data.items():
+                    if isinstance(value, dict):
+                        add_rows(value, prefix=f"{prefix}{key}.")
+                    else:
+                        table.add_row(f"{prefix}{key}", str(value))
+
+            add_rows(profile_data)
 
         console.print(table)
