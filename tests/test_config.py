@@ -67,3 +67,27 @@ lm = { model = "gpt-4o-mini", temperature = "not-a-float" }
     config_path.write_text(invalid_profile)
     manager = ProfileManager(config_path)
     assert manager.load() != {}
+
+
+def test_load_dotted_keys(tmp_path: Path):
+    """Tests that profiles with dotted keys are correctly parsed."""
+    config_path = tmp_path / "profiles.toml"
+    dotted_key_profile = """
+[prof1]
+lm.model = "model1"
+lm.temperature = 0.7
+
+[prof2.lm]
+model = "model2"
+temperature = 0.8
+"""
+    config_path.write_text(dotted_key_profile)
+    manager = ProfileManager(config_path)
+    profiles = manager.load()
+
+    assert "prof1" in profiles
+    assert "prof2" in profiles
+    assert profiles["prof1"]["lm"]["model"] == "model1"
+    assert profiles["prof1"]["lm"]["temperature"] == 0.7
+    assert profiles["prof2"]["lm"]["model"] == "model2"
+    assert profiles["prof2"]["lm"]["temperature"] == 0.8
