@@ -13,8 +13,8 @@ You can configure any language model that DSPy supports. Here's an example of co
 ```toml title="~/.dspy/profiles.toml"
 [local_mistral]
 [local_mistral.lm]
-class_name = "dspy.OllamaLocal"
-model = "mistral"
+model = "ollama_chat/llama3.2"
+api_base = "http://localhost:11434"
 max_tokens = 4096
 ```
 
@@ -223,3 +223,36 @@ temperature = "0.7"
 ```
 
 You can then view the new profile with `dspy-profiles show from_env`.
+
+## Integrating with Any Language Model
+
+`dspy-profiles` is designed to work seamlessly with any language model that `dspy` supports. This is achieved through `dspy`'s unified `dspy.LM` class, which can be configured to connect to a wide variety of providers, including local models.
+
+### The `model` String: More Than Just a Name
+
+The key to this integration is the `model` string in your profile's `lm` section. `dspy` uses a special prefix in this string to determine which provider to connect to.
+
+For example:
+-   `openai/gpt-4o-mini`: Connects to the OpenAI API.
+-   `anthropic/claude-3-opus-20240229`: Connects to the Anthropic API.
+-   `ollama_chat/llama3.2`: Connects to a local Ollama server.
+
+This prefix-based system allows you to switch between providers just by changing a single string in your profile.
+
+### Example: Configuring a Local Ollama Model
+
+Let's say you want to create a profile to use a local Llama 3.2 model running on an Ollama server. Here's how you would configure it in your `profiles.toml`:
+
+```toml title="~/.dspy/profiles.toml"
+[local_llama]
+[local_llama.lm]
+# The 'ollama_chat/' prefix tells dspy to connect to an Ollama server.
+model = "ollama_chat/llama3.2"
+
+# You also need to provide the api_base for your local server.
+api_base = "http://localhost:11434"
+```
+
+When you activate the `local_llama` profile, `dspy-profiles` will configure `dspy` to use your local model. This makes it incredibly easy to switch between local and remote models for development and testing.
+
+> For a full list of supported providers and their prefixes, please refer to the official [dspy documentation](https://dspy.ai/learn/programming/language_models/).
