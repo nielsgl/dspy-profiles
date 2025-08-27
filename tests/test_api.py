@@ -5,7 +5,6 @@ from unittest.mock import patch
 import pytest
 
 from dspy_profiles.api import (
-    ProfileNotFound,
     delete_profile,
     get_profile,
     list_profiles,
@@ -37,19 +36,22 @@ def test_get_profile_found(mock_profile_manager):
     mock_instance = mock_profile_manager.return_value
     mock_instance.get.return_value = {"lm": {"model": "gpt-4"}}
 
-    profile = get_profile("default")
+    profile, error = get_profile("default")
 
+    assert error is None
+    assert profile is not None
     assert profile["lm"]["model"] == "gpt-4"
     mock_instance.get.assert_called_once_with("default")
 
 
 def test_get_profile_not_found(mock_profile_manager):
-    """Test that getting a non-existent profile raises ProfileNotFound."""
+    """Test that getting a non-existent profile returns an error."""
     mock_instance = mock_profile_manager.return_value
     mock_instance.get.return_value = None
 
-    with pytest.raises(ProfileNotFound):
-        get_profile("non_existent")
+    profile, error = get_profile("non_existent")
+    assert profile is None
+    assert error == "Profile 'non_existent' not found."
 
 
 def test_delete_profile_found(mock_profile_manager):
@@ -63,12 +65,12 @@ def test_delete_profile_found(mock_profile_manager):
 
 
 def test_delete_profile_not_found(mock_profile_manager):
-    """Test that deleting a non-existent profile raises ProfileNotFound."""
+    """Test that deleting a non-existent profile returns an error."""
     mock_instance = mock_profile_manager.return_value
     mock_instance.delete.return_value = False
 
-    with pytest.raises(ProfileNotFound):
-        delete_profile("non_existent")
+    error = delete_profile("non_existent")
+    assert error == "Profile 'non_existent' not found."
 
 
 def test_update_profile(mock_profile_manager):
@@ -76,8 +78,10 @@ def test_update_profile(mock_profile_manager):
     mock_instance = mock_profile_manager.return_value
     mock_instance.get.return_value = {"lm": {"model": "gpt-3.5"}}
 
-    updated_profile = update_profile("default", "lm.model", "gpt-4-turbo")
+    updated_profile, error = update_profile("default", "lm.model", "gpt-4-turbo")
 
+    assert error is None
+    assert updated_profile is not None
     assert updated_profile["lm"]["model"] == "gpt-4-turbo"
     mock_instance.set.assert_called_once_with("default", {"lm": {"model": "gpt-4-turbo"}})
 
@@ -87,7 +91,9 @@ def test_update_profile_new_profile(mock_profile_manager):
     mock_instance = mock_profile_manager.return_value
     mock_instance.get.return_value = None  # Profile doesn't exist yet
 
-    updated_profile = update_profile("new_profile", "lm.api_key", "12345")
+    updated_profile, error = update_profile("new_profile", "lm.api_key", "12345")
 
+    assert error is None
+    assert updated_profile is not None
     assert updated_profile["lm"]["api_key"] == "12345"
     mock_instance.set.assert_called_once_with("new_profile", {"lm": {"api_key": "12345"}})

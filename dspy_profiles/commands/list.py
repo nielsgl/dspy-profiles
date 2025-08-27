@@ -3,16 +3,14 @@
 from rich.console import Console
 from rich.table import Table
 
-from dspy_profiles.config import ProfileManager, find_profiles_path
+from dspy_profiles import api
 
 console = Console()
 
 
 def list_profiles():
     """Lists all available profiles and their core details."""
-    config_path = find_profiles_path()
-    manager = ProfileManager(config_path)
-    all_profiles = manager.load()
+    all_profiles = api.list_profiles()
     if not all_profiles:
         console.print("[yellow]No profiles found. Use 'dspy-profiles init' to create one.[/yellow]")
         return

@@ -5,7 +5,7 @@ from typing import Annotated
 from rich.console import Console
 import typer
 
-from dspy_profiles.config import ProfileManager, find_profiles_path
+from dspy_profiles import api
 
 console = Console()
 
@@ -27,14 +27,14 @@ def init_profile(
     ] = False,
 ):
     """Initializes a new profile interactively."""
-    config_path = find_profiles_path()
-    manager = ProfileManager(config_path)
-    if manager.get(profile_name) and not force:
-        console.print(
-            f"[bold red]Error:[/] Profile '{profile_name}' already exists. "
-            "Use --force to overwrite."
-        )
-        raise typer.Exit(code=1)
+    if not force:
+        profile, _ = api.get_profile(profile_name)
+        if profile:
+            console.print(
+                f"[bold red]Error:[/] Profile '{profile_name}' already exists. "
+                "Use --force to overwrite."
+            )
+            raise typer.Exit(code=1)
 
     console.print(f"Configuring profile: [bold]{profile_name}[/bold]")
 
@@ -52,7 +52,7 @@ def init_profile(
     if api_base:
         new_config["lm"]["api_base"] = api_base
 
-    manager.set(profile_name, new_config)
+    api.create_profile(profile_name, new_config)
 
     console.print(f"\n[bold green]Success![/bold green] Profile '{profile_name}' saved.")
     console.print(

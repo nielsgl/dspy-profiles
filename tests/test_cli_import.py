@@ -1,44 +1,37 @@
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 from typer.testing import CliRunner
 
 from dspy_profiles import cli
-from dspy_profiles.config import ProfileManager
 
 runner = CliRunner()
 
 
-def test_import_profile(tmp_path: Path, monkeypatch):
-    """Tests the import command with an isolated profile manager."""
-    config_path = tmp_path / "profiles.toml"
-    monkeypatch.setattr(
-        "dspy_profiles.commands.import_profile.find_profiles_path", lambda: config_path
-    )
-    manager = ProfileManager(config_path)
+@patch("dspy_profiles.commands.import_profile.api")
+def test_import_profile(mock_api: MagicMock, tmp_path: Path):
+    """Tests the import command by mocking the API layer."""
+    env_file = tmp_path / ".env"
+    env_file.write_text("DSPY_LM_MODEL=gpt-4o-mini")
 
     # 1. Test successful import
-    env_file = tmp_path / ".env"
-    env_file.write_text(
-        "DSPY_LM_MODEL=gpt-4o-mini\nDSPY_SETTINGS_TEMPERATURE=0.7\nNOT_DSPY_VAR=should_be_ignored"
-    )
+    mock_api.import_profile.return_value = None
     result = runner.invoke(
         cli.app,
         ["import", "--profile", "imported_profile", "--from", str(env_file)],
     )
     assert result.exit_code == 0
     assert "Success!" in result.stdout
-    profile = manager.get("imported_profile")
-    assert profile is not None
-    assert profile.get("lm", {}).get("model") == "gpt-4o-mini"
-    assert profile.get("settings", {}).get("temperature") == "0.7"
+    mock_api.import_profile.assert_called_with("imported_profile", env_file)
 
     # 2. Test import when profile already exists
+    mock_api.import_profile.return_value = "Profile 'imported_profile' already exists."
     result = runner.invoke(
         cli.app,
         ["import", "--profile", "imported_profile", "--from", str(env_file)],
     )
     assert result.exit_code == 1
-    assert "already exists" in result.stdout
+    assert "Error: Profile 'imported_profile' already exists." in result.stdout
 
     # 3. Test import with a non-existent file
     result = runner.invoke(

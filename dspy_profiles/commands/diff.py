@@ -8,7 +8,7 @@ from rich.console import Console
 from rich.text import Text
 import typer
 
-from dspy_profiles.config import ProfileManager, find_profiles_path
+from dspy_profiles import api
 
 console = Console()
 
@@ -18,18 +18,17 @@ def diff_profiles(
     profile_b_name: Annotated[str, typer.Argument(help="The second profile to compare.")],
 ):
     """Compares two profiles and highlights their differences."""
-    config_path = find_profiles_path()
-    manager = ProfileManager(config_path)
-    profile_a = manager.get(profile_a_name)
-    profile_b = manager.get(profile_b_name)
-
-    if not profile_a:
-        console.print(f"[bold red]Error:[/] Profile '{profile_a_name}' not found.")
-        raise typer.Exit(code=1)
-    if not profile_b:
-        console.print(f"[bold red]Error:[/] Profile '{profile_b_name}' not found.")
+    profile_a, error_a = api.get_profile(profile_a_name)
+    if error_a:
+        console.print(f"[bold red]Error:[/] {error_a}")
         raise typer.Exit(code=1)
 
+    profile_b, error_b = api.get_profile(profile_b_name)
+    if error_b:
+        console.print(f"[bold red]Error:[/] {error_b}")
+        raise typer.Exit(code=1)
+
+    # Note: The bug with HttpUrl serialization will be fixed in a later phase.
     json_a = json.dumps(profile_a, indent=2, sort_keys=True)
     json_b = json.dumps(profile_b, indent=2, sort_keys=True)
 

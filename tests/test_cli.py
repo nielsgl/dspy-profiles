@@ -1,37 +1,30 @@
-from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 from typer.testing import CliRunner
 
 from dspy_profiles import cli
-from dspy_profiles.config import ProfileManager
 
 runner = CliRunner()
 
 
-def test_list_command(tmp_path: Path, monkeypatch):
-    """Tests the list command with an isolated profile manager."""
-    config_path = tmp_path / "profiles.toml"
-
-    # Patch find_profiles_path to return our temp path
-    monkeypatch.setattr("dspy_profiles.commands.list.find_profiles_path", lambda: config_path)
-
+@patch("dspy_profiles.commands.list.api")
+def test_list_command(mock_api: MagicMock):
+    """Tests the list command by mocking the API layer."""
     # 1. Test with no profiles
+    mock_api.list_profiles.return_value = {}
     result = runner.invoke(cli.app, ["list"])
     assert "No profiles found" in result.stdout
 
-    # 2. Add a profile and test again
-    manager = ProfileManager(config_path)
-    manager.set(
-        "test_profile",
-        {
+    # 2. Test with a profile
+    mock_api.list_profiles.return_value = {
+        "test_profile": {
             "lm": {
                 "model": "gpt-4",
                 "api_key": "sk-1234567890abcdef1234567890abcdef",
                 "api_base": "https://api.openai.com/v1",
             }
-        },
-    )
+        }
+    }
     result = runner.invoke(cli.app, ["list"])
     assert "test_profile" in result.stdout
     assert "gpt-4" in result.stdout
@@ -39,49 +32,46 @@ def test_list_command(tmp_path: Path, monkeypatch):
     assert "https://api.open" in result.stdout
 
 
-def test_show_command(tmp_path: Path, monkeypatch):
-    """Tests the show command with an isolated profile manager."""
-    config_path = tmp_path / "profiles.toml"
-    monkeypatch.setattr("dspy_profiles.commands.show.find_profiles_path", lambda: config_path)
-    manager = ProfileManager(config_path)
-    manager.set("test_profile", {"lm": {"model": "gpt-4"}})
-
+@patch("dspy_profiles.commands.show.api")
+def test_show_command(mock_api: MagicMock):
+    """Tests the show command by mocking the API layer."""
     # 1. Test showing an existing profile
+    mock_api.get_profile.return_value = {"lm": {"model": "gpt-4"}}, None
     result = runner.invoke(cli.app, ["show", "test_profile"])
     assert result.exit_code == 0
     assert "gpt-4" in result.stdout
+    mock_api.get_profile.assert_called_with("test_profile")
 
     # 2. Test showing a non-existent profile
+    mock_api.get_profile.return_value = None, "Profile 'nonexistent' not found."
     result = runner.invoke(cli.app, ["show", "nonexistent"])
-    assert "not found" in result.stdout
     assert result.exit_code == 1
+    assert "Error: Profile 'nonexistent' not found." in result.stdout
 
 
-def test_delete_command(tmp_path: Path, monkeypatch):
-    """Tests the delete command with an isolated profile manager."""
-    config_path = tmp_path / "profiles.toml"
-    monkeypatch.setattr("dspy_profiles.commands.delete.find_profiles_path", lambda: config_path)
-    manager = ProfileManager(config_path)
-    manager.set("test_profile", {"lm": {"model": "gpt-4"}})
-
+@patch("dspy_profiles.commands.delete.api")
+def test_delete_command(mock_api: MagicMock):
+    """Tests the delete command by mocking the API layer."""
     # 1. Test deleting an existing profile
-    result = runner.invoke(cli.app, ["delete", "test_profile"])
+    mock_api.delete_profile.return_value = None
+    result = runner.invoke(cli.app, ["delete", "test_profile", "--force"])
     assert result.exit_code == 0
-    assert "Success!" in result.stdout
-    assert manager.get("test_profile") is None
+    assert "deleted successfully" in result.stdout
+    mock_api.delete_profile.assert_called_with("test_profile")
 
     # 2. Test deleting a non-existent profile
-    result = runner.invoke(cli.app, ["delete", "nonexistent"])
-    assert "not found" in result.stdout
+    mock_api.delete_profile.return_value = "Profile 'nonexistent' not found."
+    result = runner.invoke(cli.app, ["delete", "nonexistent", "--force"])
     assert result.exit_code == 1
+    assert "Error: Profile 'nonexistent' not found." in result.stdout
 
 
-def test_init_command_interactive(tmp_path: Path, monkeypatch):
-    """Tests the interactive init command."""
-    config_path = tmp_path / "profiles.toml"
-    monkeypatch.setattr("dspy_profiles.commands.init.find_profiles_path", lambda: config_path)
+@patch("dspy_profiles.commands.init.api")
+def test_init_command_interactive(mock_api: MagicMock):
+    """Tests the interactive init command by mocking the API layer."""
+    # Mock get_profile to indicate the profile doesn't exist yet
+    mock_api.get_profile.return_value = None, None
 
-    # Run the init command
     result = runner.invoke(
         cli.app,
         ["init", "--profile", "test_profile"],
@@ -90,19 +80,24 @@ def test_init_command_interactive(tmp_path: Path, monkeypatch):
     assert result.exit_code == 0
     assert "Success!" in result.stdout
 
-    # Verify the profile was created correctly
-    manager = ProfileManager(config_path)
-    profile = manager.get("test_profile")
-    assert profile is not None
-    assert profile.get("lm", {}).get("model") == "openai/gpt-4o-mini"
-    assert profile.get("lm", {}).get("api_key") == "sk-my-secret-key"
-    assert str(profile.get("lm", {}).get("api_base")) == "http://localhost:8000/"
+    # Verify that the create_profile function was called with the correct data
+    mock_api.create_profile.assert_called_once()
+    mock_api.create_profile.assert_called_with(
+        "test_profile",
+        {
+            "lm": {
+                "model": "openai/gpt-4o-mini",
+                "api_key": "sk-my-secret-key",
+                "api_base": "http://localhost:8000",
+            }
+        },
+    )
 
 
-def test_init_command_no_optional_values(tmp_path: Path, monkeypatch):
+@patch("dspy_profiles.commands.init.api")
+def test_init_command_no_optional_values(mock_api: MagicMock):
     """Tests the init command without providing optional values."""
-    config_path = tmp_path / "profiles.toml"
-    monkeypatch.setattr("dspy_profiles.commands.init.find_profiles_path", lambda: config_path)
+    mock_api.get_profile.return_value = None, None
 
     result = runner.invoke(
         cli.app,
@@ -112,20 +107,16 @@ def test_init_command_no_optional_values(tmp_path: Path, monkeypatch):
     assert result.exit_code == 0
     assert "Success!" in result.stdout
 
-    manager = ProfileManager(config_path)
-    profile = manager.get("test_profile_no_key")
-    assert profile is not None
-    assert profile.get("lm", {}).get("model") == "openai/gpt-4o-mini"
-    assert profile.get("lm", {}).get("api_key") is None
-    assert profile.get("lm", {}).get("api_base") is None
+    mock_api.create_profile.assert_called_with(
+        "test_profile_no_key", {"lm": {"model": "openai/gpt-4o-mini"}}
+    )
 
 
-def test_init_command_force(tmp_path: Path, monkeypatch):
+@patch("dspy_profiles.commands.init.api")
+def test_init_command_force(mock_api: MagicMock):
     """Tests the --force option of the init command."""
-    config_path = tmp_path / "profiles.toml"
-    monkeypatch.setattr("dspy_profiles.commands.init.find_profiles_path", lambda: config_path)
-    manager = ProfileManager(config_path)
-    manager.set("test_profile", {"lm": {"model": "old/model"}})
+    # Mock get_profile to indicate the profile already exists
+    mock_api.get_profile.return_value = {"lm": {"model": "old/model"}}, None
 
     # Test without --force first
     result = runner.invoke(cli.app, ["init", "--profile", "test_profile"])
@@ -139,32 +130,26 @@ def test_init_command_force(tmp_path: Path, monkeypatch):
         input="new/model\nnew-key\n\n",
     )
     assert result.exit_code == 0
-    profile = manager.get("test_profile")
-    assert profile is not None
-    assert profile.get("lm", {}).get("model") == "new/model"
-    assert profile.get("lm", {}).get("api_key") == "new-key"
+    mock_api.create_profile.assert_called_with(
+        "test_profile", {"lm": {"model": "new/model", "api_key": "new-key"}}
+    )
 
 
-def test_set_command(tmp_path: Path, monkeypatch):
-    """Tests the set command with an isolated profile manager."""
-    config_path = tmp_path / "profiles.toml"
-    monkeypatch.setattr("dspy_profiles.commands.set.find_profiles_path", lambda: config_path)
-    manager = ProfileManager(config_path)
+@patch("dspy_profiles.commands.set.api")
+def test_set_command(mock_api: MagicMock):
+    """Tests the set command by mocking the API layer."""
+    mock_api.update_profile.return_value = (
+        {"lm": {"model": "gpt-4o", "temperature": "0.7"}},
+        None,
+    )
 
-    # 1. Set a value in a new profile
     result = runner.invoke(cli.app, ["set", "new_profile", "lm.model", "gpt-4o"])
     assert result.exit_code == 0
-    profile = manager.get("new_profile")
-    assert profile is not None
-    assert profile.get("lm", {}).get("model") == "gpt-4o"
+    mock_api.update_profile.assert_called_with("new_profile", "lm.model", "gpt-4o")
 
-    # 2. Set a nested value in an existing profile
     result = runner.invoke(cli.app, ["set", "new_profile", "lm.temperature", "0.7"])
     assert result.exit_code == 0
-    profile = manager.get("new_profile")
-    assert profile is not None
-    assert profile.get("lm", {}).get("temperature") == "0.7"
-    assert profile.get("lm", {}).get("model") == "gpt-4o"  # Ensure old value is kept
+    mock_api.update_profile.assert_called_with("new_profile", "lm.temperature", "0.7")
 
 
 @patch("dspy_profiles.commands.run.subprocess.run")

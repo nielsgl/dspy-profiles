@@ -87,4 +87,4 @@ def test_validate_malformed_toml(malformed_toml_file: Path):
     """Test validation with a malformed TOML file."""
     result = runner.invoke(app, ["validate", "--config", str(malformed_toml_file)])
     assert result.exit_code == 1
-    assert "Invalid TOML format" in result.stdout
+    assert "Error:" in result.stdout

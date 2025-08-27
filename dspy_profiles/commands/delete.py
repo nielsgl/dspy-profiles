@@ -5,19 +5,35 @@ from typing import Annotated
 from rich.console import Console
 import typer
 
-from dspy_profiles.config import ProfileManager, find_profiles_path
+from dspy_profiles import api
 
 console = Console()
 
 
 def delete_profile(
     profile_name: Annotated[str, typer.Argument(help="The name of the profile to delete.")],
+    force: Annotated[
+        bool,
+        typer.Option(
+            "--force",
+            "-f",
+            help="Delete the profile without prompting for confirmation.",
+        ),
+    ] = False,
 ):
     """Deletes a specified profile."""
-    config_path = find_profiles_path()
-    manager = ProfileManager(config_path)
-    if not manager.delete(profile_name):
-        console.print(f"[bold red]Error:[/] Profile '{profile_name}' not found.")
+    if not force:
+        profile, error = api.get_profile(profile_name)
+        if error:
+            console.print(f"[bold red]Error:[/] {error}")
+            raise typer.Exit(code=1)
+        if not typer.confirm(f"Are you sure you want to delete the profile '{profile_name}'?"):
+            console.print("Deletion cancelled.")
+            raise typer.Exit()
+
+    error = api.delete_profile(profile_name)
+    if error:
+        console.print(f"[bold red]Error:[/] {error}")
         raise typer.Exit(code=1)
 
-    console.print(f"[bold green]Success![/bold green] Profile '{profile_name}' deleted.")
+    console.print(f"Profile '{profile_name}' deleted successfully.")
