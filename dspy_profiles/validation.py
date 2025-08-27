@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, Field, HttpUrl, RootModel
+from pydantic import BaseModel, ConfigDict, Field, RootModel
 
 
 class LanguageModelSettings(BaseModel):
@@ -15,8 +15,8 @@ class LanguageModelSettings(BaseModel):
             this via environment variables rather than directly in the file.
     """
 
-    model: str = Field(..., description="The model name, e.g., 'gpt-4o-mini'.")
-    api_base: HttpUrl | None = Field(None, description="The API endpoint.")
+    model: str | None = Field(None, description="The model name, e.g., 'gpt-4o-mini'.")
+    api_base: str | None = Field(None, description="The API endpoint.")
     api_key: str | None = Field(None, description="The API key.")
 
     model_config = ConfigDict(extra="allow")
@@ -51,8 +51,8 @@ class Profile(BaseModel):
     """
 
     extends: str | None = Field(None, description="The name of a parent profile to inherit from.")
-    lm: LanguageModelSettings | None = None
-    rm: RetrievalModelSettings | None = None
+    lm: LanguageModelSettings | None = Field(None, alias="lm")
+    rm: RetrievalModelSettings | None = Field(None)
 
     model_config = ConfigDict(extra="allow")
 
