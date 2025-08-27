@@ -63,8 +63,12 @@ def delete_profile(profile_name: str) -> str | None:
         An error message if the profile was not found, otherwise None.
     """
     manager = ProfileManager(find_profiles_path())
-    if not manager.delete(profile_name):
+    profiles = manager.load()
+    if profile_name not in profiles:
         return f"Profile '{profile_name}' not found."
+
+    del profiles[profile_name]
+    manager.save(profiles)
     return None
 
 
@@ -72,8 +76,6 @@ def update_profile(
     profile_name: str, key: str, value: Any
 ) -> tuple[dict[str, Any] | None, str | None]:
     """Sets or updates a configuration value for a given profile.
-
-    This function will be improved later to handle the `set` command bug correctly.
 
     Args:
         profile_name: The name of the profile to modify.
@@ -84,7 +86,9 @@ def update_profile(
         A tuple containing the updated profile data and an error message, if any.
     """
     manager = ProfileManager(find_profiles_path())
-    profile_data = manager.get(profile_name) or {}
+    profile_data = manager.get(profile_name)
+    if profile_data is None:
+        profile_data = {}
 
     keys = key.split(".")
     current_level = profile_data

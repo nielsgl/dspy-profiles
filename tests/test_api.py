@@ -97,3 +97,30 @@ def test_update_profile_new_profile(mock_profile_manager):
     assert updated_profile is not None
     assert updated_profile["lm"]["api_key"] == "12345"
     mock_instance.set.assert_called_once_with("new_profile", {"lm": {"api_key": "12345"}})
+
+
+def test_update_profile_with_nested_key(mock_profile_manager):
+    """Tests that `set` command correctly handles nested keys without overwriting the structure."""
+    mock_instance = mock_profile_manager.return_value
+    # GIVEN a profile with a nested structure
+    initial_profile = {
+        "lm": {
+            "model": "openai/hola",
+            "api_base": "HttpUrl('http://base-url/')",
+            "api_key": "bla123",
+        }
+    }
+    mock_instance.get.return_value = initial_profile
+
+    # WHEN we update a nested key
+    update_profile("default", "lm.api_key", "newkey456")
+
+    # THEN the updated profile should be set with the full nested structure preserved
+    expected_profile = {
+        "lm": {
+            "model": "openai/hola",
+            "api_base": "HttpUrl('http://base-url/')",
+            "api_key": "newkey456",
+        }
+    }
+    mock_instance.set.assert_called_once_with("default", expected_profile)

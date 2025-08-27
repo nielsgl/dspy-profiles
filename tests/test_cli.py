@@ -1,5 +1,8 @@
+import importlib
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+import toml
 from typer.testing import CliRunner
 
 from dspy_profiles import cli
@@ -199,3 +202,30 @@ def test_main(mock_app: MagicMock):
     """Tests the main function."""
     cli.main()
     mock_app.assert_called_once()
+
+
+def test_delete_command_corruption_bug(tmp_path: Path):
+    """Test that the delete command does not corrupt other profiles."""
+    profiles_file = tmp_path / "profiles.toml"
+    # GIVEN a profiles file with two profiles
+    profiles_content = {
+        "default": {"lm": {"model": "gpt-4"}},
+        "testing": {"lm": {"model": "gpt-3.5-turbo"}},
+    }
+    with open(profiles_file, "w") as f:
+        toml.dump(profiles_content, f)
+
+    # WHEN the delete command is called on one profile
+    importlib.import_module("dspy_profiles.api")
+
+    # Temporarily patch find_profiles_path to point to our test file
+    with patch("dspy_profiles.api.find_profiles_path", return_value=profiles_file):
+        runner.invoke(cli.app, ["delete", "default", "--force"])
+
+    # THEN the remaining profile should still be intact in the file
+    with open(profiles_file) as f:
+        remaining_profiles = toml.load(f)
+
+    assert "default" not in remaining_profiles
+    assert "testing" in remaining_profiles
+    assert remaining_profiles["testing"] == {"lm": {"model": "gpt-3.5-turbo"}}
