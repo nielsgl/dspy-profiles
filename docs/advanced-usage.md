@@ -224,6 +224,80 @@ temperature = "0.7"
 
 You can then view the new profile with `dspy-profiles show from_env`.
 
+## Seamless Integration with `dspy.Module`
+
+A key goal of `dspy-profiles` is to integrate seamlessly with the core patterns of `dspy`, especially the stateful `dspy.Module`. This section details the robust support for configuring modules declaratively and dynamically.
+
+### The Challenge: Configuration at the Right Time
+
+As we've discussed, `dspy` modules like `dspy.Predict` are instantiated within your custom module's `__init__` method. However, they resolve their language model configuration from `dspy.settings` at *runtime*, when they are actually called.
+
+This means that to correctly configure a `dspy.Module`, the profile must be active when its `__call__` (or `forward`) method is executed. `dspy-profiles` provides an intelligent decorator that handles this automatically.
+
+### The Solution: The `@with_profile` Decorator
+
+The `@with_profile` decorator is the recommended way to manage configuration for both simple functions and complex `dspy.Module` classes. It's smart enough to apply the correct behavior based on what it's decorating.
+
+-   **On a function:** It wraps the entire function call in a profile context.
+-   **On a `dspy.Module` class:** It wraps the module's `__call__` method, ensuring that every time you execute an instance of the module, the correct profile is active.
+
+### Complex Example: The Adaptive Reasoning Agent
+
+This example demonstrates the full power of the decorator for setting a default context, and the `profile()` context manager for dynamic, conditional overrides.
+
+First, let's assume a `profiles.toml` with a cheap default model and an expensive expert model:
+
+```toml title="~/.dspy/profiles.toml"
+# Profile for fast, low-cost queries
+[default.lm]
+model = "azure/gpt-4o-mini"
+temperature = 0.7
+
+# Profile for complex, high-quality reasoning
+[expert_reasoner.lm]
+model = "anthropic/claude-3-opus-20240229"
+temperature = 0.0
+```
+
+Now, we can build our `AdaptiveAgent`:
+
+```python
+import dspy
+from dspy_profiles import profile, with_profile
+
+# The class decorator sets the default execution context for all calls to this module.
+@with_profile("default")
+class AdaptiveAgent(dspy.Module):
+def __init__(self):
+    super().__init__()
+    # This signature asks the model to rate its own confidence.
+    self.initial_attempt = dspy.ChainOfThought("question -> answer, confidence_score: int")
+    self.expert_attempt = dspy.ChainOfThought("question -> answer")
+
+def forward(self, question):
+    # This call will use the "default" profile (gpt-4o-mini).
+    print("--- Attempting with default model... ---")
+    first_pass = self.initial_attempt(question=question)
+
+    # If confidence is low, we escalate.
+    if first_pass.confidence_score < 7:
+        print("\\n--- Low confidence. Escalating to expert model... ---")
+
+        # Use the context manager to temporarily switch to the expert profile.
+        with profile("expert_reasoner"):
+            expert_result = self.expert_attempt(question=question)
+            return dspy.Prediction(answer=expert_result.answer, escalated=True)
+
+    return dspy.Prediction(answer=first_pass.answer, escalated=False)
+
+# --- Execution ---
+agent = AdaptiveAgent()
+result = agent(question="Explain the significance of the Treaty of Westphalia.")
+print(f"Final Answer: {result.answer}")
+```
+
+This pattern is incredibly powerful. The agent's default behavior is cleanly declared, while the critical, high-stakes logic for escalation is made explicit and readable with the context manager. This is the kind of robust, maintainable code that `dspy-profiles` is designed to enable.
+
 ## Integrating with Any Language Model
 
 `dspy-profiles` is designed to work seamlessly with any language model that `dspy` supports. This is achieved through `dspy`'s unified `dspy.LM` class, which can be configured to connect to a wide variety of providers, including local models.

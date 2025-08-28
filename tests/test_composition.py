@@ -75,15 +75,18 @@ def test_decorator_with_inline_overrides(profile_manager):
     assert lm_instance.kwargs["temperature"] == 0.7
 
 
-def test_decorator_with_function_kwargs_overrides(profile_manager):
-    """Tests that kwargs passed to the decorated function take precedence."""
+def test_decorator_with_function_kwargs_overrides_with_dummy_lm(profile_manager):
+    """Tests that kwargs passed to the decorated function take precedence, using DummyLM."""
+    # This DummyLM, when passed as a kwarg, should override any profile settings.
+    override_lm = DummyLM([{"answer": "override dummy"}])
 
-    @with_profile("base", lm={"model": "decorator_override"})
-    def my_function(lm=None):
-        # The 'lm' kwarg should be handled by the decorator, not passed to the function
-        return dspy.settings.lm
+    @with_profile("base", config_path=profile_manager.path)
+    def my_function(question, lm=None):
+        # The 'lm' kwarg is handled by the decorator.
+        return dspy.Predict("question -> answer")(question=question)
 
-    lm_instance = my_function(lm={"model": "function_override", "temperature": 1.0})
-    assert isinstance(lm_instance, dspy.LM)
-    assert lm_instance.model == "function_override"
-    assert lm_instance.kwargs["temperature"] == 1.0
+    # Pass the DummyLM instance directly in the function call.
+    result = my_function(question="test", lm=override_lm)
+
+    # The result's answer must come from our override_lm, proving it was used.
+    assert result.answer == "override dummy"
