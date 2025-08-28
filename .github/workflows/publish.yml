@@ -1,9 +1,8 @@
 name: Upload Python Package to PyPI
 
 on:
-  push:
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+*' # Match tags like v0.1.0, v1.2.3 etc.
+  release:
+    types: [published]
 
 jobs:
   deploy:
