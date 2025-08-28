@@ -2,6 +2,7 @@ from collections.abc import Callable, Generator
 import contextlib
 from contextvars import ContextVar
 from functools import wraps
+import inspect
 import os
 from typing import Any
 
@@ -68,7 +69,10 @@ def profile(
     loader = ProfileLoader(config_path=config_path) if config_path else ProfileLoader()
     loaded_profile = loader.get_config(profile_to_load)
     # print(f"DEBUG: Loaded profile config: {loaded_profile.config}")
+    print(f"[DEBUG] Initial loaded_profile.config: {loaded_profile.config}")
+    print(f"[DEBUG] Overrides received: {overrides}")
     final_config = _deep_merge(loaded_profile.config, overrides)
+    print(f"[DEBUG] final_config after merge: {final_config}")
     resolved_profile = ResolvedProfile(
         name=loaded_profile.name,
         config=final_config,
@@ -84,14 +88,25 @@ def profile(
 
     lm_instance, rm_instance = None, None
     if resolved_profile.lm:
-        lm_config = resolved_profile.lm.copy()
-        model = lm_config.pop("model", None)
-        provider = lm_config.pop("provider", "openai").capitalize()
-        lm_class = getattr(dspy, provider, dspy.LM)
-        lm_instance = lm_class(model=model, **lm_config) if model else dspy.LM(**lm_config)
+        print(f"[DEBUG] resolved_profile.lm is type: {type(resolved_profile.lm)}")
+        if isinstance(resolved_profile.lm, dspy.LM):
+            print("[DEBUG] resolved_profile.lm is a dspy.LM instance. Using it directly.")
+            lm_instance = resolved_profile.lm
+        else:
+            print("[DEBUG] resolved_profile.lm is a dict. Instantiating new LM.")
+            lm_config = resolved_profile.lm.copy()
+            model = lm_config.pop("model", None)
+            provider = lm_config.pop("provider", "openai").capitalize()
+            lm_class = getattr(dspy, provider, dspy.LM)
+            lm_instance = lm_class(model=model, **lm_config) if model else dspy.LM(**lm_config)
+        print(f"[DEBUG] lm_instance created: {lm_instance}")
 
     if resolved_profile.rm:
-        rm_instance = dspy.ColBERTv2(**resolved_profile.rm)
+        rm_config = resolved_profile.rm.copy()
+        provider = rm_config.pop("provider", "ColBERTv2")
+        # Fallback for legacy dspy versions might be needed if RM names change.
+        rm_class = getattr(dspy, provider, dspy.ColBERTv2)
+        rm_instance = rm_class(**rm_config)
 
     token = _CURRENT_PROFILE.set(resolved_profile)
     try:
@@ -100,11 +115,12 @@ def profile(
         #     f"rm={rm_instance}, settings={settings}"
         # )
         dspy_settings = settings.copy()
-        if resolved_profile.lm:
+        if resolved_profile.lm and isinstance(resolved_profile.lm, dict):
             dspy_settings.update(resolved_profile.lm)
 
         dspy.settings.configure(**dspy_settings)
 
+        print(f"[DEBUG] Entering dspy.context with lm_instance: {lm_instance}")
         with dspy.context(lm=lm_instance, rm=rm_instance, **settings):
             yield
     finally:
@@ -114,10 +130,14 @@ def profile(
 def with_profile(
     profile_name: str, *, force: bool = False, config_path: str | None = None, **overrides: Any
 ) -> Callable:
-    """A decorator to apply a dspy-profiles configuration to a function.
+    """A decorator to apply a dspy-profiles configuration to a function or dspy.Module.
 
-    This decorator wraps a function, activating the specified profile before the
-    function is called and deactivating it afterward.
+    This decorator wraps a function or a `dspy.Module` class, activating the
+    specified profile before the decorated object is called.
+
+    When applied to a function, it wraps the function directly. When applied to a
+    class (like a `dspy.Module`), it wraps the `__call__` method, ensuring the
+    profile is active during its execution.
 
     Args:
         profile_name (str): The name of the profile to activate.
@@ -128,31 +148,53 @@ def with_profile(
         **overrides: Keyword arguments to override profile settings.
 
     Returns:
-        Callable: The decorated function.
+        Callable: The decorated function or class.
 
-    Example:
+    Example (Function):
         ```python
         @dspy_profiles.with_profile("testing", temperature=0)
         def my_dspy_program(question):
             return dspy.Predict("question -> answer")(question=question)
         ```
-    """
 
-    def decorator(func: Callable) -> Callable:
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            final_overrides = overrides.copy()
-            profile_keys = {"lm", "rm", "settings"}
-            func_overrides = {k: v for k, v in kwargs.items() if k in profile_keys}
-            func_args = {k: v for k, v in kwargs.items() if k not in profile_keys}
+    Example (dspy.Module):
+        ```python
+        @dspy_profiles.with_profile("agent-profile")
+        class MyAgent(dspy.Module):
+            def __init__(self):
+                super().__init__()
+                self.predict = dspy.Predict("question -> answer")
 
-            if func_overrides:
-                final_overrides = _deep_merge(final_overrides, func_overrides)
+            def __call__(self, question):
+                return self.predict(question=question)
+        ```"""
 
-            with profile(profile_name, force=force, config_path=config_path, **final_overrides):
-                return func(*args, **func_args)
+    def decorator(target: Callable) -> Callable:
+        # This is the wrapper that will be applied to the function or __call__ method.
+        def profile_wrapper(func_to_wrap: Callable) -> Callable:
+            @wraps(func_to_wrap)
+            def wrapper(*args, **kwargs):
+                final_overrides = overrides.copy()
+                profile_keys = {"lm", "rm", "settings"}
+                func_overrides = {k: v for k, v in kwargs.items() if k in profile_keys}
+                func_args = {k: v for k, v in kwargs.items() if k not in profile_keys}
 
-        return wrapper
+                if func_overrides:
+                    final_overrides = _deep_merge(final_overrides, func_overrides)
+
+                with profile(profile_name, force=force, config_path=config_path, **final_overrides):
+                    return func_to_wrap(*args, **func_args)
+
+            return wrapper
+
+        # Check if the target is a class or a function/method
+        if inspect.isclass(target):
+            # It's a class, so we need to wrap its __call__ method.
+            original_call = target.__call__
+            target.__call__ = profile_wrapper(original_call)
+            return target
+        # It's a function, wrap it directly.
+        return profile_wrapper(target)
 
     return decorator
 

@@ -1,9 +1,24 @@
 import os
 
 import dspy
+from dspy.utils import DummyLM
 import pytest
 
 from dspy_profiles.core import _LM_CACHE, current_profile, lm, profile, with_profile
+
+
+class MyModule(dspy.Module):
+    """A simple dspy.Module for testing."""
+
+    def __init__(self):
+        super().__init__()
+        self.predict = dspy.Predict("question -> answer")
+
+    def forward(self, question):
+        # In some tests, we check the profile, in others, the prediction.
+        if dspy.settings.lm:
+            return self.predict(question=question)
+        return current_profile()
 
 
 # Fixture to manage environment variables
@@ -47,9 +62,13 @@ def test_with_profile_decorator(profile_manager):
 
     @with_profile("decorator_profile", config_path=profile_manager.path)
     def my_function():
-        return dspy.settings.lm.model
+        return dspy.settings.lm
 
-    assert my_function() == "decorator_model"
+    result_lm = my_function()
+    assert isinstance(result_lm, DummyLM)
+    # The DummyLM itself doesn't have a readily accessible answer list,
+    # but confirming the type proves the correct object was loaded from the profile.
+    assert result_lm.model == "dummy"
     assert dspy.settings.lm is None
 
 
@@ -160,3 +179,48 @@ def test_profile_no_profile_found(profile_manager):
     """Tests that nothing happens when no profile is found."""
     with profile(config_path=profile_manager.path):
         assert dspy.settings.lm is None
+
+
+def test_with_profile_decorator_on_dspy_module_with_dummy_lm(profile_manager):
+    """Tests that the @with_profile decorator works on a dspy.Module class."""
+
+    # The "decorator_profile" in the mocked conftest now contains a DummyLM instance.
+    @with_profile("decorator_profile", config_path=profile_manager.path)
+    class DecoratedModule(MyModule):
+        pass
+
+    module = DecoratedModule()
+    result = module(question="test")
+
+    # The answer must come from the DummyLM defined in the profile.
+    assert result.answer == "dummy profile answer"
+
+
+def test_current_profile_with_decorator_on_dspy_module(profile_manager):
+    """Tests current_profile() with the decorator on a dspy.Module."""
+
+    @with_profile("decorator_profile", config_path=profile_manager.path)
+    class DecoratedModule(MyModule):
+        def forward(self, question):
+            active_profile = current_profile()
+            assert active_profile is not None
+            assert active_profile.name == "decorator_profile"
+            return active_profile
+
+    # Before instantiation/call, no profile should be active
+    assert current_profile() is None
+
+    module = DecoratedModule()
+    module(question="test")
+    # After the call, it should be reset
+    assert current_profile() is None
+
+
+def test_profile_with_no_lm_in_config(profile_manager):
+    """Tests that a profile with no LM configured does not break the context manager."""
+    with profile("no_lm_profile", config_path=profile_manager.path):
+        assert dspy.settings.lm is None
+    # This test now checks that calling a module without a profile doesn't crash.
+    module = MyModule()
+    # The forward method will return the current_profile, which should be None
+    assert module(question="test") is None

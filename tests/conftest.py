@@ -3,6 +3,7 @@ from unittest.mock import patch
 
 import dspy
 from dspy.dsp.utils.settings import DEFAULT_CONFIG
+from dspy.utils.dummies import DummyLM
 import pytest
 
 # Sample profiles for testing, now globally available
@@ -28,11 +29,11 @@ MOCK_PROFILES = {
     "env_profile": {"lm": {"model": "env_model"}},
     "other_profile": {"lm": {"model": "other_model"}},
     "forced_profile": {"lm": {"model": "forced_model"}},
-    "decorator_profile": {"lm": {"model": "decorator_model"}},
+    "decorator_profile": {"lm": DummyLM([{"answer": "dummy profile answer"}])},
     "env_profile_decorator": {"lm": {"model": "env_model_decorator"}},
     "other_profile_decorator": {"lm": {"model": "other_model_decorator"}},
     "forced_profile_decorator": {"lm": {"model": "forced_model_decorator"}},
-    "no_lm_profile": {"rm": {"model": "some-rm"}},
+    "no_lm_profile": {"rm": {"url": "http://some-rm-url"}},
 }
 
 
