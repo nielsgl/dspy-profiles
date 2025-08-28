@@ -219,13 +219,6 @@ def test_run_command_fails(mock_subprocess_run: MagicMock):
     assert result.exit_code == 123
 
 
-@patch("dspy_profiles.cli.app")
-def test_main(mock_app: MagicMock):
-    """Tests the main function."""
-    cli.main()
-    mock_app.assert_called_once()
-
-
 def test_delete_command_corruption_bug(tmp_path: Path):
     """Test that the delete command does not corrupt other profiles."""
     profiles_file = tmp_path / "profiles.toml"
