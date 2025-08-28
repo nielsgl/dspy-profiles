@@ -47,7 +47,8 @@ pip install dspy-profiles
 1.  **Initialize a default profile interactively:**
     ```bash
     dspy-profiles init
-    ```    This will prompt you for your language model and optionally your API key and API base.
+    ```
+    This will prompt you for your language model and optionally your API key and API base.
 
 2.  **Use it in your Python code:**
     ```python
