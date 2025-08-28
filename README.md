@@ -1,13 +1,15 @@
 # DSPy Profiles
 
-[![PyPI version](https://badge.fury.io/py/dspy-profiles.svg)](https://badge.fury.io/py/dspy-profiles)
+[![PyPI Version](https://img.shields.io/pypi/v/dspy-profiles.svg)](https://pypi.org/project/dspy-profiles/)
+[![Python Version](https://img.shields.io/pypi/pyversions/dspy-profiles.svg)](https://pypi.org/project/dspy-profiles/)
+[![PyPI Downloads](https://img.shields.io/pypi/dm/dspy-profiles.svg)](https://pypi.org/project/dspy-profiles/)
 [![Tests](https://github.com/nielsgl/dspy-profiles/actions/workflows/tests.yml/badge.svg)](https://github.com/nielsgl/dspy-profiles/actions/workflows/tests.yml)
 [![Coverage](https://img.shields.io/codecov/c/github/nielsgl/dspy-profiles)](https://codecov.io/gh/nielsgl/dspy-profiles)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![uv](https://img.shields.io/badge/managed%20by-uv-blue.svg)](https://github.com/astral-sh/uv)
-[![Python Version](https://img.shields.io/pypi/pyversions/dspy-profiles.svg)](https://pypi.org/project/dspy-profiles/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Managed by uv](https://img.shields.io/badge/managed%20by-uv-blue.svg)](https://github.com/astral-sh/uv)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Project Status](https://img.shields.io/badge/status-active-success.svg)](https://github.com/nielsgl/dspy-profiles/pulse)
 
 **A companion tool for the [DSPy framework](https://github.com/stanfordnlp/dspy) to manage configuration profiles, inspired by the AWS CLI.**
 
@@ -39,7 +41,18 @@ When working with DSPy, you often need to switch between different language mode
 ## Installation
 
 ```bash
+# With pip
 pip install dspy-profiles
+
+# With uv
+uv add dspy-profiles
+
+# Or run it directly without installation
+uvx dspy-profiles --help
+
+# Or as a tool in your cli
+uv tool install dspy-profiles
+dspy-profiles --help
 ```
 
 ## Quickstart
@@ -65,6 +78,9 @@ pip install dspy-profiles
 3.  **Run any script with a profile:**
     ```bash
     dspy-profiles run --profile default -- python my_script.py
+
+    # You can also run it as a module
+    python -m dspy_profiles run --profile default -- python my_script.py
     ```
 
 ---
