@@ -2,6 +2,7 @@
 
 import typer
 
+from dspy_profiles import __version__
 from dspy_profiles.commands.delete import delete_profile
 from dspy_profiles.commands.diff import diff_profiles
 from dspy_profiles.commands.import_profile import import_profile
@@ -13,6 +14,14 @@ from dspy_profiles.commands.show import show_profile
 from dspy_profiles.commands.test import test_profile
 from dspy_profiles.commands.validate import validate_profiles
 
+
+def version_callback(value: bool):
+    """Prints the version of the package."""
+    if value:
+        print(f"dspy-profiles version: {__version__}")
+        raise typer.Exit()
+
+
 app = typer.Typer(
     name="dspy-profiles",
     help="A CLI for managing DSPy profiles.",
@@ -20,6 +29,21 @@ app = typer.Typer(
     add_completion=False,
     rich_markup_mode="markdown",
 )
+
+
+@app.callback()
+def root_callback(
+    version: bool = typer.Option(
+        None,
+        "--version",
+        "-v",
+        help="Show the version and exit.",
+        callback=version_callback,
+        is_eager=True,
+    ),
+):
+    """Manage DSPy profiles."""
+
 
 # Add command functions
 app.command(name="list")(list_profiles)
@@ -37,10 +61,5 @@ app.command(
 )(run_command)
 
 
-def main():
-    """Run the CLI application."""
-    app()
-
-
 if __name__ == "__main__":
-    main()
+    app()
