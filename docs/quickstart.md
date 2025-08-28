@@ -26,13 +26,25 @@ First, install the package from PyPI:
     Installed
     ```
 
+=== "uvx"
 
-```
-```
+    <!--termynal: {title: zsh, prompt_literal_start: [$]}-->
 
-```bash
-pip install dspy-profiles
-```
+    ```
+    $ uvx dspy-profiles --help
+    ---> 100%
+    Installed
+    ```
+
+=== "uv tool"
+
+    <!--termynal: {title: zsh, prompt_literal_start: [$]}-->
+
+    ```
+    $ uv tool install dspy-profiles
+    ---> 100%
+    Installed
+    ```
 
 ## 2. Core Concepts
 
@@ -70,9 +82,19 @@ graph TD
 
 The easiest way to get started is with the interactive `init` command. This will create a `default` profile for you.
 
-```bash
-dspy-profiles init
-```
+=== "uvx"
+
+    <!--termynal: {title: zsh, prompt_literal_start: [$]}-->
+
+    ```
+    uvx dspy-profiles init
+    ```
+=== "uv tool"
+
+    <!--termynal: {title: zsh, prompt_literal_start: [$]}-->
+    ```
+    dspy-profiles init
+    ```
 
 This command will ask for the language model, and optionally, your API key and an API base. It will then create the configuration file at `~/.dspy/profiles.toml`.
 
@@ -83,9 +105,17 @@ This command will ask for the language model, and optionally, your API key and a
 
 You can view the contents of any profile with the `show` command:
 
-```bash
-dspy-profiles show default
-```
+=== "uvx"
+    <!--termynal: {title: zsh, prompt_literal_start: [$]}-->
+    ```
+    uvx dspy-profiles show default
+    ```
+
+=== "uv tool"
+    <!--termynal: {title: zsh, prompt_literal_start: [$]}-->
+    ```
+    dspy-profiles show default
+    ```
 
 ## 5. Using Profiles in Your Code
 
@@ -143,9 +173,16 @@ dspy-profiles show default
 
     Now, run it with your profile:
 
-    ```bash
-    dspy-profiles run --profile default -- python my_script.py
-    ```
+    === "uvx"
+        <!--termynal: {title: zsh, prompt_literal_start: [$]}-->
+        ```
+        uvx dspy-profiles run --profile default -- python my_script.py
+        ```
+    === "uv tool"
+        <!--termynal: {title: zsh, prompt_literal_start: [$]}-->
+        ```
+        dspy-profiles run --profile default -- python my_script.py
+        ```
 
 ## 6. Next Steps
 
