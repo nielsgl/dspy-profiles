@@ -6,6 +6,31 @@ This guide will walk you through the basics of setting up and using `dspy-profil
 
 First, install the package from PyPI:
 
+=== "uv"
+
+    <!-- termynal -->
+
+    ```
+    $ uv add dspy-profiles
+    ---> 100%
+    Installed
+    ```
+
+=== "pip"
+
+    <!-- termynal -->
+    <!--termynal: {title: zsh, prompt_literal_start: [$]}-->
+
+    ```
+    $ pip install dspy-profiles
+    ---> 100%
+    Installed
+    ```
+
+
+```
+```
+
 ```bash
 pip install dspy-profiles
 ```

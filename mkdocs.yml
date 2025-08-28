@@ -72,3 +72,4 @@ plugins:
             show_root_heading: true
             show_source: true
   - mermaid2
+  - termynal
