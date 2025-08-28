@@ -84,8 +84,8 @@ class ProfileManager:
                     return {}
 
                 normalized_data = normalize_config(data)
-                validated_profiles = ProfilesFile.model_validate(normalized_data)
-                return validated_profiles.model_dump(exclude_unset=True)
+                ProfilesFile.model_validate(normalized_data)
+                return normalized_data
             except (toml.TomlDecodeError, ValidationError):
                 return {}
 
