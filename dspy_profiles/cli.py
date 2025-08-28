@@ -61,5 +61,9 @@ app.command(
 )(run_command)
 
 
+def main():
+    app(prog_name="dspy-profiles")
+
+
 if __name__ == "__main__":
-    app()
+    main()

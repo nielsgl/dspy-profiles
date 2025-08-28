@@ -2,8 +2,7 @@
 
 This section provides a detailed reference for the `dspy-profiles` command-line interface.
 
-::: mkdocs-typer
+
+::: mkdocs-typer2
     :module: dspy_profiles.cli
-    :command: app
-    :prog_name: dspy-profiles
-    :depth: 1
+    :name: dspy-profiles

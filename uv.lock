@@ -520,6 +520,7 @@ dev = [
     { name = "mkdocs-mermaid2-plugin" },
     { name = "mkdocs-section-index" },
     { name = "mkdocs-typer" },
+    { name = "mkdocs-typer2" },
     { name = "mkdocstrings" },
     { name = "mkdocstrings-python" },
     { name = "pre-commit" },
@@ -552,6 +553,7 @@ dev = [
     { name = "mkdocs-mermaid2-plugin", specifier = ">=1.2.1" },
     { name = "mkdocs-section-index", specifier = ">=0.3.10" },
     { name = "mkdocs-typer", specifier = ">=0.0.3" },
+    { name = "mkdocs-typer2", specifier = ">=0.1.5" },
     { name = "mkdocstrings", specifier = ">=0.30.0" },
     { name = "mkdocstrings-python", specifier = ">=1.17.0" },
     { name = "pre-commit", specifier = ">=4.3.0" },
@@ -1282,6 +1284,20 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/91/1a/b2ac21a04c8e487a1fccc3982f9d91319b83a64c3fc3dc51d89658f43b57/mkdocs_typer-0.0.3.tar.gz", hash = "sha256:4dd37f024190a82aaf0f6c984faafb15167d34eab7e29a6a85e61362423a4eb7", size = 11381, upload-time = "2023-06-21T16:33:39.93Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/38/34/4d6722b7cdb5e37474272205df6f2080ad01aff74570820a83dedb314f1b/mkdocs_typer-0.0.3-py3-none-any.whl", hash = "sha256:b2a9a44da590a7100114fde4de9123fedfea692d229379984db20ee3b3f12d7c", size = 11564, upload-time = "2023-06-21T16:33:38.597Z" },
+]
+
+[[package]]
+name = "mkdocs-typer2"
+version = "0.1.5"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "mkdocs" },
+    { name = "pydantic" },
+    { name = "typer" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/fd/8a/ed485350d175d530321902c795d779976b22e697f73caef4f914443316b0/mkdocs_typer2-0.1.5.tar.gz", hash = "sha256:801725a788a1dd29e686e9f4855fd046b53581e1e359f14dec1528316419cc8e", size = 23508, upload-time = "2025-06-03T20:36:12.068Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/73/71/d237da61a62d9674d8498502242bd0ee6c3ce1e311863d571b239ef08992/mkdocs_typer2-0.1.5-py3-none-any.whl", hash = "sha256:5c4dd389ebba3db7b56d3f58bcddedc8d34d8f65475077656516086f188bbdab", size = 11981, upload-time = "2025-06-03T20:36:10.939Z" },
 ]
 
 [[package]]

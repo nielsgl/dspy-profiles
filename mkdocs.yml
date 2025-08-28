@@ -55,7 +55,7 @@ markdown_extensions:
   - admonition
   - toc:
       permalink: true
-  - mkdocs-typer
+  # - mkdocs-typer
   # - mkdocs-click:
   #     module: dspy_profiles.cli
   #     command: app
@@ -74,3 +74,5 @@ plugins:
   - mermaid2
   - termynal
   - macros
+  - mkdocs-typer2:
+      pretty: true
