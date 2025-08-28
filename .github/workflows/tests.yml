@@ -25,4 +25,4 @@ jobs:
         run: uv sync --all-extras
 
       - name: Run tests and check coverage
-        run: uv run pytest
+        run: uv run pytest --cov --cov-report json
