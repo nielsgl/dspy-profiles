@@ -10,4 +10,4 @@ except importlib.metadata.PackageNotFoundError:
     __version__ = "unknown"
 
 
-__all__ = ["profile", "with_profile", "current_profile"]
+__all__ = ["profile", "with_profile", "current_profile", "__version__"]

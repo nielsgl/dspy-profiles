@@ -73,3 +73,4 @@ plugins:
             show_source: true
   - mermaid2
   - termynal
+  - macros

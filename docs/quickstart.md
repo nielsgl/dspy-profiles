@@ -14,6 +14,8 @@ First, install the package from PyPI:
     $ uv add dspy-profiles
     ---> 100%
     Installed
+    $ uv run dspy-profiles --version
+    dspy-profiles version: {{ version }}
     ```
 
 === "pip"
@@ -31,9 +33,8 @@ First, install the package from PyPI:
     <!--termynal: {title: zsh, prompt_literal_start: [$]}-->
 
     ```
-    $ uvx dspy-profiles --help
-    ---> 100%
-    Installed
+    $ uvx run dspy-profiles --version
+    dspy-profiles version: {{ version }}
     ```
 
 === "uv tool"
@@ -44,6 +45,8 @@ First, install the package from PyPI:
     $ uv tool install dspy-profiles
     ---> 100%
     Installed
+    $ dspy-profiles --version
+    dspy-profiles version: {{ version }}
     ```
 
 ## 2. Core Concepts
