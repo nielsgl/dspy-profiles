@@ -18,7 +18,6 @@ First, install the package from PyPI:
 
 === "pip"
 
-    <!-- termynal -->
     <!--termynal: {title: zsh, prompt_literal_start: [$]}-->
 
     ```
