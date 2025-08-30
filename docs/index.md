@@ -63,18 +63,25 @@
     -   `dspy-profiles list`: See all your available profiles.
     -   `dspy-profiles show <name>`: View the full configuration of a profile.
     -   `dspy-profiles diff <a a> <b b>`: Compare two profiles.
-    -   `dspy-profiles run -- ...`: Execute any command with a profile activated.
+    -   `dspy-run ...`: The star of the show. Execute any script with a profile, no code changes needed.
 
 === "Seamless Python API"
 
-    Activate profiles in your Python code with an elegant and intuitive API.
+    Keep your DSPy code completely clean of configuration. Use `dspy-run` to activate profiles from the command line, or use the elegant context manager for fine-grained control.
 
     ```python
-    from dspy_profiles import profile
+    # Your script remains pure DSPy, with no mention of profiles.
+    # my_script.py
+    import dspy
 
-    with profile("prod"):
-        # Your production-grade DSPy code here
-        ...
+    predictor = dspy.Predict("question -> answer")
+    result = predictor(question="What is the capital of Spain?")
+    print(f"The capital of Spain is {result.answer}.")
+    ```
+
+    ```bash
+    # Activate the profile from the outside!
+    $ dspy-run --profile production my_script.py
     ```
 
 === "Advanced Features"

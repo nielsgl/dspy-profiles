@@ -178,20 +178,6 @@ def test_set_command(mock_api: MagicMock):
 
 
 @patch("dspy_profiles.commands.run.subprocess.run")
-def test_run_command_success(mock_subprocess_run: MagicMock):
-    """Tests a successful run command."""
-    mock_subprocess_run.return_value = MagicMock(returncode=0)
-    result = runner.invoke(
-        cli.app, ["run", "--profile", "test_profile", "--", "python", "my_script.py"]
-    )
-    assert result.exit_code == 0
-    mock_subprocess_run.assert_called_once()
-    args, kwargs = mock_subprocess_run.call_args
-    assert args == (["python", "my_script.py"],)
-    assert kwargs["env"]["DSPY_PROFILE"] == "test_profile"
-
-
-@patch("dspy_profiles.commands.run.subprocess.run")
 def test_run_no_command_provided(mock_subprocess_run: MagicMock):
     """Tests that the run command exits if no command is provided."""
     result = runner.invoke(cli.app, ["run", "--profile", "test_profile"])

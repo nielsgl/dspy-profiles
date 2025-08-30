@@ -158,33 +158,48 @@ You can view the contents of any profile with the `show` command:
     print(result.answer)
     ```
 
-=== "CLI `run` Command"
+=== "CLI `dspy-run` Command"
 
-    For running entire scripts, the `run` command is the most convenient option. It activates a profile for the entire duration of the script's execution.
+    The `dspy-run` command is the most powerful feature for your daily workflow. It lets you run **any Python script** with a specific profile, without needing to modify the script's code at all.
 
-    Create a file named `my_script.py`:
+    Imagine you have a standard DSPy script, `my_script.py`:
 
     ```python
     # my_script.py
     import dspy
 
-    # No need for a context manager, the profile is active!
+    # This script is clean. No dspy-profiles code is needed.
     predictor = dspy.Predict("question -> answer")
     result = predictor(question="What is the capital of Spain?")
     print(f"The capital of Spain is {result.answer}.")
     ```
 
-    Now, run it with your profile:
+    Instead of adding a `with profile(...)` block to your code, you can simply tell `dspy-run` to handle it for you.
 
-    === "uvx"
+    === "uv tool (Recommended)"
+        If you have installed `dspy-profiles` as a tool with `uv tool install dspy-profiles`, you can call it directly. This is the cleanest and most convenient method.
         <!--termynal: {title: zsh, prompt_literal_start: [$]}-->
         ```
-        uvx dspy-profiles run --profile default -- python my_script.py
+        $ dspy-run my_script.py
+        No profile specified. Using default profile: 'default'
+        The capital of Spain is Madrid.
+
+        $ dspy-run --profile production my_script.py
+        The capital of Spain is Madrid.
         ```
-    === "uv tool"
+
+    === "uvx (Ad-hoc)"
+        If you haven't installed the tool, you can use `uvx` to run it directly from PyPI.
         <!--termynal: {title: zsh, prompt_literal_start: [$]}-->
         ```
-        dspy-profiles run --profile default -- python my_script.py
+        $ uvx dspy-run --profile default my_script.py
+        ```
+
+    === "uv run (In a project)"
+        If `dspy-profiles` is a dependency in your project's `pyproject.toml`, you can use `uv run`.
+        <!--termynal: {title: zsh, prompt_literal_start: [$]}-->
+        ```
+        $ uv run dspy-run --profile default my_script.py
         ```
 
 ## 6. Next Steps

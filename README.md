@@ -76,12 +76,13 @@ dspy-profiles --help
         print(response.answer)
     ```
 
-3.  **Run any script with a profile:**
+3.  **Run any script with a profile, without changing your code:**
     ```bash
-    dspy-profiles run --profile default -- python my_script.py
+    # The new, convenient way to run any script with a profile
+    dspy-run my_script.py
 
-    # You can also run it as a module
-    python -m dspy_profiles run --profile default -- python my_script.py
+    # Specify a different profile, or run non-python commands
+    dspy-run --profile production -- pytest
     ```
 
 ---

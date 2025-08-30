@@ -58,6 +58,7 @@ keyring = ["keyring"]
 
 [project.scripts]
 dspy-profiles = "dspy_profiles.cli:main"
+dspy-run = "dspy_profiles.commands.run:cli_app"
 
 [build-system]
 requires = ["uv_build>=0.8.12,<0.9.0"]

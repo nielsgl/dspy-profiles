@@ -121,7 +121,7 @@ Now, when you activate the `creative_prod` profile, it will have the `model`, `a
 The order is as follows:
 
 1.  **`profile()` Context Manager / `@with_profile` Decorator**: The most specific and highest precedence.
-2.  **`DSPY_PROFILE` Environment Variable**: If set, this profile will be used. This is what the `dspy-profiles run` command uses internally.
+2.  **`DSPY_PROFILE` Environment Variable**: If set, this profile will be used. This is what the `dspy-run` command uses internally.
 3.  **Default DSPy Configuration**: If neither of the above is present, the standard DSPy environment variables (`OPENAI_API_KEY`, etc.) or manually configured settings will be used.
 
 ```mermaid
