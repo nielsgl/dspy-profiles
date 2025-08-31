@@ -1,0 +1,17 @@
+name: 'Setup Python and uv'
+description: 'Checks out the repo, sets up Python, and installs uv with caching.'
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version-file: ".python-version"
+
+    - name: Install uv and enable caching
+      uses: astral-sh/setup-uv@v6
+      with:
+        enable-cache: true

@@ -5,16 +5,15 @@ on:
     types: [prereleased]
 
 jobs:
-  setup:
-    uses: ./.github/workflows/reusable-setup.yml
-
   deploy:
-    needs: setup
     runs-on: ubuntu-latest
     permissions:
       id-token: write # Required for trusted publishing
 
     steps:
+      - name: Setup Python and uv
+        uses: ./.github/actions/setup
+
       - name: Build package
         run: uv build --sdist --wheel
 

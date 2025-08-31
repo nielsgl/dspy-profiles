@@ -6,16 +6,15 @@ on:
       - main
 
 jobs:
-  setup:
-    uses: ./.github/workflows/reusable-setup.yml
-
   deploy:
-    needs: setup
     runs-on: ubuntu-latest
     permissions:
       contents: write # Required to push to gh-pages branch
 
     steps:
+      - name: Setup Python and uv
+        uses: ./.github/actions/setup
+
       - name: Install dependencies
         run: uv sync --all-extras --dev
 
