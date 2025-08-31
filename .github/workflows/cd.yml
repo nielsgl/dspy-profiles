@@ -55,7 +55,7 @@ jobs:
           enable-cache: true
 
       - name: "Install dependencies"
-        run: uv sync --system
+        run: uv sync --all-extras --dev
 
       - name: "Configure Git"
         run: |
@@ -145,7 +145,7 @@ jobs:
           enable-cache: true
 
       - name: "Install dependencies"
-        run: uv sync --system
+        run: uv sync
 
       - name: "Build and deploy documentation"
         run: uv run mkdocs gh-deploy --force
