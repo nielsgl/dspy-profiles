@@ -92,7 +92,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           # Checkout the specific tag that was just created
-          ref: ${{ needs.release.outputs.new_version }}
+          ref: refs/tags/${{ needs.release.outputs.new_version }}
 
       - name: "Set up Python"
         uses: actions/setup-python@v5
@@ -135,7 +135,7 @@ jobs:
       - name: "Checkout repository"
         uses: actions/checkout@v4
         with:
-          ref: ${{ needs.release.outputs.new_version }}
+          ref: refs/tags/${{ needs.release.outputs.new_version }}
 
       - name: "Set up Python"
         uses: actions/setup-python@v5
