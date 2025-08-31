@@ -46,8 +46,9 @@ jobs:
         with:
           # Fetch all history for changelog generation
           fetch-depth: 0
-          # Fetch all tags for commitizen
-          fetch-tags: true
+
+      - name: "Fetch all tags and history"
+        run: git fetch --prune --unshallow --tags
 
       - name: "Set up Python"
         uses: actions/setup-python@v5
