@@ -1,0 +1,980 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<link href="../quickstart/" rel="prev"/>
+<link href="../cli-reference/" rel="next"/>
+<link href="../assets/images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.6.1, mkdocs-material-9.6.18" name="generator"/>
+<title>Advanced Usage - dspy-profiles</title>
+<link href="../assets/stylesheets/main.7e37652d.min.css" rel="stylesheet"/>
+<link href="../assets/stylesheets/palette.06af60db.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<link href="../assets/_mkdocstrings.css" rel="stylesheet"/>
+<link href="../termynal.css" rel="stylesheet"/>
+<script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+</head>
+<body data-md-color-accent="indigo" data-md-color-primary="indigo" data-md-color-scheme="default" dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#advanced-usage">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="dspy-profiles" class="md-header__button md-logo" data-md-component="logo" href=".." title="dspy-profiles">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            dspy-profiles
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              Advanced Usage
+            
+          </span>
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="indigo" data-md-color-media="" data-md-color-primary="indigo" data-md-color-scheme="default" id="__palette_0" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+</label>
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="indigo" data-md-color-media="" data-md-color-primary="indigo" data-md-color-scheme="slate" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_0" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+</label>
+</form>
+<script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+</button>
+</nav>
+<div class="md-search__suggest" data-md-component="search-suggest"></div>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="" tabindex="0">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list" role="presentation"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://github.com/nielsgl/dspy-profiles" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4" fill="currentColor"></path></svg>
+</div>
+<div class="md-source__repository">
+    nielsgl/dspy-profiles
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<nav aria-label="Tabs" class="md-tabs" data-md-component="tabs">
+<div class="md-grid">
+<ul class="md-tabs__list">
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="..">
+        
+  
+  
+    
+  
+  Overview
+
+      </a>
+</li>
+<li class="md-tabs__item md-tabs__item--active">
+<a class="md-tabs__link" href="../quickstart/">
+          
+  
+  
+  User Guide
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../cli-reference/">
+          
+  
+  
+  Reference
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../contributing/">
+          
+  
+  
+  About
+
+        </a>
+</li>
+</ul>
+</div>
+</nav>
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--lifted" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="dspy-profiles" class="md-nav__button md-logo" data-md-component="logo" href=".." title="dspy-profiles">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+    dspy-profiles
+  </label>
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://github.com/nielsgl/dspy-profiles" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4" fill="currentColor"></path></svg>
+</div>
+<div class="md-source__repository">
+    nielsgl/dspy-profiles
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="..">
+<span class="md-ellipsis">
+    Overview
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+<span class="md-ellipsis">
+    User Guide
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_2_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
+<span class="md-nav__icon md-icon"></span>
+            User Guide
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../quickstart/">
+<span class="md-ellipsis">
+    Quickstart
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+<span class="md-ellipsis">
+    Advanced Usage
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+<span class="md-ellipsis">
+    Advanced Usage
+    
+  </span>
+</a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#complex-profile-examples">
+<span class="md-ellipsis">
+      Complex Profile Examples
+    </span>
+</a>
+<nav aria-label="Complex Profile Examples" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#configuring-different-lms">
+<span class="md-ellipsis">
+      Configuring Different LMs
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#configuring-retrieval-models">
+<span class="md-ellipsis">
+      Configuring Retrieval Models
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#understanding-toml-syntax-two-ways-to-write-your-profiles">
+<span class="md-ellipsis">
+      Understanding TOML Syntax: Two Ways to Write Your Profiles
+    </span>
+</a>
+<nav aria-label="Understanding TOML Syntax: Two Ways to Write Your Profiles" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#style-1-nested-table-syntax-the-explicit-way">
+<span class="md-ellipsis">
+      Style 1: Nested Table Syntax (The Explicit Way)
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#style-2-dotted-key-syntax-the-shortcut">
+<span class="md-ellipsis">
+      Style 2: Dotted Key Syntax (The Shortcut)
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#dry-and-maintainable-using-profile-inheritance">
+<span class="md-ellipsis">
+      Dry and Maintainable: Using Profile Inheritance
+    </span>
+</a>
+<nav aria-label="Dry and Maintainable: Using Profile Inheritance" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#how-it-works">
+<span class="md-ellipsis">
+      How It Works
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#example-a-common-use-case">
+<span class="md-ellipsis">
+      Example: A Common Use Case
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#activation-precedence">
+<span class="md-ellipsis">
+      Activation Precedence
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#programmatic-access">
+<span class="md-ellipsis">
+      Programmatic Access
+    </span>
+</a>
+<nav aria-label="Programmatic Access" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#getting-the-current-profile">
+<span class="md-ellipsis">
+      Getting the Current Profile
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#loading-a-profiles-configuration">
+<span class="md-ellipsis">
+      Loading a Profile's Configuration
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#importing-from-env-files">
+<span class="md-ellipsis">
+      Importing from .env Files
+    </span>
+</a>
+<nav aria-label="Importing from .env Files" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#example">
+<span class="md-ellipsis">
+      Example
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#seamless-integration-with-dspymodule">
+<span class="md-ellipsis">
+      Seamless Integration with dspy.Module
+    </span>
+</a>
+<nav aria-label="Seamless Integration with dspy.Module" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#the-challenge-configuration-at-the-right-time">
+<span class="md-ellipsis">
+      The Challenge: Configuration at the Right Time
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#the-solution-the-with_profile-decorator">
+<span class="md-ellipsis">
+      The Solution: The @with_profile Decorator
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#complex-example-the-adaptive-reasoning-agent">
+<span class="md-ellipsis">
+      Complex Example: The Adaptive Reasoning Agent
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#integrating-with-any-language-model">
+<span class="md-ellipsis">
+      Integrating with Any Language Model
+    </span>
+</a>
+<nav aria-label="Integrating with Any Language Model" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#the-model-string-more-than-just-a-name">
+<span class="md-ellipsis">
+      The model String: More Than Just a Name
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#example-configuring-a-local-ollama-model">
+<span class="md-ellipsis">
+      Example: Configuring a Local Ollama Model
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+<span class="md-ellipsis">
+    Reference
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_3">
+<span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../cli-reference/">
+<span class="md-ellipsis">
+    CLI Reference
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../cli-run-reference/">
+<span class="md-ellipsis">
+    CLI Run Reference
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../api-reference/">
+<span class="md-ellipsis">
+    API Reference
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+<span class="md-ellipsis">
+    About
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_4_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_4">
+<span class="md-nav__icon md-icon"></span>
+            About
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../contributing/">
+<span class="md-ellipsis">
+    Contributing
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../changelog/">
+<span class="md-ellipsis">
+    Changelog
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#complex-profile-examples">
+<span class="md-ellipsis">
+      Complex Profile Examples
+    </span>
+</a>
+<nav aria-label="Complex Profile Examples" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#configuring-different-lms">
+<span class="md-ellipsis">
+      Configuring Different LMs
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#configuring-retrieval-models">
+<span class="md-ellipsis">
+      Configuring Retrieval Models
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#understanding-toml-syntax-two-ways-to-write-your-profiles">
+<span class="md-ellipsis">
+      Understanding TOML Syntax: Two Ways to Write Your Profiles
+    </span>
+</a>
+<nav aria-label="Understanding TOML Syntax: Two Ways to Write Your Profiles" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#style-1-nested-table-syntax-the-explicit-way">
+<span class="md-ellipsis">
+      Style 1: Nested Table Syntax (The Explicit Way)
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#style-2-dotted-key-syntax-the-shortcut">
+<span class="md-ellipsis">
+      Style 2: Dotted Key Syntax (The Shortcut)
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#dry-and-maintainable-using-profile-inheritance">
+<span class="md-ellipsis">
+      Dry and Maintainable: Using Profile Inheritance
+    </span>
+</a>
+<nav aria-label="Dry and Maintainable: Using Profile Inheritance" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#how-it-works">
+<span class="md-ellipsis">
+      How It Works
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#example-a-common-use-case">
+<span class="md-ellipsis">
+      Example: A Common Use Case
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#activation-precedence">
+<span class="md-ellipsis">
+      Activation Precedence
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#programmatic-access">
+<span class="md-ellipsis">
+      Programmatic Access
+    </span>
+</a>
+<nav aria-label="Programmatic Access" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#getting-the-current-profile">
+<span class="md-ellipsis">
+      Getting the Current Profile
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#loading-a-profiles-configuration">
+<span class="md-ellipsis">
+      Loading a Profile's Configuration
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#importing-from-env-files">
+<span class="md-ellipsis">
+      Importing from .env Files
+    </span>
+</a>
+<nav aria-label="Importing from .env Files" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#example">
+<span class="md-ellipsis">
+      Example
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#seamless-integration-with-dspymodule">
+<span class="md-ellipsis">
+      Seamless Integration with dspy.Module
+    </span>
+</a>
+<nav aria-label="Seamless Integration with dspy.Module" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#the-challenge-configuration-at-the-right-time">
+<span class="md-ellipsis">
+      The Challenge: Configuration at the Right Time
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#the-solution-the-with_profile-decorator">
+<span class="md-ellipsis">
+      The Solution: The @with_profile Decorator
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#complex-example-the-adaptive-reasoning-agent">
+<span class="md-ellipsis">
+      Complex Example: The Adaptive Reasoning Agent
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#integrating-with-any-language-model">
+<span class="md-ellipsis">
+      Integrating with Any Language Model
+    </span>
+</a>
+<nav aria-label="Integrating with Any Language Model" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#the-model-string-more-than-just-a-name">
+<span class="md-ellipsis">
+      The model String: More Than Just a Name
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#example-configuring-a-local-ollama-model">
+<span class="md-ellipsis">
+      Example: Configuring a Local Ollama Model
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<h1 id="advanced-usage">Advanced Usage<a class="headerlink" href="#advanced-usage" title="Permanent link">¶</a></h1>
+<p>This section covers more advanced features and use cases for <code>dspy-profiles</code>.</p>
+<h2 id="complex-profile-examples">Complex Profile Examples<a class="headerlink" href="#complex-profile-examples" title="Permanent link">¶</a></h2>
+<p>While the <code>init</code> command is great for getting started, your <code>profiles.toml</code> file can grow to handle much more complex scenarios.</p>
+<h3 id="configuring-different-lms">Configuring Different LMs<a class="headerlink" href="#configuring-different-lms" title="Permanent link">¶</a></h3>
+<p>You can configure any language model that DSPy supports. Here's an example of configuring a local Ollama model:</p>
+<div class="highlight"><span class="filename">~/.dspy/profiles.toml</span><pre><span></span><code><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="k">[local_mistral]</span>
+<a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="k">[local_mistral.lm]</span>
+<a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ollama_chat/llama3.2"</span>
+<a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="n">api_base</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"http://localhost:11434"</span>
+<a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="n">max_tokens</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4096</span>
+</code></pre></div>
+<h3 id="configuring-retrieval-models">Configuring Retrieval Models<a class="headerlink" href="#configuring-retrieval-models" title="Permanent link">¶</a></h3>
+<p>Configuring a retrieval model like <code>ColBERTv2</code> is just as easy. This is where profiles become incredibly powerful, as you can switch your entire retrieval backend with a single word.</p>
+<div class="highlight"><span class="filename">~/.dspy/profiles.toml</span><pre><span></span><code><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="k">[dev_retrieval]</span>
+<a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="k">[dev_retrieval.rm]</span>
+<a href="#__codelineno-1-3" id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="n">class_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"dspy.ColBERTv2"</span>
+<a href="#__codelineno-1-4" id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="n">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"http://localhost:8893/api/search"</span>
+</code></pre></div>
+<h2 id="understanding-toml-syntax-two-ways-to-write-your-profiles">Understanding TOML Syntax: Two Ways to Write Your Profiles<a class="headerlink" href="#understanding-toml-syntax-two-ways-to-write-your-profiles" title="Permanent link">¶</a></h2>
+<p>When you look at TOML files, you might notice that people structure their data in a couple of different ways, especially when it comes to nested information. <code>dspy-profiles</code> is designed to be flexible and understands both common styles right out of the box. Let's break them down.</p>
+<h3 id="style-1-nested-table-syntax-the-explicit-way">Style 1: Nested Table Syntax (The Explicit Way)<a class="headerlink" href="#style-1-nested-table-syntax-the-explicit-way" title="Permanent link">¶</a></h3>
+<p>This is the most structured way to write your configuration. You can think of it like creating folders and subfolders. For example, to define the <code>lm</code> (language model) settings for a profile named <code>my_profile</code>, you would create a "folder" called <code>my_profile.lm</code>.</p>
+<p>This is great for clarity, especially when you have multiple sections in your profile (like <code>lm</code>, <code>rm</code>, and <code>settings</code>).</p>
+<div class="highlight"><span class="filename">Nested Table Syntax</span><pre><span></span><code><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="c1"># This creates a 'my_profile' profile with an 'lm' section inside it.</span>
+<a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="k">[my_profile.lm]</span>
+<a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gpt-4o-mini"</span>
+<a href="#__codelineno-2-4" id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="n">temperature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.7</span>
+<a href="#__codelineno-2-5" id="__codelineno-2-5" name="__codelineno-2-5"></a>
+<a href="#__codelineno-2-6" id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="c1"># You could also add a retrieval model like this:</span>
+<a href="#__codelineno-2-7" id="__codelineno-2-7" name="__codelineno-2-7"></a><span class="k">[my_profile.rm]</span>
+<a href="#__codelineno-2-8" id="__codelineno-2-8" name="__codelineno-2-8"></a><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"colbertv2.0"</span>
+</code></pre></div>
+<h3 id="style-2-dotted-key-syntax-the-shortcut">Style 2: Dotted Key Syntax (The Shortcut)<a class="headerlink" href="#style-2-dotted-key-syntax-the-shortcut" title="Permanent link">¶</a></h3>
+<p>This style is more concise and is often used for simpler configurations. Instead of creating explicit "subfolders," you use a dot (<code>.</code>) in the key to indicate nesting. You can think of it as a shortcut path to a file.</p>
+<p><code>dspy-profiles</code> will automatically understand that <code>lm.model</code> means "the <code>model</code> key inside the <code>lm</code> section."</p>
+<div class="highlight"><span class="filename">Dotted Key Syntax</span><pre><span></span><code><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="c1"># This creates a 'my_profile' profile and sets the 'model' and 'temperature'</span>
+<a href="#__codelineno-3-2" id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="c1"># keys inside an 'lm' section.</span>
+<a href="#__codelineno-3-3" id="__codelineno-3-3" name="__codelineno-3-3"></a><span class="k">[my_profile]</span>
+<a href="#__codelineno-3-4" id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="n">lm</span><span class="p">.</span><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gpt-4o-mini"</span>
+<a href="#__codelineno-3-5" id="__codelineno-3-5" name="__codelineno-3-5"></a><span class="n">lm</span><span class="p">.</span><span class="n">temperature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.7</span>
+<a href="#__codelineno-3-6" id="__codelineno-3-6" name="__codelineno-3-6"></a><span class="n">rm</span><span class="p">.</span><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"colbertv2.0"</span>
+</code></pre></div>
+<blockquote>
+<p><strong>Key Takeaway:</strong> Both of these styles produce the exact same result. You can use whichever one you find more readable, and you can even mix and match them in the same file.</p>
+</blockquote>
+<hr/>
+<h2 id="dry-and-maintainable-using-profile-inheritance">Dry and Maintainable: Using Profile Inheritance<a class="headerlink" href="#dry-and-maintainable-using-profile-inheritance" title="Permanent link">¶</a></h2>
+<p>As your project grows, you might find yourself repeating the same settings across multiple profiles. For example, you might have a <code>dev</code>, <code>staging</code>, and <code>prod</code> profile that all use the same <code>api_key</code> and <code>api_base</code>, but have different <code>model</code>s.</p>
+<p>Instead of copying and pasting these settings, you can use the <code>extends</code> keyword to create a "parent" profile that other "child" profiles can inherit from. This is a powerful feature that helps keep your configuration <strong>DRY</strong> (<strong>D</strong>on't <strong>R</strong>epeat <strong>Y</strong>ourself).</p>
+<h3 id="how-it-works">How It Works<a class="headerlink" href="#how-it-works" title="Permanent link">¶</a></h3>
+<ol>
+<li><strong>Create a Base Profile</strong>: First, you create a base profile that contains all the common settings you want to share.</li>
+<li><strong>Create a Child Profile</strong>: Then, you create a new profile and use the <code>extends</code> keyword to tell it which base profile to inherit from.</li>
+<li><strong>Override as Needed</strong>: The child profile will automatically have all the settings from the base profile. You can then add new settings or override existing ones.</li>
+</ol>
+<h3 id="example-a-common-use-case">Example: A Common Use Case<a class="headerlink" href="#example-a-common-use-case" title="Permanent link">¶</a></h3>
+<p>Let's say you want to define a <code>base_prod</code> profile that has your production <code>api_key</code> and <code>api_base</code>. Then, you want to create two child profiles: <code>creative_prod</code> for tasks that need a high temperature, and <code>analytical_prod</code> for tasks that need a low temperature.</p>
+<p>Here's how you would do it:</p>
+<div class="highlight"><span class="filename">profiles.toml</span><pre><span></span><code><a href="#__codelineno-4-1" id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="c1"># 1. The Base Profile</span>
+<a href="#__codelineno-4-2" id="__codelineno-4-2" name="__codelineno-4-2"></a><span class="c1"># This contains the common settings that both child profiles will use.</span>
+<a href="#__codelineno-4-3" id="__codelineno-4-3" name="__codelineno-4-3"></a><span class="k">[base_prod.lm]</span>
+<a href="#__codelineno-4-4" id="__codelineno-4-4" name="__codelineno-4-4"></a><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"azure/gpt-4o"</span>
+<a href="#__codelineno-4-5" id="__codelineno-4-5" name="__codelineno-4-5"></a><span class="n">api_key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"your_production_api_key"</span><span class="w">  </span><span class="c1"># It's better to use env variables for this!</span>
+<a href="#__codelineno-4-6" id="__codelineno-4-6" name="__codelineno-4-6"></a><span class="n">api_base</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"your_production_api_base"</span>
+<a href="#__codelineno-4-7" id="__codelineno-4-7" name="__codelineno-4-7"></a>
+<a href="#__codelineno-4-8" id="__codelineno-4-8" name="__codelineno-4-8"></a><span class="c1"># 2. The Creative Child Profile</span>
+<a href="#__codelineno-4-9" id="__codelineno-4-9" name="__codelineno-4-9"></a><span class="c1"># This profile inherits from 'base_prod' and only changes the temperature.</span>
+<a href="#__codelineno-4-10" id="__codelineno-4-10" name="__codelineno-4-10"></a><span class="k">[creative_prod]</span>
+<a href="#__codelineno-4-11" id="__codelineno-4-11" name="__codelineno-4-11"></a><span class="n">extends</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"base_prod"</span>
+<a href="#__codelineno-4-12" id="__codelineno-4-12" name="__codelineno-4-12"></a>
+<a href="#__codelineno-4-13" id="__codelineno-4-13" name="__codelineno-4-13"></a><span class="k">[creative_prod.lm]</span>
+<a href="#__codelineno-4-14" id="__codelineno-4-14" name="__codelineno-4-14"></a><span class="n">temperature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.9</span>
+<a href="#__codelineno-4-15" id="__codelineno-4-15" name="__codelineno-4-15"></a>
+<a href="#__codelineno-4-16" id="__codelineno-4-16" name="__codelineno-4-16"></a><span class="c1"># 3. The Analytical Child Profile</span>
+<a href="#__codelineno-4-17" id="__codelineno-4-17" name="__codelineno-4-17"></a><span class="c1"># This profile also inherits from 'base_prod' but sets a different temperature.</span>
+<a href="#__codelineno-4-18" id="__codelineno-4-18" name="__codelineno-4-18"></a><span class="k">[analytical_prod]</span>
+<a href="#__codelineno-4-19" id="__codelineno-4-19" name="__codelineno-4-19"></a><span class="n">extends</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"base_prod"</span>
+<a href="#__codelineno-4-20" id="__codelineno-4-20" name="__codelineno-4-20"></a>
+<a href="#__codelineno-4-21" id="__codelineno-4-21" name="__codelineno-4-21"></a><span class="k">[analytical_prod.lm]</span>
+<a href="#__codelineno-4-22" id="__codelineno-4-22" name="__codelineno-4-22"></a><span class="n">temperature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span>
+</code></pre></div>
+<p>Now, when you activate the <code>creative_prod</code> profile, it will have the <code>model</code>, <code>api_key</code>, and <code>api_base</code> from <code>base_prod</code>, but with its own <code>temperature</code> of <code>0.9</code>. This makes your configuration much cleaner and easier to update in the future.</p>
+<h2 id="activation-precedence">Activation Precedence<a class="headerlink" href="#activation-precedence" title="Permanent link">¶</a></h2>
+<p><code>dspy-profiles</code> uses a clear and predictable order of precedence to determine which profile is active. This ensures that you always know which configuration is being used.</p>
+<p>The order is as follows:</p>
+<ol>
+<li><strong><code>profile()</code> Context Manager / <code>@with_profile</code> Decorator</strong>: The most specific and highest precedence.</li>
+<li><strong><code>DSPY_PROFILE</code> Environment Variable</strong>: If set, this profile will be used. This is what the <code>dspy-run</code> command uses internally.</li>
+<li><strong>Default DSPy Configuration</strong>: If neither of the above is present, the standard DSPy environment variables (<code>OPENAI_API_KEY</code>, etc.) or manually configured settings will be used.</li>
+</ol>
+<pre class="mermaid"><code>graph TD
+    subgraph "Activation Logic"
+        A{Code Execution} --&gt; B{Is it inside a profile block?};
+        B -- Yes --&gt; C[Activate Profile from Context];
+        B -- No --&gt; D{Is `DSPY_PROFILE` env var set?};
+        D -- Yes --&gt; E[Activate Profile from Env Var];
+        D -- No --&gt; F[Use Default DSPy Settings];
+    end
+</code></pre>
+<h2 id="programmatic-access">Programmatic Access<a class="headerlink" href="#programmatic-access" title="Permanent link">¶</a></h2>
+<p>You can programmatically access profile information, which is useful for introspection or for building more complex workflows.</p>
+<h3 id="getting-the-current-profile">Getting the Current Profile<a class="headerlink" href="#getting-the-current-profile" title="Permanent link">¶</a></h3>
+<p>The <code>current_profile()</code> function returns the name of the currently active profile, if any.</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-5-1" id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">dspy_profiles</span><span class="w"> </span><span class="kn">import</span> <span class="n">profile</span><span class="p">,</span> <span class="n">current_profile</span>
+<a href="#__codelineno-5-2" id="__codelineno-5-2" name="__codelineno-5-2"></a>
+<a href="#__codelineno-5-3" id="__codelineno-5-3" name="__codelineno-5-3"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Outside context: </span><span class="si">{</span><span class="n">current_profile</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a href="#__codelineno-5-4" id="__codelineno-5-4" name="__codelineno-5-4"></a>
+<a href="#__codelineno-5-5" id="__codelineno-5-5" name="__codelineno-5-5"></a><span class="k">with</span> <span class="n">profile</span><span class="p">(</span><span class="s2">"my_profile"</span><span class="p">):</span>
+<a href="#__codelineno-5-6" id="__codelineno-5-6" name="__codelineno-5-6"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Inside context: </span><span class="si">{</span><span class="n">current_profile</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a href="#__codelineno-5-7" id="__codelineno-5-7" name="__codelineno-5-7"></a>
+<a href="#__codelineno-5-8" id="__codelineno-5-8" name="__codelineno-5-8"></a><span class="c1"># Output:</span>
+<a href="#__codelineno-5-9" id="__codelineno-5-9" name="__codelineno-5-9"></a><span class="c1"># Outside context: None</span>
+<a href="#__codelineno-5-10" id="__codelineno-5-10" name="__codelineno-5-10"></a><span class="c1"># Inside context: my_profile</span>
+</code></pre></div>
+<h3 id="loading-a-profiles-configuration">Loading a Profile's Configuration<a class="headerlink" href="#loading-a-profiles-configuration" title="Permanent link">¶</a></h3>
+<p>The <code>get_profile()</code> function allows you to load the fully resolved configuration of any profile as a dictionary.</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-6-1" id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">dspy_profiles</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_profile</span>
+<a href="#__codelineno-6-2" id="__codelineno-6-2" name="__codelineno-6-2"></a>
+<a href="#__codelineno-6-3" id="__codelineno-6-3" name="__codelineno-6-3"></a><span class="n">config</span> <span class="o">=</span> <span class="n">get_profile</span><span class="p">(</span><span class="s2">"my_profile"</span><span class="p">)</span>
+<a href="#__codelineno-6-4" id="__codelineno-6-4" name="__codelineno-6-4"></a><span class="nb">print</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<a href="#__codelineno-6-5" id="__codelineno-6-5" name="__codelineno-6-5"></a>
+<a href="#__codelineno-6-6" id="__codelineno-6-6" name="__codelineno-6-6"></a><span class="c1"># Output:</span>
+<a href="#__codelineno-6-7" id="__codelineno-6-7" name="__codelineno-6-7"></a><span class="c1"># {'lm': {'model': 'gpt-4o-mini'}, 'settings': {'temperature': 0.7}}</span>
+</code></pre></div>
+<h2 id="importing-from-env-files">Importing from .env Files<a class="headerlink" href="#importing-from-env-files" title="Permanent link">¶</a></h2>
+<p>The <code>dspy-profiles import</code> command allows you to create a new profile directly from a <code>.env</code> file. This is particularly useful for migrating existing DSPy projects or for teams that use <code>.env</code> files for environment management.</p>
+<p>The command works by reading a <code>.env</code> file and looking for variables with the <code>DSPY_</code> prefix. It then converts these variables into a profile, following a simple mapping logic:</p>
+<ul>
+<li><code>DSPY_LM_MODEL</code> becomes <code>[profile.lm] model = "..."</code></li>
+<li><code>DSPY_RM_URL</code> becomes <code>[profile.rm] url = "..."</code></li>
+<li><code>DSPY_SETTINGS_CACHE_DIR</code> becomes <code>[profile.settings] cache_dir = "..."</code></li>
+</ul>
+<h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">¶</a></h3>
+<p>Imagine you have a <code>.env</code> file with the following content:</p>
+<div class="highlight"><span class="filename">.env</span><pre><span></span><code><a href="#__codelineno-7-1" id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="c1"># Language Model Settings</span>
+<a href="#__codelineno-7-2" id="__codelineno-7-2" name="__codelineno-7-2"></a><span class="nv">DSPY_LM_MODEL</span><span class="o">=</span><span class="s2">"openai/gpt-4o-mini"</span>
+<a href="#__codelineno-7-3" id="__codelineno-7-3" name="__codelineno-7-3"></a><span class="nv">DSPY_LM_API_KEY</span><span class="o">=</span><span class="s2">"sk-..."</span>
+<a href="#__codelineno-7-4" id="__codelineno-7-4" name="__codelineno-7-4"></a><span class="nv">DSPY_LM_API_BASE</span><span class="o">=</span><span class="s2">"https://api.openai.com/v1"</span>
+<a href="#__codelineno-7-5" id="__codelineno-7-5" name="__codelineno-7-5"></a>
+<a href="#__codelineno-7-6" id="__codelineno-7-6" name="__codelineno-7-6"></a><span class="c1"># Retrieval Model Settings</span>
+<a href="#__codelineno-7-7" id="__codelineno-7-7" name="__codelineno-7-7"></a><span class="nv">DSPY_RM_CLASS_NAME</span><span class="o">=</span><span class="s2">"dspy.ColBERTv2"</span>
+<a href="#__codelineno-7-8" id="__codelineno-7-8" name="__codelineno-7-8"></a><span class="nv">DSPY_RM_URL</span><span class="o">=</span><span class="s2">"http://localhost:8893/api/search"</span>
+<a href="#__codelineno-7-9" id="__codelineno-7-9" name="__codelineno-7-9"></a>
+<a href="#__codelineno-7-10" id="__codelineno-7-10" name="__codelineno-7-10"></a><span class="c1"># Other DSPy Settings</span>
+<a href="#__codelineno-7-11" id="__codelineno-7-11" name="__codelineno-7-11"></a><span class="nv">DSPY_SETTINGS_TEMPERATURE</span><span class="o">=</span><span class="s2">"0.7"</span>
+</code></pre></div>
+<p>You can import this into a new profile named <code>from_env</code> with the following command:</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-8-1" id="__codelineno-8-1" name="__codelineno-8-1"></a>dspy-profiles<span class="w"> </span>import<span class="w"> </span>--profile<span class="w"> </span>from_env<span class="w"> </span>--from<span class="w"> </span>.env
+</code></pre></div>
+<p>This will create a new <code>from_env</code> profile in your <code>profiles.toml</code> file. If your <code>profiles.toml</code> was empty, it would now look like this:</p>
+<div class="highlight"><span class="filename">profiles.toml</span><pre><span></span><code><a href="#__codelineno-9-1" id="__codelineno-9-1" name="__codelineno-9-1"></a><span class="k">[from_env]</span>
+<a href="#__codelineno-9-2" id="__codelineno-9-2" name="__codelineno-9-2"></a>
+<a href="#__codelineno-9-3" id="__codelineno-9-3" name="__codelineno-9-3"></a><span class="k">[from_env.lm]</span>
+<a href="#__codelineno-9-4" id="__codelineno-9-4" name="__codelineno-9-4"></a><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"openai/gpt-4o-mini"</span>
+<a href="#__codelineno-9-5" id="__codelineno-9-5" name="__codelineno-9-5"></a><span class="n">api_key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"sk-..."</span>
+<a href="#__codelineno-9-6" id="__codelineno-9-6" name="__codelineno-9-6"></a><span class="n">api_base</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"https://api.openai.com/v1"</span>
+<a href="#__codelineno-9-7" id="__codelineno-9-7" name="__codelineno-9-7"></a>
+<a href="#__codelineno-9-8" id="__codelineno-9-8" name="__codelineno-9-8"></a><span class="k">[from_env.rm]</span>
+<a href="#__codelineno-9-9" id="__codelineno-9-9" name="__codelineno-9-9"></a><span class="n">class_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"dspy.ColBERTv2"</span>
+<a href="#__codelineno-9-10" id="__codelineno-9-10" name="__codelineno-9-10"></a><span class="n">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"http://localhost:8893/api/search"</span>
+<a href="#__codelineno-9-11" id="__codelineno-9-11" name="__codelineno-9-11"></a>
+<a href="#__codelineno-9-12" id="__codelineno-9-12" name="__codelineno-9-12"></a><span class="k">[from_env.settings]</span>
+<a href="#__codelineno-9-13" id="__codelineno-9-13" name="__codelineno-9-13"></a><span class="n">temperature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"0.7"</span>
+</code></pre></div>
+<p>You can then view the new profile with <code>dspy-profiles show from_env</code>.</p>
+<h2 id="seamless-integration-with-dspymodule">Seamless Integration with <code>dspy.Module</code><a class="headerlink" href="#seamless-integration-with-dspymodule" title="Permanent link">¶</a></h2>
+<p>A key goal of <code>dspy-profiles</code> is to integrate seamlessly with the core patterns of <code>dspy</code>, especially the stateful <code>dspy.Module</code>. This section details the robust support for configuring modules declaratively and dynamically.</p>
+<h3 id="the-challenge-configuration-at-the-right-time">The Challenge: Configuration at the Right Time<a class="headerlink" href="#the-challenge-configuration-at-the-right-time" title="Permanent link">¶</a></h3>
+<p>As we've discussed, <code>dspy</code> modules like <code>dspy.Predict</code> are instantiated within your custom module's <code>__init__</code> method. However, they resolve their language model configuration from <code>dspy.settings</code> at <em>runtime</em>, when they are actually called.</p>
+<p>This means that to correctly configure a <code>dspy.Module</code>, the profile must be active when its <code>__call__</code> (or <code>forward</code>) method is executed. <code>dspy-profiles</code> provides an intelligent decorator that handles this automatically.</p>
+<h3 id="the-solution-the-with_profile-decorator">The Solution: The <code>@with_profile</code> Decorator<a class="headerlink" href="#the-solution-the-with_profile-decorator" title="Permanent link">¶</a></h3>
+<p>The <code>@with_profile</code> decorator is the recommended way to manage configuration for both simple functions and complex <code>dspy.Module</code> classes. It's smart enough to apply the correct behavior based on what it's decorating.</p>
+<ul>
+<li><strong>On a function:</strong> It wraps the entire function call in a profile context.</li>
+<li><strong>On a <code>dspy.Module</code> class:</strong> It wraps the module's <code>__call__</code> method, ensuring that every time you execute an instance of the module, the correct profile is active.</li>
+</ul>
+<h3 id="complex-example-the-adaptive-reasoning-agent">Complex Example: The Adaptive Reasoning Agent<a class="headerlink" href="#complex-example-the-adaptive-reasoning-agent" title="Permanent link">¶</a></h3>
+<p>This example demonstrates the full power of the decorator for setting a default context, and the <code>profile()</code> context manager for dynamic, conditional overrides.</p>
+<p>First, let's assume a <code>profiles.toml</code> with a cheap default model and an expensive expert model:</p>
+<div class="highlight"><span class="filename">~/.dspy/profiles.toml</span><pre><span></span><code><a href="#__codelineno-10-1" id="__codelineno-10-1" name="__codelineno-10-1"></a><span class="c1"># Profile for fast, low-cost queries</span>
+<a href="#__codelineno-10-2" id="__codelineno-10-2" name="__codelineno-10-2"></a><span class="k">[default.lm]</span>
+<a href="#__codelineno-10-3" id="__codelineno-10-3" name="__codelineno-10-3"></a><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"azure/gpt-4o-mini"</span>
+<a href="#__codelineno-10-4" id="__codelineno-10-4" name="__codelineno-10-4"></a><span class="n">temperature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.7</span>
+<a href="#__codelineno-10-5" id="__codelineno-10-5" name="__codelineno-10-5"></a>
+<a href="#__codelineno-10-6" id="__codelineno-10-6" name="__codelineno-10-6"></a><span class="c1"># Profile for complex, high-quality reasoning</span>
+<a href="#__codelineno-10-7" id="__codelineno-10-7" name="__codelineno-10-7"></a><span class="k">[expert_reasoner.lm]</span>
+<a href="#__codelineno-10-8" id="__codelineno-10-8" name="__codelineno-10-8"></a><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"anthropic/claude-3-opus-20240229"</span>
+<a href="#__codelineno-10-9" id="__codelineno-10-9" name="__codelineno-10-9"></a><span class="n">temperature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span>
+</code></pre></div>
+<p>Now, we can build our <code>AdaptiveAgent</code>:</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-11-1" id="__codelineno-11-1" name="__codelineno-11-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">dspy</span>
+<a href="#__codelineno-11-2" id="__codelineno-11-2" name="__codelineno-11-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">dspy_profiles</span><span class="w"> </span><span class="kn">import</span> <span class="n">profile</span><span class="p">,</span> <span class="n">with_profile</span>
+<a href="#__codelineno-11-3" id="__codelineno-11-3" name="__codelineno-11-3"></a>
+<a href="#__codelineno-11-4" id="__codelineno-11-4" name="__codelineno-11-4"></a><span class="c1"># The class decorator sets the default execution context for all calls to this module.</span>
+<a href="#__codelineno-11-5" id="__codelineno-11-5" name="__codelineno-11-5"></a><span class="nd">@with_profile</span><span class="p">(</span><span class="s2">"default"</span><span class="p">)</span>
+<a href="#__codelineno-11-6" id="__codelineno-11-6" name="__codelineno-11-6"></a><span class="k">class</span><span class="w"> </span><span class="nc">AdaptiveAgent</span><span class="p">(</span><span class="n">dspy</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<a href="#__codelineno-11-7" id="__codelineno-11-7" name="__codelineno-11-7"></a><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a href="#__codelineno-11-8" id="__codelineno-11-8" name="__codelineno-11-8"></a>    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+<a href="#__codelineno-11-9" id="__codelineno-11-9" name="__codelineno-11-9"></a>    <span class="c1"># This signature asks the model to rate its own confidence.</span>
+<a href="#__codelineno-11-10" id="__codelineno-11-10" name="__codelineno-11-10"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">initial_attempt</span> <span class="o">=</span> <span class="n">dspy</span><span class="o">.</span><span class="n">ChainOfThought</span><span class="p">(</span><span class="s2">"question -&gt; answer, confidence_score: int"</span><span class="p">)</span>
+<a href="#__codelineno-11-11" id="__codelineno-11-11" name="__codelineno-11-11"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">expert_attempt</span> <span class="o">=</span> <span class="n">dspy</span><span class="o">.</span><span class="n">ChainOfThought</span><span class="p">(</span><span class="s2">"question -&gt; answer"</span><span class="p">)</span>
+<a href="#__codelineno-11-12" id="__codelineno-11-12" name="__codelineno-11-12"></a>
+<a href="#__codelineno-11-13" id="__codelineno-11-13" name="__codelineno-11-13"></a><span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">question</span><span class="p">):</span>
+<a href="#__codelineno-11-14" id="__codelineno-11-14" name="__codelineno-11-14"></a>    <span class="c1"># This call will use the "default" profile (gpt-4o-mini).</span>
+<a href="#__codelineno-11-15" id="__codelineno-11-15" name="__codelineno-11-15"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">"--- Attempting with default model... ---"</span><span class="p">)</span>
+<a href="#__codelineno-11-16" id="__codelineno-11-16" name="__codelineno-11-16"></a>    <span class="n">first_pass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_attempt</span><span class="p">(</span><span class="n">question</span><span class="o">=</span><span class="n">question</span><span class="p">)</span>
+<a href="#__codelineno-11-17" id="__codelineno-11-17" name="__codelineno-11-17"></a>
+<a href="#__codelineno-11-18" id="__codelineno-11-18" name="__codelineno-11-18"></a>    <span class="c1"># If confidence is low, we escalate.</span>
+<a href="#__codelineno-11-19" id="__codelineno-11-19" name="__codelineno-11-19"></a>    <span class="k">if</span> <span class="n">first_pass</span><span class="o">.</span><span class="n">confidence_score</span> <span class="o">&lt;</span> <span class="mi">7</span><span class="p">:</span>
+<a href="#__codelineno-11-20" id="__codelineno-11-20" name="__codelineno-11-20"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\\</span><span class="s2">n--- Low confidence. Escalating to expert model... ---"</span><span class="p">)</span>
+<a href="#__codelineno-11-21" id="__codelineno-11-21" name="__codelineno-11-21"></a>
+<a href="#__codelineno-11-22" id="__codelineno-11-22" name="__codelineno-11-22"></a>        <span class="c1"># Use the context manager to temporarily switch to the expert profile.</span>
+<a href="#__codelineno-11-23" id="__codelineno-11-23" name="__codelineno-11-23"></a>        <span class="k">with</span> <span class="n">profile</span><span class="p">(</span><span class="s2">"expert_reasoner"</span><span class="p">):</span>
+<a href="#__codelineno-11-24" id="__codelineno-11-24" name="__codelineno-11-24"></a>            <span class="n">expert_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expert_attempt</span><span class="p">(</span><span class="n">question</span><span class="o">=</span><span class="n">question</span><span class="p">)</span>
+<a href="#__codelineno-11-25" id="__codelineno-11-25" name="__codelineno-11-25"></a>            <span class="k">return</span> <span class="n">dspy</span><span class="o">.</span><span class="n">Prediction</span><span class="p">(</span><span class="n">answer</span><span class="o">=</span><span class="n">expert_result</span><span class="o">.</span><span class="n">answer</span><span class="p">,</span> <span class="n">escalated</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a href="#__codelineno-11-26" id="__codelineno-11-26" name="__codelineno-11-26"></a>
+<a href="#__codelineno-11-27" id="__codelineno-11-27" name="__codelineno-11-27"></a>    <span class="k">return</span> <span class="n">dspy</span><span class="o">.</span><span class="n">Prediction</span><span class="p">(</span><span class="n">answer</span><span class="o">=</span><span class="n">first_pass</span><span class="o">.</span><span class="n">answer</span><span class="p">,</span> <span class="n">escalated</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<a href="#__codelineno-11-28" id="__codelineno-11-28" name="__codelineno-11-28"></a>
+<a href="#__codelineno-11-29" id="__codelineno-11-29" name="__codelineno-11-29"></a><span class="c1"># --- Execution ---</span>
+<a href="#__codelineno-11-30" id="__codelineno-11-30" name="__codelineno-11-30"></a><span class="n">agent</span> <span class="o">=</span> <span class="n">AdaptiveAgent</span><span class="p">()</span>
+<a href="#__codelineno-11-31" id="__codelineno-11-31" name="__codelineno-11-31"></a><span class="n">result</span> <span class="o">=</span> <span class="n">agent</span><span class="p">(</span><span class="n">question</span><span class="o">=</span><span class="s2">"Explain the significance of the Treaty of Westphalia."</span><span class="p">)</span>
+<a href="#__codelineno-11-32" id="__codelineno-11-32" name="__codelineno-11-32"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Final Answer: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">answer</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<p>This pattern is incredibly powerful. The agent's default behavior is cleanly declared, while the critical, high-stakes logic for escalation is made explicit and readable with the context manager. This is the kind of robust, maintainable code that <code>dspy-profiles</code> is designed to enable.</p>
+<h2 id="integrating-with-any-language-model">Integrating with Any Language Model<a class="headerlink" href="#integrating-with-any-language-model" title="Permanent link">¶</a></h2>
+<p><code>dspy-profiles</code> is designed to work seamlessly with any language model that <code>dspy</code> supports. This is achieved through <code>dspy</code>'s unified <code>dspy.LM</code> class, which can be configured to connect to a wide variety of providers, including local models.</p>
+<h3 id="the-model-string-more-than-just-a-name">The <code>model</code> String: More Than Just a Name<a class="headerlink" href="#the-model-string-more-than-just-a-name" title="Permanent link">¶</a></h3>
+<p>The key to this integration is the <code>model</code> string in your profile's <code>lm</code> section. <code>dspy</code> uses a special prefix in this string to determine which provider to connect to.</p>
+<p>For example:
+-   <code>openai/gpt-4o-mini</code>: Connects to the OpenAI API.
+-   <code>anthropic/claude-3-opus-20240229</code>: Connects to the Anthropic API.
+-   <code>ollama_chat/llama3.2</code>: Connects to a local Ollama server.</p>
+<p>This prefix-based system allows you to switch between providers just by changing a single string in your profile.</p>
+<h3 id="example-configuring-a-local-ollama-model">Example: Configuring a Local Ollama Model<a class="headerlink" href="#example-configuring-a-local-ollama-model" title="Permanent link">¶</a></h3>
+<p>Let's say you want to create a profile to use a local Llama 3.2 model running on an Ollama server. Here's how you would configure it in your <code>profiles.toml</code>:</p>
+<div class="highlight"><span class="filename">~/.dspy/profiles.toml</span><pre><span></span><code><a href="#__codelineno-12-1" id="__codelineno-12-1" name="__codelineno-12-1"></a><span class="k">[local_llama]</span>
+<a href="#__codelineno-12-2" id="__codelineno-12-2" name="__codelineno-12-2"></a><span class="k">[local_llama.lm]</span>
+<a href="#__codelineno-12-3" id="__codelineno-12-3" name="__codelineno-12-3"></a><span class="c1"># The 'ollama_chat/' prefix tells dspy to connect to an Ollama server.</span>
+<a href="#__codelineno-12-4" id="__codelineno-12-4" name="__codelineno-12-4"></a><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ollama_chat/llama3.2"</span>
+<a href="#__codelineno-12-5" id="__codelineno-12-5" name="__codelineno-12-5"></a>
+<a href="#__codelineno-12-6" id="__codelineno-12-6" name="__codelineno-12-6"></a><span class="c1"># You also need to provide the api_base for your local server.</span>
+<a href="#__codelineno-12-7" id="__codelineno-12-7" name="__codelineno-12-7"></a><span class="n">api_base</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"http://localhost:11434"</span>
+</code></pre></div>
+<p>When you activate the <code>local_llama</code> profile, <code>dspy-profiles</code> will configure <code>dspy</code> to use your local model. This makes it incredibly easy to switch between local and remote models for development and testing.</p>
+<blockquote>
+<p>For a full list of supported providers and their prefixes, please refer to the official <a href="https://dspy.ai/learn/programming/language_models/">dspy documentation</a>.</p>
+</blockquote>
+</article>
+</div>
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+</div>
+<button class="md-top md-icon" data-md-component="top" hidden="" type="button">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Back to top
+</button>
+</main>
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy", "content.code.annotate", "content.code.select", "navigation.tabs", "navigation.top", "navigation.sections", "navigation.expand", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+<script src="../assets/javascripts/bundle.92b07e13.min.js"></script>
+<script src="../termynal.js"></script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+window.mermaidConfig = {default: {
+    startOnLoad: false
+}};</script></body>
+</html>
