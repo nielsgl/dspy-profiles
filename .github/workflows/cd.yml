@@ -1,0 +1,150 @@
+# .github/workflows/cd.yml
+#
+# Definitive Continuous Deployment (CD) & Release workflow.
+#
+# This workflow automates the entire release process, triggered manually via a `workflow_dispatch` event.
+# It uses a two-job sequential process to ensure stability and avoid race conditions.
+#
+# 1.  **Job 1: `release`**: Runs `commitizen` to bump the version based on conventional commits,
+#     generate a changelog, and push a new version tag to the repository. It then outputs the new tag.
+#
+# 2.  **Job 2: `publish`**: Waits for the `release` job to complete, then uses the new tag to build the
+#     package, create a GitHub Release, publish to PyPI, and deploy documentation.
+#
+# This single-workflow, multi-job design is robust and secure, using the standard GITHUB_TOKEN
+# and OIDC for all operations, with no PAT required.
+
+name: "CD: Release & Publish"
+
+on:
+  workflow_dispatch:
+    inputs:
+      increment:
+        description: "Version increment (major, minor, patch)"
+        required: true
+        default: "patch"
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  release:
+    name: "🔖 Version & Tag"
+    runs-on: ubuntu-latest
+    outputs:
+      new_version: ${{ steps.bump.outputs.version }}
+
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+        with:
+          # Fetch all history for changelog generation
+          fetch-depth: 0
+
+      - name: "Set up Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: ".python-version"
+
+      - name: "Install uv and enable caching"
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: "Install dependencies"
+        run: uv sync --system
+
+      - name: "Configure Git"
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+
+      - name: "Bump version, create tag, and update changelog"
+        id: bump
+        run: |
+          # Bump the version and create a tag
+          uv run cz bump --yes --increment ${{ github.event.inputs.increment }}
+
+          # Get the new version from the pyproject.toml
+          NEW_VERSION=$(uv run cz version --project)
+          echo "version=${NEW_VERSION}" >> $GITHUB_OUTPUT
+
+          # Push the changes
+          git push --follow-tags
+
+  publish:
+    name: "📦 Publish"
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      # Required for trusted publishing
+      id-token: write
+      # Required for creating a GitHub Release
+      contents: write
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+        with:
+          # Checkout the specific tag that was just created
+          ref: ${{ needs.release.outputs.new_version }}
+
+      - name: "Set up Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: ".python-version"
+
+      - name: "Install uv and enable caching"
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: "Build package"
+        run: uv run build
+
+      - name: "Publish to PyPI"
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          # We don't need a password because we're using trusted publishing
+          password: ""
+          # This enables trusted publishing
+          attestations: true
+
+      - name: "Create GitHub Release"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.release.outputs.new_version }}
+        run: |
+          gh release create "$TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "$TAG" \
+            --generate-notes
+
+  deploy-docs:
+    name: "📚 Deploy Docs"
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # To push to gh-pages branch
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.release.outputs.new_version }}
+
+      - name: "Set up Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: ".python-version"
+
+      - name: "Install uv and enable caching"
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: "Install dependencies"
+        run: uv sync --system
+
+      - name: "Build and deploy documentation"
+        run: uv run mkdocs gh-deploy --force
