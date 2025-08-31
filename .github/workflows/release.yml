@@ -40,7 +40,7 @@ jobs:
           uv run cz bump --check-consistency
           # Bump version, create changelog, and create git tag
           uv run cz bump --yes --changelog
-          # Push the changes (including the new tag) to the repository
-          git push --follow-tags
-          # Create a GitHub Release
+          # Push the bump commit and the new tag to the remote repository
+          git push origin main --follow-tags
+          # Create a GitHub Release from the new tag
           gh release create "$(git describe --tags --abbrev=0)" --generate-notes
