@@ -34,6 +34,7 @@ Repository = "https://github.com/nielsgl/dspy-profiles"
 [dependency-groups]
 dev = [
     "black>=25.1.0",
+    "commitizen>=4.8.3",
     "isort>=6.0.1",
     "mkdocs>=1.6.1",
     "mkdocs-autorefs>=1.4.2",
@@ -100,3 +101,11 @@ fail_under = 90
 omit = [
     "dspy_profiles/__init__.py",
 ]
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+tag_format = "$version"
+version_scheme = "pep440"
+version_provider = "uv"
+update_changelog_on_bump = true
+major_version_zero = true
