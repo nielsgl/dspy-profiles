@@ -7,22 +7,25 @@ on:
     branches: [ main ]
 
 jobs:
+  setup:
+    uses: ./.github/workflows/reusable-setup.yml
+
   test:
+    needs: setup
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version-file: ".python-version"
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v6
-
       - name: Install dependencies
         run: uv sync --all-extras
 
       - name: Run tests and check coverage
         run: uv run pytest --cov --cov-report json
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-${{ matrix.python-version }}
+          path: coverage.json
