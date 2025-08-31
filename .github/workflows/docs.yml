@@ -12,6 +12,9 @@ jobs:
       contents: write # Required to push to gh-pages branch
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Setup Python and uv
         uses: ./.github/actions/setup
 

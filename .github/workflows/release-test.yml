@@ -11,6 +11,9 @@ jobs:
       id-token: write # Required for trusted publishing
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Setup Python and uv
         uses: ./.github/actions/setup
 

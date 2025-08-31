@@ -14,6 +14,9 @@ jobs:
         python-version: ["3.12"]
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Setup Python and uv
         uses: ./.github/actions/setup
 
