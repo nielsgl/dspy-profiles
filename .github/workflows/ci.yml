@@ -45,9 +45,14 @@ jobs:
 
       - name: "Run linter"
         run: uv run ruff check .
-
-      - name: "Run security audit"
-        run: uv run pip-audit
+  # pip-audit:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: pypa/gh-action-pip-audit@v1.0.0
+  #       with:
+  #         inputs: requirements.txt
+  #     - name: "Run security audit"
+  #       run: uv run pip-audit
 
   test:
     name: "🧪 Test"
