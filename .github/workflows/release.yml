@@ -1,45 +1,80 @@
-name: Automated Release
+name: "Release: Publish on Tag + Docs"
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - "*"
+
+permissions:
+  contents: write
+  id-token: write
+
+concurrency:
+  group: release-${{ github.ref_name }}
+  cancel-in-progress: true
 
 jobs:
-  release:
+  publish:
+    name: "📦 Publish to PyPI"
     runs-on: ubuntu-latest
-    permissions:
-      contents: write # To push commits and tags
-      issues: write # To create releases
     steps:
-      - name: Checkout repository
+      - name: "Checkout tag"
         uses: actions/checkout@v4
         with:
-          # We need to fetch all history and tags for commitizen to work correctly
-          fetch-depth: 0
+          ref: ${{ github.ref_name }}
 
-      - name: Setup Python and uv
-        uses: ./.github/actions/setup
+      - name: "Set up Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: ".python-version"
 
-      - name: Install dependencies
+      - name: "Install uv and enable caching"
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: "Build package"
+        run: uv build --sdist --wheel
+
+      - name: "Publish to PyPI"
+        uses: pypa/gh-action-pypi-publish@release/v1
+        # with:
+        #   attestations: true
+
+      - name: "Create GitHub Release"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "$TAG" \
+            --generate-notes || echo "Release may already exist; continuing."
+
+  docs:
+    name: "📚 Deploy Docs"
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: "Checkout tag"
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: "Set up Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: ".python-version"
+
+      - name: "Install uv and enable caching"
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: "Install dependencies"
         run: uv sync --all-extras --dev
 
-      - name: Run tests
-        run: uv run pytest
-
-      - name: Configure Git
-        run: |
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-
-      - name: Create Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # This command will fail if no bump is needed, exiting the workflow gracefully.
-          uv run cz bump --check-consistency
-          # Bump version, create changelog, and create git tag
-          uv run cz bump --yes --changelog
-          # Push the bump commit and the new tag to the remote repository
-          git push origin main --follow-tags
-          # The 'publish.yml' workflow will handle the GitHub Release creation.
+      - name: "Build and deploy documentation"
+        run: uv run mkdocs gh-deploy --force

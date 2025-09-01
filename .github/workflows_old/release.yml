@@ -1,0 +1,45 @@
+name: Automated Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # To push commits and tags
+      issues: write # To create releases
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # We need to fetch all history and tags for commitizen to work correctly
+          fetch-depth: 0
+
+      - name: Setup Python and uv
+        uses: ./.github/actions/setup
+
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+
+      - name: Run tests
+        run: uv run pytest
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
+      - name: Create Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # This command will fail if no bump is needed, exiting the workflow gracefully.
+          uv run cz bump --check-consistency
+          # Bump version, create changelog, and create git tag
+          uv run cz bump --yes --changelog
+          # Push the bump commit and the new tag to the remote repository
+          git push origin main --follow-tags
+          # The 'publish.yml' workflow will handle the GitHub Release creation.

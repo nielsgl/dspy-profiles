@@ -1,0 +1,76 @@
+name: "Snapshot: Publish .dev to TestPyPI"
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_version:
+        description: "Optional base version override (defaults to [project].version)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: snapshot-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  snapshot:
+    name: "📦 Build & Publish Snapshot"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4
+
+      - name: "Set up Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: ".python-version"
+
+      - name: "Install uv and enable caching"
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: "Compute snapshot version"
+        id: ver
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -n "${{ inputs.base_version }}" ]]; then
+            BASE="${{ inputs.base_version }}"
+          else
+            BASE=$(sed -n -E 's/^version\s*=\s*"([^"]+)".*/\1/p' pyproject.toml | head -n1)
+            if [[ -z "$BASE" ]]; then BASE="0.0.0"; fi
+          fi
+          SNAPSHOT="${BASE}.dev${GITHUB_RUN_NUMBER}"
+          echo "base=${BASE}" >> "$GITHUB_OUTPUT"
+          echo "snapshot=${SNAPSHOT}" >> "$GITHUB_OUTPUT"
+
+      - name: "Update version in pyproject (ephemeral)"
+        shell: bash
+        run: |
+          set -euo pipefail
+          SNAPSHOT='${{ steps.ver.outputs.snapshot }}'
+          sed -E -i "s/^version = \".*\"/version = \"${SNAPSHOT}\"/" pyproject.toml
+          echo "Using version: ${SNAPSHOT}"
+          sed -n '1,80p' pyproject.toml | sed -n '1,20p'
+
+      - name: "Build package"
+        run: uv build --sdist --wheel
+
+      - name: "Publish to TestPyPI"
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          # attestations: true
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+
+      - name: "Summary"
+        shell: bash
+        run: |
+          echo "Published snapshot version: ${{ steps.ver.outputs.snapshot }}"
+          echo "Install from TestPyPI:"
+          echo "  pip install -i https://test.pypi.org/simple dspy-profiles==${{ steps.ver.outputs.snapshot }}"
