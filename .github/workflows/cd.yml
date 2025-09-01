@@ -44,6 +44,8 @@ jobs:
         with:
           # Fetch all history for changelog generation
           fetch-depth: 0
+          # Also fetch tags so commitizen can find the previous version tag
+          fetch-tags: true
 
       - name: "Set up Python"
         uses: actions/setup-python@v5
