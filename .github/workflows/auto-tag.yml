@@ -35,6 +35,17 @@ jobs:
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: "Bootstrap initial tag if none exists"
+        if: steps.gate.outputs.skip != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! git describe --tags --abbrev=0 >/dev/null 2>&1; then
+            root=$(git rev-list --max-parents=0 HEAD | tail -n1)
+            echo "No tags found. Creating bootstrap tag 0.0.0 at $root"
+            git tag -a 0.0.0 "$root" -m "bootstrap tag"
+          fi
+
       - name: "Set up Python"
         if: steps.gate.outputs.skip != 'true'
         uses: actions/setup-python@v5
