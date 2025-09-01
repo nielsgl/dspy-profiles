@@ -14,7 +14,7 @@
 # This single-workflow, multi-job design is robust and secure, using the standard GITHUB_TOKEN
 # and OIDC for all operations, with no PAT required.
 
-name: "CD: Release & Publish"
+name: "[Deprecated] CD: Release & Publish"
 
 on:
   workflow_dispatch:

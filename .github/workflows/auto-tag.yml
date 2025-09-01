@@ -1,0 +1,67 @@
+name: "Release: Auto-bump & Tag on main"
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: auto-tag-main
+  cancel-in-progress: true
+
+jobs:
+  bump_and_tag:
+    name: "🔖 Bump & Tag"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: "Short-circuit if release commit"
+        id: gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          msg=$(git log -1 --pretty=%B)
+          if echo "$msg" | grep -Eiq '^(bump: version|chore\(release\))'; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Release commit detected; skipping bump." >&2
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: "Set up Python"
+        if: steps.gate.outputs.skip != 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: ".python-version"
+
+      - name: "Install uv and enable caching"
+        if: steps.gate.outputs.skip != 'true'
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: "Install dependencies"
+        if: steps.gate.outputs.skip != 'true'
+        run: uv sync --all-extras --dev
+
+      - name: "Commitizen bump"
+        if: steps.gate.outputs.skip != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          uv run cz bump --yes
+
+      - name: "Push commit and tags"
+        if: steps.gate.outputs.skip != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git push
+          git push --tags
