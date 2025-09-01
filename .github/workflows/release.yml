@@ -16,6 +16,7 @@ concurrency:
 jobs:
   publish:
     name: "📦 Publish to PyPI"
+    if: github.ref_name != '0.0.0'
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout tag"
@@ -54,6 +55,7 @@ jobs:
   docs:
     name: "📚 Deploy Docs"
     needs: publish
+    if: github.ref_name != '0.0.0'
     runs-on: ubuntu-latest
     permissions:
       contents: write
