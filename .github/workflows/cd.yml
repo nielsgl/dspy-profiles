@@ -68,6 +68,15 @@ jobs:
       - name: "Bump version, create tag, and update changelog"
         id: bump
         run: |
+          # On non-main branches, ensure an existing tag is present so commitizen can compute
+          # an incremental changelog. We create a local tag for the current version if missing.
+          if [ "${{ github.ref_name }}" != "main" ]; then
+            CURR_VERSION=$(uv run cz version --project)
+            if ! git rev-parse -q --verify "refs/tags/$CURR_VERSION" >/dev/null; then
+              git tag -a "$CURR_VERSION" -m "local tag for changelog on branch ${{ github.ref_name }}"
+            fi
+          fi
+
           # Bump the version and create a tag
           uv run cz bump --yes --increment ${{ github.event.inputs.increment }}
 
