@@ -109,3 +109,7 @@ See the [PROJECT.md](PROJECT.md) file for detailed specifications.
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request.
+
+## Notes
+
+Here some notes.
