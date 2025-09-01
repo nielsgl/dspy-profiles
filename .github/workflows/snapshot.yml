@@ -42,13 +42,8 @@ jobs:
           if [[ -n "${{ inputs.base_version }}" ]]; then
             BASE="${{ inputs.base_version }}"
           else
-            BASE=$(python - <<'PY'
-            import re, pathlib
-            text = pathlib.Path('pyproject.toml').read_text()
-            m = re.search(r'^version\s*=\s*"([^"]+)"', text, flags=re.M)
-            print(m.group(1) if m else "0.0.0")
-            PY
-            )
+            BASE=$(sed -n -E 's/^version\s*=\s*"([^"]+)".*/\1/p' pyproject.toml | head -n1)
+            if [[ -z "$BASE" ]]; then BASE="0.0.0"; fi
           fi
           SNAPSHOT="${BASE}.dev${GITHUB_RUN_NUMBER}"
           echo "base=${BASE}" >> "$GITHUB_OUTPUT"
@@ -61,7 +56,7 @@ jobs:
           SNAPSHOT='${{ steps.ver.outputs.snapshot }}'
           sed -E -i "s/^version = \".*\"/version = \"${SNAPSHOT}\"/" pyproject.toml
           echo "Using version: ${SNAPSHOT}"
-          sed -n '1,120p' pyproject.toml | sed -n '1,40p'
+          sed -n '1,80p' pyproject.toml | sed -n '1,20p'
 
       - name: "Build package"
         run: uv build --sdist --wheel
