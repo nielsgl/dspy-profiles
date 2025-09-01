@@ -1,6 +1,6 @@
 [project]
 name = "dspy-profiles"
-version = "0.2.1"
+version = "0.2.2"
 description = "Add support for DSPy profiles"
 readme = "README.md"
 license = { text = "MIT" }
