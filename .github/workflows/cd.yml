@@ -32,6 +32,8 @@ on:
 jobs:
   release:
     name: "🔖 Version & Tag"
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     outputs:
       new_version: ${{ steps.bump.outputs.version }}
@@ -71,8 +73,16 @@ jobs:
           NEW_VERSION=$(uv run cz version --project)
           echo "version=${NEW_VERSION}" >> $GITHUB_OUTPUT
 
-          # Push the changes
-          git push --follow-tags
+          # Push the branch changes
+          git push
+
+          # Only push tags on main to avoid creating production tags from feature branches
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            git push --tags
+          fi
+
+      # Build is handled in the publish job, so we don't
+      # build or upload artifacts here to avoid duplication.
 
   publish:
     name: "📦 Publish"
@@ -87,8 +97,8 @@ jobs:
       - name: "Checkout repository"
         uses: actions/checkout@v4
         with:
-          # Checkout the specific tag that was just created
-          ref: ${{ needs.release.outputs.new_version }}
+          # On main: checkout the new tag. On branches: checkout the current branch to include the bump commit
+          ref: ${{ github.ref_name == 'main' && needs.release.outputs.new_version || github.ref_name }}
 
       - name: "Set up Python"
         uses: actions/setup-python@v5
@@ -104,14 +114,21 @@ jobs:
         run: uv run build
 
       - name: "Publish to PyPI"
+        if: github.ref_name == 'main'
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          # We don't need a password because we're using trusted publishing
-          password: ""
           # This enables trusted publishing
           attestations: true
 
+      - name: "Publish to TestPyPI"
+        if: github.ref_name != 'main'
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          attestations: true
+
       - name: "Create GitHub Release"
+        if: github.ref_name == 'main'
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ needs.release.outputs.new_version }}
@@ -123,8 +140,9 @@ jobs:
 
   deploy-docs:
     name: "📚 Deploy Docs"
-    needs: publish
+    needs: [publish, release]
     runs-on: ubuntu-latest
+    if: github.ref_name == 'main'
     permissions:
       contents: write # To push to gh-pages branch
     steps:
@@ -144,7 +162,7 @@ jobs:
           enable-cache: true
 
       - name: "Install dependencies"
-        run: uv sync --system
+        run: uv sync
 
       - name: "Build and deploy documentation"
         run: uv run mkdocs gh-deploy --force
