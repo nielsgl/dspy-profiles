@@ -35,18 +35,6 @@ jobs:
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: "Ensure current version tag exists (local only)"
-        if: steps.gate.outputs.skip != 'true'
-        shell: bash
-        run: |
-          set -euo pipefail
-          CURR_VERSION=$(uv run cz version --project)
-          if ! git rev-parse -q --verify "refs/tags/$CURR_VERSION" >/dev/null; then
-            root=$(git rev-list --max-parents=0 HEAD | tail -n1)
-            echo "Tag $CURR_VERSION not found. Creating local bootstrap tag at repo root $root"
-            git tag -a "$CURR_VERSION" "$root" -m "bootstrap tag for current version $CURR_VERSION"
-          fi
-
       - name: "Set up Python"
         if: steps.gate.outputs.skip != 'true'
         uses: actions/setup-python@v5
@@ -62,6 +50,18 @@ jobs:
       - name: "Install dependencies"
         if: steps.gate.outputs.skip != 'true'
         run: uv sync --all-extras --dev
+
+      - name: "Ensure current version tag exists (local only)"
+        if: steps.gate.outputs.skip != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          CURR_VERSION=$(uv run cz version --project)
+          if ! git rev-parse -q --verify "refs/tags/$CURR_VERSION" >/dev/null; then
+            root=$(git rev-list --max-parents=0 HEAD | tail -n1)
+            echo "Tag $CURR_VERSION not found. Creating local bootstrap tag at repo root $root"
+            git tag -a "$CURR_VERSION" "$root" -m "bootstrap tag for current version $CURR_VERSION"
+          fi
 
       - name: "Commitizen bump"
         if: steps.gate.outputs.skip != 'true'
