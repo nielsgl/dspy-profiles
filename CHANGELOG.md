@@ -1,3 +1,9 @@
+## 0.2.1 (2025-09-01)
+
+### Fix
+
+- :green_heart: update workflow
+
 ## 0.2.0 (2025-09-01)
 
 ### Feat
