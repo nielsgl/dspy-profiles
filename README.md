@@ -4,7 +4,7 @@
 [![Python Version](https://img.shields.io/pypi/pyversions/dspy-profiles.svg)](https://pypi.org/project/dspy-profiles/)
 [![PyPI Downloads](https://img.shields.io/pypi/dm/dspy-profiles.svg)](https://pypi.org/project/dspy-profiles/)
 [![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://nielsgl.github.io/dspy-profiles/)
-[![Tests](https://github.com/nielsgl/dspy-profiles/actions/workflows/tests.yml/badge.svg)](https://github.com/nielsgl/dspy-profiles/actions/workflows/tests.yml)
+[![Tests](https://github.com/nielsgl/dspy-profiles/actions/workflows/ci.yml/badge.svg)](https://github.com/nielsgl/dspy-profiles/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/codecov/c/github/nielsgl/dspy-profiles)](https://codecov.io/gh/nielsgl/dspy-profiles)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Managed by uv](https://img.shields.io/badge/managed%20by-uv-blue.svg)](https://github.com/astral-sh/uv)
@@ -109,7 +109,3 @@ See the [PROJECT.md](PROJECT.md) file for detailed specifications.
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request.
-
-## Notes
-
-Here some notes.
