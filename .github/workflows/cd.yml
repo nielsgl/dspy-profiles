@@ -111,7 +111,7 @@ jobs:
           enable-cache: true
 
       - name: "Build package"
-        run: uv run build
+        run: uv build --sdist --wheel
 
       - name: "Publish to PyPI"
         if: github.ref_name == 'main'
