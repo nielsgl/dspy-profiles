@@ -51,6 +51,11 @@ jobs:
         if: steps.gate.outputs.skip != 'true'
         run: uv sync --all-extras --dev
 
+      - name: "Configure Git"
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+
       - name: "Ensure current version tag exists (local only)"
         if: steps.gate.outputs.skip != 'true'
         shell: bash
