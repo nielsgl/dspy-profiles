@@ -128,6 +128,7 @@ jobs:
         with:
           repository-url: https://test.pypi.org/legacy/
           # attestations: true
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
 
       - name: "Create GitHub Release"
         if: github.ref_name == 'main'
