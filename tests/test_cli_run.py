@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, patch
 from typer.testing import CliRunner
 
 from dspy_profiles import cli
+from dspy_profiles.commands import run as run_cli
 
 runner = CliRunner()
 
@@ -81,3 +82,22 @@ def test_run_command_not_found(mock_subprocess_run: MagicMock):
 
     assert result.exit_code == 1
     assert "Command not found" in result.stdout
+
+
+def test_dspy_run_app_with_verbose_executes_python():
+    """Covers dspy-run app callback with verbosity flags and real python."""
+    runner_local = CliRunner()
+    result = runner_local.invoke(
+        run_cli.app,
+        [
+            "--profile",
+            "default",
+            "-V",
+            "--",
+            sys.executable,
+            "-c",
+            "print('ok')",
+        ],
+    )
+    assert result.exit_code == 0
+    assert "ok" in result.stdout
