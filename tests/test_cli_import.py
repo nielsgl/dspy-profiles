@@ -40,3 +40,15 @@ def test_import_profile(mock_api: MagicMock, tmp_path: Path):
     )
     assert result.exit_code == 2  # Typer's exit code for file not found
     assert "Invalid value" in result.stderr
+
+
+def test_cli_import_warning_when_no_vars(tmp_path: Path):
+    """Importing from a .env with no DSPY_ variables should warn and exit 0."""
+    env_file = tmp_path / ".env"
+    env_file.write_text("FOO=bar\n")
+    result = runner.invoke(
+        cli.app,
+        ["import", "--profile", "empty", "--from", str(env_file)],
+    )
+    assert result.exit_code == 0
+    assert "Warning:" in result.stdout

@@ -51,3 +51,15 @@ def test_diff_command_with_http_url(mock_api: MagicMock):
     assert result.exit_code == 0
     assert 'api_base": "HttpUrl(\'http://localhost:8080\')"' in result.stdout
     assert 'api_base": "HttpUrl(\'http://localhost:8888\')"' in result.stdout
+
+
+@patch("dspy_profiles.commands.diff.api")
+def test_diff_command_error_on_first_profile(mock_api: MagicMock):
+    """Diff should error when the first profile cannot be loaded."""
+    mock_api.get_profile.side_effect = [
+        (None, "Profile 'missing' not found."),
+        ({}, None),
+    ]
+    result = runner.invoke(cli.app, ["diff", "missing", "other"])
+    assert result.exit_code == 1
+    assert "Error: Profile 'missing' not found." in result.stdout

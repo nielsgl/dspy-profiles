@@ -132,3 +132,14 @@ def test_dspy_run_dry_run_non_python():
     assert result.exit_code == 0
     assert "Resolved command:" in result.stdout
     assert "echo hello" in result.stdout
+
+
+def test_dspy_run_app_no_profile_default_message():
+    """Invoking dspy-run without --profile should print default profile notice."""
+    result = runner.invoke(
+        run_cli.app,
+        ["--", sys.executable, "-c", "print('ok')"],
+    )
+    assert result.exit_code == 0
+    assert "No profile specified. Using default profile: 'default'" in result.stdout
+    assert "ok" in result.stdout

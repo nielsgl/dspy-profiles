@@ -178,3 +178,12 @@ url = "http://localhost:8893/api/search"
         """.strip()
     )
     assert validate_profiles_file(valid_rm) is None
+
+
+def test_api_exception_messages():
+    from dspy_profiles.api import ProfileExistsError, ProfileNotFound
+
+    e1 = ProfileNotFound("abc")
+    e2 = ProfileExistsError("xyz")
+    assert "abc" in str(e1)
+    assert "xyz" in str(e2)

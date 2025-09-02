@@ -38,3 +38,19 @@ def test_delete_profile_found(mock_find_path, tmp_path):
         remaining_profiles = toml.load(f)
 
     assert "my_profile" not in remaining_profiles
+
+
+@patch("dspy_profiles.api.find_profiles_path")
+def test_delete_cancelled(mock_find_path, tmp_path):
+    """Interactive delete without --force; user cancels (answers 'n')."""
+    profiles_path = tmp_path / "profiles.toml"
+    profiles_path.write_text('[my_profile]\nlm = {model = "gpt-4"}')
+    mock_find_path.return_value = profiles_path
+
+    res = runner.invoke(app, ["delete", "my_profile"], input="n\n")
+    assert res.exit_code == 0
+    assert "Deletion cancelled." in res.stdout
+    # Ensure profile remains
+    with open(profiles_path) as f:
+        remaining = toml.load(f)
+    assert "my_profile" in remaining
