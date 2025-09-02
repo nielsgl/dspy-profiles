@@ -38,12 +38,11 @@ This is a prioritized, actionable checklist derived from a thorough code and doc
 - Files: `dspy_profiles/api.py:98–116`
 - Tests: Add a validation test for dotted keys using `validate_profiles_file`.
 
-7) P0 — Align Retrieval Model schema with docs (or vice versa)
+7) P0 — Align Retrieval Model schema with docs — DONE (Option A)
 - Intent: Avoid validation failures for documented RM examples (`class_name`, `url`).
-- Option A (recommended): Make `RetrievalModelSettings` permissive (optional `model`, allow `class_name`, `url`, and extra keys). Update core to instantiate RM by `class_name` if provided, else by `provider` fallback, else leave RM unset.
-- Option B: Require `model` string in docs and code; update docs accordingly and keep schema strict.
-- Files: `dspy_profiles/validation.py:24–45`; `dspy_profiles/core.py:104–109`; docs noted below
-- Tests: Add unit tests for RM config variants and instantiation.
+- Change: `RetrievalModelSettings.model` is optional; added `class_name` field; instantiate RM via `rm.class_name` with import fallback, else `provider`.
+- Files: `dspy_profiles/validation.py`, `dspy_profiles/core.py`.
+- Tests: Added core test for rm.class_name and API validation test for rm.class_name.
 
 8) P0 — Remove stray debug print from path resolution — DONE
 - Intent: Prevent stdout noise in `find_profiles_path` fallback.
@@ -117,11 +116,11 @@ This is a prioritized, actionable checklist derived from a thorough code and doc
 - Files: Code (as in #5), docs (Advanced Usage “Integrating with Any Language Model”).
 - Tests: Existing tests remain valid.
 
-20) P0 — Decide and document RM schema and instantiation (policy decision)
+20) P0 — Decide and document RM schema and instantiation — DONE (Option A)
 - Intent: Consistent RM configuration and validation.
-- Choice: Prefer a permissive schema supporting `class_name`/`url` (docs-friendly), or a strict `model`-string schema. Implement instantiation accordingly and document clearly with examples for ColBERTv2 and others.
-- Files: `dspy_profiles/validation.py`, `dspy_profiles/core.py` (RM creation), `docs/advanced-usage.md`
-- Tests: Add coverage for both accepted config shapes.
+- Decision: Permissive schema supporting `class_name`/`url` preferred. Core instantiates via `class_name` when provided.
+- Files: `dspy_profiles/validation.py`, `dspy_profiles/core.py`; docs already aligned with class_name examples.
+- Tests: Covered by new tests.
 
 21) P1 — Fix example quoting bug
 - Intent: Prevent syntax errors in examples.
