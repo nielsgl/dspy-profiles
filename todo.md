@@ -104,11 +104,11 @@ This is a prioritized, actionable checklist derived from a thorough code and doc
 - Files: `dspy_profiles/utils.py`
 - Tests: Add tests for 2+ nested levels (e.g., `a.b.c = 1`).
 
-18) P2 — `dspy-run` quality-of-life flags
+18) P2 — `dspy-run` quality-of-life flags — DONE
 - Intent: Improve transparency when executing.
-- Change: Add `--dry-run` (print command, profile, and path to config) and `--verbose` (echo resolved profile, selected bootstrap path).
-- Files: `dspy_profiles/commands/run.py`, docs updates
-- Tests: CLI tests for flags.
+- Change: Added `--dry-run` to print profile, config path, environment, and resolved command; echo command when `-V`.
+- Files: `dspy_profiles/commands/run.py`
+- Tests: Added CLI tests for dry-run and verbosity path.
 
 19) P0 — Decide and document LM provider strategy (policy decision)
 - Intent: Consistency between code and docs.
