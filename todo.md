@@ -80,9 +80,9 @@ This is a prioritized, actionable checklist derived from a thorough code and doc
 - Files: `docs/api-reference.md`
 - Tests: Docs only.
 
-14) P1 — Add a Troubleshooting page
+14) P1 — Add a Troubleshooting page — DONE
 - Intent: Reduce support friction for common issues.
-- Change: New doc covering: “No LM loaded”, “Profile not found”, “Validation errors”, “Which profiles.toml is used?”, and commands to diagnose.
+- Change: Added `docs/troubleshooting.md` and linked it in `mkdocs.yml` under User Guide.
 - Files: `docs/troubleshooting.md` (new), `mkdocs.yml` nav entry
 - Tests: Docs only.
 
@@ -128,10 +128,10 @@ This is a prioritized, actionable checklist derived from a thorough code and doc
 - Files: `examples/hello_runner.py:5`
 - Tests: Manual run; optional doctest.
 
-22) P1 — Add a minimal RM example aligned with schema
+22) P1 — Add a minimal RM example aligned with schema — DONE
 - Intent: Show a working retrieval model configuration users can copy.
-- Change: New section in Advanced Usage with a tested config snippet; optionally add a simple example script.
-- Files: `docs/advanced-usage.md`, maybe `examples/retrieval_example.py`
+- Change: Added a dedicated “Retrieval Model Configuration” section and a new example script.
+- Files: `docs/advanced-usage.md`, `examples/retrieval_example.py`
 - Tests: Docs/example only.
 
 23) P1 — Improve docs on configuration precedence and discovery

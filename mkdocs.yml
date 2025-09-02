@@ -32,6 +32,7 @@ nav:
   - 'User Guide':
     - 'Quickstart': quickstart.md
     - 'Advanced Usage': advanced-usage.md
+    - 'Troubleshooting': troubleshooting.md
   - 'Reference':
     - 'CLI Reference': cli-reference.md
     - 'CLI Run Reference': cli-run-reference.md
