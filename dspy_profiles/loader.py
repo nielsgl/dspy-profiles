@@ -5,7 +5,7 @@ from typing import Any
 
 from dotenv import load_dotenv
 
-from dspy_profiles.config import PROFILES_PATH, ProfileManager
+from dspy_profiles.config import ProfileManager, find_profiles_path
 
 
 @dataclass
@@ -41,15 +41,15 @@ class ProfileLoader:
         config_path (Path): The path to the `profiles.toml` file being used.
     """
 
-    def __init__(self, config_path: str | Path = PROFILES_PATH):
+    def __init__(self, config_path: str | Path | None = None):
         """Initializes the ProfileLoader.
 
         Args:
-            config_path (str | Path, optional): The path to the `profiles.toml` file.
-                If not provided, it uses the default path resolution.
-                Defaults to `PROFILES_PATH`.
+            config_path (str | Path | None, optional): The path to the `profiles.toml` file.
+                If None, resolves using standard precedence: env var > local discovery > global.
         """
-        self.config_path = Path(config_path)
+        resolved = Path(config_path) if config_path is not None else find_profiles_path()
+        self.config_path = resolved
         self._load_dotenv()
 
     def _load_dotenv(self):
