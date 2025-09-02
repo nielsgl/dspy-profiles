@@ -10,6 +10,13 @@ from dspy_profiles import cli
 runner = CliRunner()
 
 
+def test_cli_version_flag():
+    """Tests that --version prints version and exits."""
+    result = runner.invoke(cli.app, ["--version"])
+    assert result.exit_code == 0
+    assert "dspy-profiles version:" in result.stdout
+
+
 @patch("dspy_profiles.commands.list.api")
 def test_list_command(mock_api: MagicMock):
     """Tests the list command by mocking the API layer."""
