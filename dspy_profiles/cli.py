@@ -1,5 +1,6 @@
 """Main CLI application for dspy-profiles."""
 
+from rich.console import Console
 import typer
 
 from dspy_profiles import __version__
@@ -13,6 +14,7 @@ from dspy_profiles.commands.set import set_value
 from dspy_profiles.commands.show import show_profile
 from dspy_profiles.commands.test import test_profile
 from dspy_profiles.commands.validate import validate_profiles
+from dspy_profiles.config import find_profiles_path
 
 
 def version_callback(value: bool):
@@ -59,6 +61,17 @@ app.command(
     name="run",
     context_settings={"allow_extra_args": True, "ignore_unknown_options": True},
 )(run_command)
+
+
+# Utilities
+@app.command(name="which-config")
+def which_config():
+    """Print the resolved profiles.toml path and whether it exists."""
+    console = Console()
+    path = find_profiles_path()
+    exists = path.exists()
+    console.print(f"Resolved config path: {path}")
+    console.print(f"Exists: {'yes' if exists else 'no'}")
 
 
 def main():
