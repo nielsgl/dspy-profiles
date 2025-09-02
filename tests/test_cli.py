@@ -215,7 +215,6 @@ def test_which_config_prints_resolved_path(tmp_path, monkeypatch):
     assert result.exit_code == 0
     assert str(fake_path) in result.stdout
     assert "Exists: yes" in result.stdout
-    assert result.exit_code == 1
 
 
 @patch("dspy_profiles.commands.run.subprocess.run")
