@@ -8,6 +8,7 @@ from typing import Annotated
 from rich.console import Console
 import typer
 
+from dspy_profiles.config import find_profiles_path
 from dspy_profiles.logging_utils import compute_level, setup_logging
 
 console = Console()
@@ -20,9 +21,11 @@ app = typer.Typer(
 )
 
 
-def _execute_with_profile(command: list[str], profile_name: str):
-    """Core logic to execute a command with an activated profile."""
+def _prepare_command(command: list[str], profile_name: str) -> tuple[list[str], bool]:
+    """Prepare the final command to execute, wrapping Python scripts if needed.
 
+    Returns (final_command, python_wrapped).
+    """
     is_python_command = False
     if command:
         executable = command[0].lower()
@@ -34,16 +37,17 @@ def _execute_with_profile(command: list[str], profile_name: str):
         ):
             is_python_command = True
 
+    final_command = list(command)
     if is_python_command:
         script_path_index = -1
-        for i, arg in enumerate(command):
+        for i, arg in enumerate(final_command):
             if arg.endswith(".py"):
                 script_path_index = i
                 break
 
         if script_path_index != -1:
-            script_path = command[script_path_index]
-            script_args = command[script_path_index + 1 :]
+            script_path = final_command[script_path_index]
+            script_args = final_command[script_path_index + 1 :]
 
             bootstrap_code = f"""
 import sys
@@ -56,8 +60,13 @@ with activate_profile('{profile_name}'):
     runpy.run_path({script_path!r}, run_name='__main__')
 """
             python_executable = sys.executable or "python"
-            new_command = [python_executable, "-c", bootstrap_code]
-            command = new_command
+            final_command = [python_executable, "-c", bootstrap_code]
+            return final_command, True
+    return final_command, False
+
+
+def _execute_with_profile(command: list[str], profile_name: str):
+    """Core logic to execute a command with an activated profile."""
 
     env = os.environ.copy()
     env["DSPY_PROFILE"] = profile_name
@@ -106,6 +115,11 @@ def main(
         list[str] | None,
         typer.Argument(help="The command to run.", rich_help_panel="Command"),
     ] = None,
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Print the resolved command, environment, and config path; then exit.",
+    ),
 ):
     """
     Run a command with a dspy-profile activated.
@@ -124,7 +138,6 @@ def main(
         console.print(f"[dim]No profile specified. Using default profile: '{profile_name}'[/dim]")
 
     run_command_list = list(command)
-
     if (
         run_command_list
         and run_command_list[0].endswith(".py")
@@ -132,7 +145,22 @@ def main(
     ):
         run_command_list.insert(0, "python")
 
-    _execute_with_profile(run_command_list, profile_name)
+    final_command, python_wrapped = _prepare_command(run_command_list, profile_name)
+
+    if dry_run:
+        config_path = find_profiles_path()
+        print(f"Profile: {profile_name}")
+        print(f"Config: {config_path}")
+        print(f"Python-wrapped: {'yes' if python_wrapped else 'no'}")
+        print(f"Env: DSPY_PROFILE={profile_name}")
+        print(f"Resolved command: {' '.join(final_command)}")
+        return
+
+    # If verbose, echo the resolved command
+    if verbose:
+        console.print(f"[dim]Command: {' '.join(final_command)}[/dim]")
+
+    _execute_with_profile(final_command, profile_name)
 
 
 # This is for the original `dspy-profiles run` subcommand
@@ -149,7 +177,8 @@ def run_command(
         console.print("[bold red]Error:[/] No command provided to run.")
         raise typer.Exit(1)
 
-    _execute_with_profile(command, profile_name)
+    final_command, _ = _prepare_command(command, profile_name)
+    _execute_with_profile(final_command, profile_name)
 
 
 def cli_app():

@@ -101,3 +101,34 @@ def test_dspy_run_app_with_verbose_executes_python():
     )
     assert result.exit_code == 0
     assert "ok" in result.stdout
+
+
+def test_dspy_run_dry_run_python():
+    """Dry-run prints resolved command and exits without executing."""
+    runner_local = CliRunner()
+    result = runner_local.invoke(
+        cli.app,
+        [
+            "run",
+            "--profile",
+            "default",
+            "--dry-run",
+            "--",
+            "script.py",
+            "--flag",
+        ],
+    )
+    assert result.exit_code == 0
+    assert "Resolved command:" in result.stdout
+    assert "-c" in result.stdout  # python -c bootstrap is used for .py
+
+
+def test_dspy_run_dry_run_non_python():
+    runner_local = CliRunner()
+    result = runner_local.invoke(
+        cli.app,
+        ["run", "--profile", "default", "--dry-run", "--", "echo", "hello"],
+    )
+    assert result.exit_code == 0
+    assert "Resolved command:" in result.stdout
+    assert "echo hello" in result.stdout
