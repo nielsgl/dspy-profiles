@@ -2,6 +2,7 @@ from collections.abc import Callable, Generator
 import contextlib
 from contextvars import ContextVar
 from functools import wraps
+import importlib
 import inspect
 import logging
 import os
@@ -110,11 +111,31 @@ def profile(
 
     if resolved_profile.rm:
         rm_config = resolved_profile.rm.copy()
-        provider = rm_config.pop("provider", "ColBERTv2")
-        # Fallback for legacy dspy versions might be needed if RM names change.
-        rm_class = getattr(dspy, provider, dspy.ColBERTv2)
+        rm_class = None
+
+        class_name = rm_config.pop("class_name", None)
+        if class_name:
+            try:
+                if class_name.startswith("dspy."):
+                    cls_name = class_name.split(".", 1)[1]
+                    rm_class = getattr(dspy, cls_name, None)
+                elif "." in class_name:
+                    module_path, _, clsname = class_name.rpartition(".")
+                    module = importlib.import_module(module_path)
+                    rm_class = getattr(module, clsname, None)
+                else:
+                    rm_class = getattr(dspy, class_name, None)
+            except Exception as e:  # pragma: no cover
+                logger.debug("Failed to resolve RM class '%s': %s", class_name, e)
+
+        if rm_class is None:
+            provider = rm_config.pop("provider", "ColBERTv2")
+            rm_class = getattr(dspy, provider, dspy.ColBERTv2)
+            logger.debug("Instantiated RM via provider=%s", provider)
+        else:
+            logger.debug("Instantiated RM via class_name=%s", class_name)
+
         rm_instance = rm_class(**rm_config)
-        logger.debug("Instantiated RM provider=%s", provider)
 
     token = _CURRENT_PROFILE.set(resolved_profile)
     try:
