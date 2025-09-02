@@ -12,6 +12,8 @@ def test_compute_level_precedence():
     assert compute_level(verbose=2, quiet=0, log_level=None) == logging.DEBUG
     # Quiet -> ERROR
     assert compute_level(verbose=0, quiet=1, log_level=None) == logging.ERROR
+    # Explicit log-level overrides flags
+    assert compute_level(verbose=2, quiet=1, log_level="WARNING") == logging.WARNING
 
 
 def test_setup_logging_idempotent(monkeypatch):

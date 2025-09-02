@@ -249,3 +249,59 @@ def test_rm_instantiation_via_class_name(profile_manager, monkeypatch):
 
     assert "kwargs" in calls
     assert calls["kwargs"]["url"].startswith("http")
+
+
+def test_rm_instantiation_via_dspy_qualified_class_name(profile_manager, monkeypatch):
+    import dspy
+
+    calls = {}
+
+    class DummyRM:
+        def __init__(self, **kwargs):
+            calls["kwargs"] = kwargs
+
+    monkeypatch.setattr(dspy, "ColBERTv2", DummyRM, raising=True)
+    profile_manager.load.return_value["rm_profile2"] = {
+        "rm": {"class_name": "dspy.ColBERTv2", "url": "http://localhost:9999"}
+    }
+
+    with profile("rm_profile2", config_path=profile_manager.path):
+        pass
+
+    assert calls["kwargs"]["url"].endswith("9999")
+
+
+def test_rm_instantiation_via_fully_qualified_import(profile_manager, monkeypatch):
+    import sys
+    import types
+
+    calls = {}
+
+    class DummyRM:
+        def __init__(self, **kwargs):
+            calls["kwargs"] = kwargs
+
+    module = types.ModuleType("pkg.mod")
+    setattr(module, "DummyRM", DummyRM)
+    sys.modules["pkg.mod"] = module
+
+    profile_manager.load.return_value["rm_profile3"] = {
+        "rm": {"class_name": "pkg.mod.DummyRM", "foo": "bar"}
+    }
+
+    with profile("rm_profile3", config_path=profile_manager.path):
+        pass
+
+    assert calls["kwargs"]["foo"] == "bar"
+
+
+def test_lm_cache_population_and_hit(profile_manager):
+    from dspy_profiles.core import _LM_CACHE
+
+    _LM_CACHE.clear()
+    # Ensure profile exists
+    profile_manager.load.return_value["test_profile_cache"] = {"lm": {"model": "dummy"}}
+
+    inst1 = lm("test_profile_cache", config_path=profile_manager.path)
+    inst2 = lm("test_profile_cache", config_path=profile_manager.path)
+    assert inst1 is inst2

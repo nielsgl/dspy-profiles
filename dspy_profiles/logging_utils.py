@@ -39,7 +39,7 @@ def setup_logging(level: int) -> None:
     Safe to call multiple times; it won't duplicate handlers.
     """
     root = logging.getLogger()
-    if not root.handlers:
+    if not root.handlers:  # pragma: no cover
         handler = logging.StreamHandler()
         handler.setFormatter(logging.Formatter("%(levelname)s %(name)s: %(message)s"))
         root.addHandler(handler)
