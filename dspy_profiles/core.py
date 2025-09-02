@@ -3,6 +3,7 @@ import contextlib
 from contextvars import ContextVar
 from functools import wraps
 import inspect
+import logging
 import os
 from typing import Any
 
@@ -11,6 +12,7 @@ import dspy
 from dspy_profiles.loader import ProfileLoader, ResolvedProfile
 
 _CURRENT_PROFILE: ContextVar[ResolvedProfile | None] = ContextVar("current_profile", default=None)
+logger = logging.getLogger(__name__)
 
 
 def _deep_merge(parent: dict, child: dict) -> dict:
@@ -60,19 +62,28 @@ def profile(
         ```
     """
     env_profile = os.getenv("DSPY_PROFILE")
-    profile_to_load = profile_name if force or not env_profile else env_profile or "default"
-
-    if not profile_to_load:
-        yield
-        return
+    if env_profile and not force:
+        profile_to_load = env_profile
+    else:
+        profile_to_load = profile_name or "default"
+    logger.debug(
+        "Activating profile=%s (env_var=%s, force=%s, config_path=%s, overrides_keys=%s)",
+        profile_to_load,
+        bool(env_profile),
+        force,
+        config_path,
+        list(overrides.keys()),
+    )
 
     loader = ProfileLoader(config_path=config_path) if config_path else ProfileLoader()
     loaded_profile = loader.get_config(profile_to_load)
-    # print(f"DEBUG: Loaded profile config: {loaded_profile.config}")
-    print(f"[DEBUG] Initial loaded_profile.config: {loaded_profile.config}")
-    print(f"[DEBUG] Overrides received: {overrides}")
     final_config = _deep_merge(loaded_profile.config, overrides)
-    print(f"[DEBUG] final_config after merge: {final_config}")
+    logger.debug(
+        "Resolved config sections: lm=%s rm=%s settings=%s",
+        "yes" if final_config.get("lm") else "no",
+        "yes" if final_config.get("rm") else "no",
+        "yes" if final_config.get("settings") else "no",
+    )
     resolved_profile = ResolvedProfile(
         name=loaded_profile.name,
         config=final_config,
@@ -88,18 +99,14 @@ def profile(
 
     lm_instance, rm_instance = None, None
     if resolved_profile.lm:
-        print(f"[DEBUG] resolved_profile.lm is type: {type(resolved_profile.lm)}")
         if isinstance(resolved_profile.lm, dspy.LM):
-            print("[DEBUG] resolved_profile.lm is a dspy.LM instance. Using it directly.")
             lm_instance = resolved_profile.lm
         else:
-            print("[DEBUG] resolved_profile.lm is a dict. Instantiating new LM.")
             lm_config = resolved_profile.lm.copy()
             model = lm_config.pop("model", None)
-            provider = lm_config.pop("provider", "openai").capitalize()
-            lm_class = getattr(dspy, provider, dspy.LM)
-            lm_instance = lm_class(model=model, **lm_config) if model else dspy.LM(**lm_config)
-        print(f"[DEBUG] lm_instance created: {lm_instance}")
+            # Use unified LM instantiation
+            lm_instance = dspy.LM(model=model, **lm_config) if model else dspy.LM(**lm_config)
+            logger.debug("Instantiated LM for model=%s", model)
 
     if resolved_profile.rm:
         rm_config = resolved_profile.rm.copy()
@@ -107,20 +114,18 @@ def profile(
         # Fallback for legacy dspy versions might be needed if RM names change.
         rm_class = getattr(dspy, provider, dspy.ColBERTv2)
         rm_instance = rm_class(**rm_config)
+        logger.debug("Instantiated RM provider=%s", provider)
 
     token = _CURRENT_PROFILE.set(resolved_profile)
     try:
-        # print(
-        #     f"DEBUG: Configuring dspy.context with lm={lm_instance},"
-        #     f"rm={rm_instance}, settings={settings}"
-        # )
-        dspy_settings = settings.copy()
-        if resolved_profile.lm and isinstance(resolved_profile.lm, dict):
-            dspy_settings.update(resolved_profile.lm)
-
-        dspy.settings.configure(**dspy_settings)
-
-        print(f"[DEBUG] Entering dspy.context with lm_instance: {lm_instance}")
+        # Configure only DSPy settings (not LM dict keys)
+        dspy.settings.configure(**settings)
+        logger.debug(
+            "Entering dspy.context (lm=%s, rm=%s, settings_keys=%s)",
+            type(lm_instance).__name__ if lm_instance else None,
+            type(rm_instance).__name__ if rm_instance else None,
+            list(settings.keys()),
+        )
         with dspy.context(lm=lm_instance, rm=rm_instance, **settings):
             yield
     finally:
@@ -215,7 +220,12 @@ def current_profile() -> ResolvedProfile | None:
 _LM_CACHE: dict[tuple, dspy.LM] = {}
 
 
-def lm(profile_name: str, cached: bool = True, **overrides: Any) -> dspy.LM | None:
+def lm(
+    profile_name: str,
+    cached: bool = True,
+    config_path: str | os.PathLike | None = None,
+    **overrides: Any,
+) -> dspy.LM | None:
     """Gets a pre-configured `dspy.LM` instance for a given profile.
 
     This is a convenience utility to quickly get a language model instance
@@ -233,51 +243,37 @@ def lm(profile_name: str, cached: bool = True, **overrides: Any) -> dspy.LM | No
         dspy.LM | None: A configured `dspy.LM` instance, or None if the profile
             has no language model configured.
     """
-    print(f"\n[DEBUG] lm(profile_name='{profile_name}', cached={cached}, overrides={overrides})")
-
     # Separate LM-specific overrides from other function kwargs like 'config_path'
     known_non_lm_kwargs = {"config_path"}
     lm_overrides = {k: v for k, v in overrides.items() if k not in known_non_lm_kwargs}
-    print(f"[DEBUG] Separated lm_overrides: {lm_overrides}")
+    logger.debug(
+        "lm() requested for profile=%s cached=%s override_keys=%s config_path=%s",
+        profile_name,
+        cached,
+        list(lm_overrides.keys()),
+        config_path,
+    )
 
     cache_key = (profile_name, tuple(sorted(lm_overrides.items())))
-    print(f"[DEBUG] Generated cache_key: {cache_key}")
     if cached and cache_key in _LM_CACHE:
-        print(f"[DEBUG] Cache hit. Returning cached instance for key: {cache_key}")
         return _LM_CACHE[cache_key]
-    print("[DEBUG] Cache miss. Proceeding to create new LM instance.")
 
-    loader = ProfileLoader()
+    loader = ProfileLoader(config_path=config_path) if config_path else ProfileLoader()
     loaded_profile = loader.get_config(profile_name)
-    print(f"[DEBUG] Loaded profile '{loaded_profile.name}' with config: {loaded_profile.config}")
     final_config = loaded_profile.config.copy()
 
     if lm_overrides:
-        print("[DEBUG] Overrides detected. Merging lm_overrides into config...")
-        lm_config_before_merge = final_config.get("lm", {}).copy()
-        print(f"[DEBUG] lm_config before merge: {lm_config_before_merge}")
         lm_config = final_config.setdefault("lm", {})
         final_config["lm"] = _deep_merge(lm_config, lm_overrides)
-        print(f"[DEBUG] lm_config after merge: {final_config.get('lm')}")
 
     lm_config = final_config.get("lm")
     if not lm_config:
-        print("[DEBUG] No lm_config found after processing. Returning None.")
         return None
-    print(f"[DEBUG] Final lm_config to be used for instantiation: {lm_config}")
 
     lm_config = lm_config.copy()
     model = lm_config.pop("model", None)
-    provider = lm_config.pop("provider", "openai").capitalize()
-    lm_class = getattr(dspy, provider, dspy.LM)
-    print(
-        f"[DEBUG] Preparing to instantiate lm_class '{lm_class.__name__}' "
-        f"with model='{model}' and kwargs={lm_config}"
-    )
-
-    instance = lm_class(model=model, **lm_config)
-    print(f"[DEBUG] Instantiated LM: {instance}")
-    print(f"[DEBUG] Instantiated LM kwargs: {getattr(instance, 'kwargs', 'N/A')}")
+    instance = dspy.LM(model=model, **lm_config)
+    logger.debug("lm() instantiated LM for model=%s", model)
 
     if cached:
         _LM_CACHE[cache_key] = instance

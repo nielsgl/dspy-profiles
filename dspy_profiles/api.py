@@ -8,6 +8,7 @@ from pydantic import ValidationError
 import toml
 
 from dspy_profiles.config import ProfileManager, find_profiles_path
+from dspy_profiles.utils import normalize_config
 from dspy_profiles.validation import ProfilesFile
 
 
@@ -163,7 +164,8 @@ def validate_profiles_file(config_path: Path) -> Exception | None:
     try:
         with open(config_path) as f:
             data = toml.load(f)
-        ProfilesFile.model_validate(data)
+        normalized = normalize_config(data)
+        ProfilesFile.model_validate(normalized)
         return None
     except (FileNotFoundError, toml.TomlDecodeError, ValidationError) as e:
         return e

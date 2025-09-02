@@ -2,7 +2,7 @@ import os
 
 import dspy
 
-print(f"{os.getenv("DSPY_PROFILE")=}")
+print(f"{os.getenv('DSPY_PROFILE')=}")
 for key in os.environ:
     if key.startswith("DSPY"):
         print(f"{key}, {os.getenv(key)}")

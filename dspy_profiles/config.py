@@ -40,7 +40,6 @@ def find_profiles_path() -> Path:
             return local_path
 
     # 3. Fallback to global default
-    print(f"{PROFILES_PATH=}")
     return PROFILES_PATH
 
 

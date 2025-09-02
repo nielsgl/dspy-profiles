@@ -8,6 +8,8 @@ from typing import Annotated
 from rich.console import Console
 import typer
 
+from dspy_profiles.logging_utils import compute_level, setup_logging
+
 console = Console()
 app = typer.Typer(
     name="dspy-run",
@@ -81,6 +83,25 @@ def main(
         str,
         typer.Option("--profile", "-p", help="The profile to activate. Defaults to 'default'."),
     ] = "default",
+    verbose: int = typer.Option(
+        0,
+        "--verbose",
+        "-V",
+        count=True,
+        help="Increase verbosity (-V for INFO, -VV for DEBUG).",
+    ),
+    quiet: int = typer.Option(
+        0,
+        "--quiet",
+        "-q",
+        count=True,
+        help="Decrease verbosity (once for ERROR).",
+    ),
+    log_level: str | None = typer.Option(
+        None,
+        "--log-level",
+        help="Explicit log level (DEBUG, INFO, WARNING, ERROR). Overrides -V/-q.",
+    ),
     command: Annotated[
         list[str] | None,
         typer.Argument(help="The command to run.", rich_help_panel="Command"),
@@ -89,6 +110,10 @@ def main(
     """
     Run a command with a dspy-profile activated.
     """
+    # Configure logging
+    level = compute_level(verbose=verbose, quiet=quiet, log_level=log_level)
+    setup_logging(level)
+
     if command is None:
         console.print("[bold red]Error:[/] No command provided to run.")
         raise typer.Exit(1)
