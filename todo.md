@@ -2,37 +2,37 @@
 
 This is a prioritized, actionable checklist derived from a thorough code and docs review. Each item includes intent, proposed change, affected files, and suggested tests or acceptance criteria. Priorities: P0 = must fix, P1 = important polish, P2 = nice-to-have.
 
-1) P0 — Fix profile precedence and default fallback
+1) P0 — Fix profile precedence and default fallback — DONE
 - Intent: Ensure `profile()` follows documented precedence and always falls back to "default" when nothing is provided.
 - Change: Compute final profile name as: use `DSPY_PROFILE` unless `force=True`; otherwise use explicit `profile_name` or "default". Remove early return path.
 - Files: `dspy_profiles/core.py:62–68`
 - Tests: Add case where `profile(None)` with no env activates empty default (no LM), not a no-op; retain current test expectations.
 
-2) P0 — Correct `dspy.settings.configure` usage (don’t merge LM dict)
+2) P0 — Correct `dspy.settings.configure` usage (don’t merge LM dict) — DONE
 - Intent: Avoid polluting DSPy settings with LM keys; rely on `lm`/`rm` parameters to `dspy.context`.
 - Change: Do not merge `resolved_profile.lm` into `settings` before calling `configure`. Only configure settings (e.g., `cache_dir`, `retries`). Pass `lm=lm_instance`, `rm=rm_instance` to `dspy.context`.
 - Files: `dspy_profiles/core.py:117–125`
 - Tests: Validate that settings keys remain only settings and LM is provided via context; predictive calls still work.
 
-3) P0 — Remove production debug prints
-- Intent: Prevent noisy stdout in normal use.
-- Change: Replace `print("[DEBUG] ...")` with `logging.getLogger(__name__).debug(...)` or remove entirely. Default logger level remains INFO.
-- Files: `dspy_profiles/core.py:72–75, 91–103, 123, 236–281`; `dspy_profiles/config.py:43`
-- Tests: None (behavioral), verify clean CLI outputs manually.
+3) P0 — Convert debug prints to proper logging — DONE
+- Intent: Prevent noisy stdout; make diagnostics available via CLI verbosity.
+- Change: Use per-module loggers (DEBUG); configure via CLI `-V/-q/--log-level`.
+- Files: `dspy_profiles/core.py` (logger + debug), `dspy_profiles/logging_utils.py` (new), `dspy_profiles/cli.py`, `dspy_profiles/commands/run.py`.
+- Tests: Added `tests/test_logging_utils.py` and a `dspy-run` callback smoke test.
 
-4) P0 — `lm()` should accept and respect `config_path`
+4) P0 — `lm()` should accept and respect `config_path` — DONE
 - Intent: Parity with context manager and tests that pass `config_path`.
 - Change: Add explicit `config_path: str | Path | None` param to `lm()` and pass to `ProfileLoader(config_path=...)`.
 - Files: `dspy_profiles/core.py:218–253`
 - Tests: Add a test loading from a temporary config file via `lm(..., config_path=tmp_path)`.
 
-5) P0 — Unify LM instantiation to `dspy.LM(...)`
+5) P0 — Unify LM instantiation to `dspy.LM(...)` — DONE
 - Intent: Align with DSPy v3 unified LM; simplify provider heuristics.
 - Change: Always instantiate `dspy.LM(model=model, **lm_config)` for both context manager and `lm()` helper.
 - Files: `dspy_profiles/core.py:97–103, 269–279`
 - Tests: Existing tests using DummyLM and kwargs should continue to pass.
 
-6) P0 — Normalize before validation in API
+6) P0 — Normalize before validation in API — DONE
 - Intent: Keep `validate` behavior consistent with loader behavior on dotted keys.
 - Change: Apply `normalize_config(data)` before `ProfilesFile.model_validate(data)`.
 - Files: `dspy_profiles/api.py:98–116`
@@ -45,31 +45,31 @@ This is a prioritized, actionable checklist derived from a thorough code and doc
 - Files: `dspy_profiles/validation.py:24–45`; `dspy_profiles/core.py:104–109`; docs noted below
 - Tests: Add unit tests for RM config variants and instantiation.
 
-8) P0 — Remove stray debug print from path resolution
+8) P0 — Remove stray debug print from path resolution — DONE
 - Intent: Prevent stdout noise in `find_profiles_path` fallback.
 - Change: Remove `print(f"{PROFILES_PATH=}")`.
 - Files: `dspy_profiles/config.py:43`
 - Tests: None.
 
-9) P1 — Fix CLI usage typo in docs (diff command)
+9) P1 — Fix CLI usage typo in docs (diff command) — DONE
 - Intent: Correct argument placeholders.
 - Change: Replace `dspy-profiles diff <a a> <b b>` with `dspy-profiles diff <a> <b>`.
 - Files: `docs/index.md:65`
 - Tests: Docs only.
 
-10) P1 — Fix `uvx` invocation in Quickstart
+10) P1 — Fix `uvx` invocation in Quickstart — DONE
 - Intent: Correct usage for `uvx`.
 - Change: Use `uvx dspy-profiles --version` (not `uvx run dspy-profiles --version`).
 - Files: `docs/quickstart.md:31–38`
 - Tests: Docs only.
 
-11) P1 — Fix broken indentation in advanced example
+11) P1 — Fix broken indentation in advanced example — DONE
 - Intent: Make copy-pasteable Python.
 - Change: Indent `__init__` and `forward` inside class in the AdaptiveAgent example.
 - Files: `docs/advanced-usage.md:268–297`
 - Tests: Docs only.
 
-12) P1 — Clarify `dspy-run` behavior for non-Python commands
+12) P1 — Clarify `dspy-run` behavior for non-Python commands — DONE
 - Intent: Set correct expectations for users running tools like `pytest`.
 - Change: Explicit note: for non-Python commands, `dspy-run` sets `DSPY_PROFILE` env var; your program should honor it. For Python scripts, `dspy-run` bootstraps via a `profile(...)` wrapper automatically.
 - Files: `docs/quickstart.md` (CLI section), `docs/cli-run-reference.md`
@@ -87,7 +87,7 @@ This is a prioritized, actionable checklist derived from a thorough code and doc
 - Files: `docs/troubleshooting.md` (new), `mkdocs.yml` nav entry
 - Tests: Docs only.
 
-15) P1 — Expose the resolved config path for UX
+15) P1 — Expose the resolved config path for UX — DONE (via which-config)
 - Intent: Help users understand which file is being used.
 - Change: Add `--show-config-path` flag to `list`/`show` or add `dspy-profiles which-config` command that prints resolved path from `find_profiles_path()`.
 - Files: `dspy_profiles/cli.py`, new command or options; docs update
@@ -189,19 +189,19 @@ Notes
 
 Decision Update: Config Discovery Precedence (env > local > global)
 
-31) P0 — Align Python API config discovery with CLI (Principle of Least Surprise)
+31) P0 — Align Python API config discovery with CLI (Principle of Least Surprise) — DONE
 - Intent: Ensure both CLI and Python API resolve `profiles.toml` with the same precedence: `DSPY_PROFILES_PATH` > local discovery (CWD/parents) > global (`~/.dspy/profiles.toml`).
 - Change: In `ProfileLoader.__init__`, accept `config_path: Path | None = None`; when None, set `self.config_path = find_profiles_path()` (import from `dspy_profiles.config`). Keep `config_path` override behavior intact. In `core.profile()`/`core.lm()`, rely on loader’s default unless `config_path` is explicitly passed.
 - Files: `dspy_profiles/loader.py` (constructor), `dspy_profiles/core.py` (call sites pass-through only), `dspy_profiles/config.py` (no change in precedence implementation).
 - Tests: Add/adjust tests verifying API code uses env var when set, local file when present, else global fallback (mirror existing `tests/test_config.py` behavior, but for `ProfileLoader`/`profile()`/`lm()`).
 
-32) P0 — Fix documentation to state env > local > global
+32) P0 — Fix documentation to state env > local > global — DONE
 - Intent: Make the documented precedence match the implementation and common conventions.
 - Change: Update the “Configuration Hierarchy” sections to list: (1) Environment Variable `DSPY_PROFILES_PATH`, (2) Project-Specific File search in CWD and parents, (3) Global default `~/.dspy/profiles.toml`.
 - Files: `docs/index.md` and `docs/quickstart.md` (the hierarchy bullet lists).
 - Tests: Docs only.
 
-33) P1 — Add `which-config` CLI helper (supersedes item 30 and complements item 15)
+33) P1 — Add `which-config` CLI helper (supersedes item 30 and complements item 15) — DONE
 - Intent: Improve discoverability by showing the resolved path used by the tool.
 - Change: Implement `dspy-profiles which-config` that prints the resolved `profiles.toml` path from `find_profiles_path()`, and whether it exists. Prefer this over adding flags to `list`/`show` (item 15 becomes optional supplement).
 - Files: `dspy_profiles/cli.py` (new command), docs (`docs/cli-reference.md`, mention in Quickstart/Index as needed).
