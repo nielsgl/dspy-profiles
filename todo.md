@@ -74,10 +74,10 @@ This is a prioritized, actionable checklist derived from a thorough code and doc
 - Files: `docs/quickstart.md` (CLI section), `docs/cli-run-reference.md`
 - Tests: Add a CLI test asserting env var is set and visible to subprocess (already exists, keep).
 
-13) P1 — Document the `lm()` helper in API Reference
+13) P1 — Document the `lm()` helper in API Reference — DONE
 - Intent: Improve discoverability of runtime helpers.
-- Change: Add “Runtime helpers” section with examples and caching notes.
-- Files: `docs/api-reference.md`
+- Change: Re-exported `lm` at package root and added a “Runtime Helpers” section with examples.
+- Files: `dspy_profiles/__init__.py`, `docs/api-reference.md`
 - Tests: Docs only.
 
 14) P1 — Add a Troubleshooting page — DONE
@@ -92,10 +92,10 @@ This is a prioritized, actionable checklist derived from a thorough code and doc
 - Files: `dspy_profiles/cli.py`, new command or options; docs update
 - Tests: Unit test that prints the path; patch `find_profiles_path` in tests.
 
-16) P1 — Security guidance for secrets
+16) P1 — Security guidance for secrets — DONE
 - Intent: Encourage safe handling of API keys.
-- Change: Add docs section recommending env vars, `.env` + `import`, or optional `keyring` extra. Provide example flows.
-- Files: `docs/advanced-usage.md` (Security), link from Quickstart
+- Change: Added “Security Best Practices” section to Advanced Usage.
+- Files: `docs/advanced-usage.md`
 - Tests: Docs only.
 
 17) P1 — Make dotted-key normalization fully recursive

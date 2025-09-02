@@ -369,3 +369,16 @@ with profile("search"):
 
     # Your retrieval-aware DSPy modules can run here.
 ```
+
+---
+
+## Security Best Practices
+
+Profiles can contain secrets like API keys. Prefer environment variables where possible, and only store secrets in `profiles.toml` if you must.
+
+- Use environment variables:
+  - Set `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, etc. in your shell or CI.
+  - Or keep them in a local `.env` and import with `dspy-profiles import --from .env`.
+- Avoid committing secrets to version control. Keep `profiles.toml` out of repos if it contains secrets.
+- Optional: use the `keyring` extra to integrate with your OS keychain for secret storage (`pip install dspy-profiles[keyring]`).
+- For teams, consider using separate files per environment and `DSPY_PROFILES_PATH` to select the right one in CI.
