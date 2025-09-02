@@ -330,3 +330,42 @@ api_base = "http://localhost:11434"
 When you activate the `local_llama` profile, `dspy-profiles` will configure `dspy` to use your local model. This makes it incredibly easy to switch between local and remote models for development and testing.
 
 > For a full list of supported providers and their prefixes, please refer to the official [dspy documentation](https://dspy.ai/learn/programming/language_models/).
+
+---
+
+## Retrieval Model Configuration
+
+`dspy-profiles` supports configuring retrieval models (RMs) directly in your profile via the `rm` section. You can declare the retrieval class using `class_name` in several convenient forms, and provide any constructor kwargs your RM needs (like `url`).
+
+### Declaring the RM class
+
+Accepted values for `rm.class_name`:
+
+- Short DSPy class name: `"ColBERTv2"`
+- Fully qualified under DSPy: `"dspy.ColBERTv2"`
+- Fully qualified import path: `"my_package.retrieval.CustomRM"`
+
+If `class_name` is omitted, profiles may still specify `provider = "ColBERTv2"` as a fallback, which behaves similarly.
+
+### Example: ColBERTv2 via `class_name`
+
+```toml title="~/.dspy/profiles.toml"
+[search.rm]
+class_name = "ColBERTv2"
+url = "http://localhost:8893/api/search"
+```
+
+### Using the configured RM
+
+When you activate the profile (via the context manager, decorator, or `dspy-run`), the RM is instantiated and injected into the `dspy.context`, so any DSPy modules that make use of retrieval can access it through `dspy.settings.rm`.
+
+```python
+import dspy
+from dspy_profiles import profile
+
+with profile("search"):
+    # At this point, dspy.settings.rm is a configured ColBERTv2 instance
+    print("RM:", type(dspy.settings.rm).__name__, getattr(dspy.settings.rm, "kwargs", {}))
+
+    # Your retrieval-aware DSPy modules can run here.
+```
