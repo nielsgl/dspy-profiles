@@ -224,3 +224,28 @@ def test_profile_with_no_lm_in_config(profile_manager):
     module = MyModule()
     # The forward method will return the current_profile, which should be None
     assert module(question="test") is None
+
+
+def test_rm_instantiation_via_class_name(profile_manager, monkeypatch):
+    """Tests that RM can be instantiated via rm.class_name."""
+    import dspy
+
+    calls = {}
+
+    class DummyRM:
+        def __init__(self, **kwargs):
+            calls["kwargs"] = kwargs
+
+    # Replace dspy.ColBERTv2 with our dummy to capture instantiation
+    monkeypatch.setattr(dspy, "ColBERTv2", DummyRM, raising=True)
+
+    profile_manager.load.return_value["rm_profile"] = {
+        "rm": {"class_name": "ColBERTv2", "url": "http://localhost:8893/api/search"}
+    }
+
+    with profile("rm_profile", config_path=profile_manager.path):
+        # Enter and exit should instantiate the DummyRM
+        pass
+
+    assert "kwargs" in calls
+    assert calls["kwargs"]["url"].startswith("http")

@@ -32,7 +32,12 @@ class RetrievalModelSettings(BaseModel):
         model (str): The identifier for the retrieval model (e.g., 'colbertv2.0').
     """
 
-    model: str = Field(..., description="The retrieval model name, e.g., 'colbertv2.0'.")
+    model: str | None = Field(
+        None, description="Optional retrieval model name; alternatively use 'class_name'."
+    )
+    class_name: str | None = Field(
+        None, description="Optional fully-qualified or dspy class name, e.g., 'ColBERTv2'."
+    )
 
     model_config = ConfigDict(extra="allow")
 

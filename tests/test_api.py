@@ -165,3 +165,16 @@ def test_validate_profiles_file(tmp_path):
     invalid_file = tmp_path / "invalid.toml"
     invalid_file.write_text("this is not toml")
     assert validate_profiles_file(invalid_file) is not None
+
+
+def test_validate_profiles_file_rm_class_name(tmp_path):
+    """Validation should allow rm.class_name based configs."""
+    valid_rm = tmp_path / "valid_rm.toml"
+    valid_rm.write_text(
+        """
+[default.rm]
+class_name = "ColBERTv2"
+url = "http://localhost:8893/api/search"
+        """.strip()
+    )
+    assert validate_profiles_file(valid_rm) is None
