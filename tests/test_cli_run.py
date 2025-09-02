@@ -143,3 +143,78 @@ def test_dspy_run_app_no_profile_default_message():
     assert result.exit_code == 0
     assert "No profile specified. Using default profile: 'default'" in result.stdout
     assert "ok" in result.stdout
+
+
+@patch("dspy_profiles.commands.run.subprocess.run")
+def test_run_command_python_script_wrapped(mock_subprocess_run: MagicMock):
+    """A .py argument should be wrapped via python -c bootstrap before execution."""
+    mock_subprocess_run.return_value.returncode = 0
+    result = runner.invoke(
+        cli.app,
+        ["run", "--profile", "test_profile", "--", "script.py", "--foo"],
+    )
+    assert result.exit_code == 0
+    # Ensure subprocess was invoked with python -c
+    call_args, _ = mock_subprocess_run.call_args
+    assert call_args[0][1] == "-c"
+    # bootstrap must reference run_path('script.py')
+    assert "runpy.run_path('script.py'" in call_args[0][2]
+
+
+@patch("dspy_profiles.commands.run.subprocess.run")
+def test_run_verbose_echoes_command(mock_subprocess_run: MagicMock):
+    """Main CLI run with -V should print the resolved command before execution."""
+    mock_subprocess_run.return_value.returncode = 0
+    mock_subprocess_run.return_value.stdout = ""
+    mock_subprocess_run.return_value.stderr = ""
+    result = runner.invoke(
+        run_cli.app,
+        ["-V", "--profile", "p", "--", "echo", "hi"],
+    )
+    assert result.exit_code == 0
+    assert "Command: echo hi" in result.stdout
+
+
+@patch("dspy_profiles.commands.run.subprocess.run")
+def test_run_prints_stdout_and_stderr(mock_subprocess_run: MagicMock):
+    """Run should print both stdout and stderr from the subprocess."""
+    mock = MagicMock()
+    mock.returncode = 0
+    mock.stdout = "STDOUT\n"
+    mock.stderr = "STDERR\n"
+    mock_subprocess_run.return_value = mock
+    result = runner.invoke(cli.app, ["run", "--profile", "p", "--", "echo", "ignored"])
+    assert result.exit_code == 0
+    # Both streams are echoed
+    assert "STDOUT" in result.stdout
+    assert "STDERR" in result.stdout
+
+
+def test_dspy_run_no_command_provided():
+    """dspy-run without a command should error with a helpful message."""
+    runner_local = CliRunner()
+    result = runner_local.invoke(run_cli.app, ["--profile", "p"])  # no command
+    assert result.exit_code == 1
+    assert "No command provided" in result.stdout
+
+
+@patch("dspy_profiles.commands.run.subprocess.run")
+def test_prepare_command_detects_various_python_paths(mock_subprocess_run: MagicMock):
+    """Ensure detection works for '/usr/bin/python' and Windows 'python.exe'."""
+    mock_subprocess_run.return_value.returncode = 0
+    # POSIX path
+    res1 = runner.invoke(
+        run_cli.app, ["--profile", "p", "--", "/usr/bin/python", "-c", "print('x')"]
+    )
+    assert res1.exit_code == 0
+    call_args, _ = mock_subprocess_run.call_args
+    assert call_args[0][0].endswith("/usr/bin/python")
+
+    # Windows path
+    res2 = runner.invoke(
+        run_cli.app,
+        ["--profile", "p", "--", "C:\\Python\\python.exe", "-c", "print('x')"],
+    )
+    assert res2.exit_code == 0
+    call_args, _ = mock_subprocess_run.call_args
+    assert call_args[0][0].endswith("\\python.exe")

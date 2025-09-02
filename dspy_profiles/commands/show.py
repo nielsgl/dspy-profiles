@@ -31,7 +31,9 @@ def show_profile(
         def http_url_serializer(obj):
             if isinstance(obj, HttpUrl):
                 return str(obj)
-            raise TypeError(f"Object of type {obj.__class__.__name__} is not JSON serializable")
+            raise TypeError(
+                f"Object of type {obj.__class__.__name__} is not JSON serializable"
+            )  # pragma: no cover
 
         console.print(json.dumps(profile_data, indent=2, default=http_url_serializer))
     else:

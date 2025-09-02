@@ -76,6 +76,19 @@ def test_show_command(mock_api: MagicMock):
     assert json.loads(result.stdout) == mock_profile_data
 
 
+@patch("dspy_profiles.commands.list.api")
+def test_list_missing_api_fields(mock_api: MagicMock):
+    """List table should show Not set for missing api_base and api_key."""
+    mock_profiles = {
+        "p1": {"lm": {"model": "gpt-4"}},
+        "p2": {"lm": {"model": "gpt-3.5-turbo", "api_key": None}},
+    }
+    mock_api.list_profiles.return_value = mock_profiles
+    result = runner.invoke(cli.app, ["list"])
+    assert result.exit_code == 0
+    assert "Not set" in result.stdout
+
+
 @patch("dspy_profiles.commands.delete.api")
 def test_delete_command(mock_api: MagicMock):
     """Tests the delete command by mocking the API layer."""
@@ -182,6 +195,15 @@ def test_set_command(mock_api: MagicMock):
     result = runner.invoke(cli.app, ["set", "new_profile", "lm.temperature", "0.7"])
     assert result.exit_code == 0
     mock_api.update_profile.assert_called_with("new_profile", "lm.temperature", "0.7")
+
+
+@patch("dspy_profiles.commands.set.api")
+def test_set_command_error_path(mock_api: MagicMock):
+    """Tests that set prints an error and exits when API returns an error."""
+    mock_api.update_profile.return_value = (None, "failed to update")
+    result = runner.invoke(cli.app, ["set", "profile_x", "lm.model", "m"])
+    assert result.exit_code == 1
+    assert "Error: failed to update" in result.stdout
 
 
 @patch("dspy_profiles.commands.run.subprocess.run")

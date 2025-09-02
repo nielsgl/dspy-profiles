@@ -32,7 +32,9 @@ def diff_profiles(
     def http_url_serializer(obj):
         if isinstance(obj, HttpUrl):
             return str(obj)
-        raise TypeError(f"Object of type {obj.__class__.__name__} is not JSON serializable")
+        raise TypeError(
+            f"Object of type {obj.__class__.__name__} is not JSON serializable"
+        )  # pragma: no cover
 
     json_a = json.dumps(profile_a, indent=2, sort_keys=True, default=http_url_serializer)
     json_b = json.dumps(profile_b, indent=2, sort_keys=True, default=http_url_serializer)

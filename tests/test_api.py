@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 
 from dspy_profiles.api import (
+    create_profile,
     delete_profile,
     get_profile,
     import_profile,
@@ -156,6 +157,74 @@ def test_import_profile(mock_profile_manager, tmp_path):
     assert manager.get("imported_prof") is not None
 
 
+def test_import_profile_no_dspy_vars(mock_profile_manager, tmp_path):
+    """Importing a .env with no DSPY_ variables returns an error string."""
+    env_file = tmp_path / ".env"
+    env_file.write_text("FOO=bar\n")
+    err = import_profile("no_vars", env_file)
+    assert err is not None
+
+
+def test_import_profile_ignores_under_specified_keys(mock_profile_manager, tmp_path):
+    """Keys like DSPY_ONLY should be ignored (len(parts) < 2 path)."""
+    env_file = tmp_path / ".env"
+    env_file.write_text("DSPY_ONLY=foo\n")
+    err = import_profile("no_section", env_file)
+    # No properly formed DSPY_ vars; returns a warning string
+    assert err is not None
+
+
+def test_import_profile_already_exists(mock_profile_manager, tmp_path):
+    """If the profile exists, import_profile returns an exists error string."""
+    env_file = tmp_path / ".env"
+    env_file.write_text("DSPY_LM_MODEL=model1\n")
+    manager = mock_profile_manager(None)
+    manager.set("exists", {"lm": {"model": "m"}})
+    # import_profile uses mocked ProfileManager via fixture
+    err = import_profile("exists", env_file)
+    assert err is not None
+
+
+def test_import_profile_nested_rm_keys(mock_profile_manager, tmp_path):
+    """Multiple DSPY_RM_ keys should populate under the same rm section."""
+    env_file = tmp_path / ".env"
+    env_file.write_text(
+        "\n".join(
+            [
+                "DSPY_RM_URL=http://localhost:8080",
+                "DSPY_RM_INDEX_NAME=my-index",
+            ]
+        )
+    )
+    err = import_profile("with_rm", env_file)
+    assert err is None
+    manager = mock_profile_manager(None)
+    prof = manager.get("with_rm")
+    assert prof["rm"]["url"].startswith("http://")
+    assert prof["rm"]["index_name"] == "my-index"
+
+
+def test_create_profile_happy_path(monkeypatch):
+    """create_profile should pass data to ProfileManager.set."""
+    calls = {}
+
+    class PM:
+        def __init__(self, path):
+            pass
+
+        def set(self, name, data):
+            calls["name"] = name
+            calls["data"] = data
+
+    monkeypatch.setattr("dspy_profiles.api.ProfileManager", PM)
+    monkeypatch.setattr("dspy_profiles.api.find_profiles_path", lambda: Path("/tmp/x"))
+
+    payload = {"lm": {"model": "m"}}
+    create_profile("new", payload)
+    assert calls["name"] == "new"
+    assert calls["data"] == payload
+
+
 def test_validate_profiles_file(tmp_path):
     """Test validating a profiles.toml file."""
     valid_file = tmp_path / "valid.toml"
@@ -165,6 +234,11 @@ def test_validate_profiles_file(tmp_path):
     invalid_file = tmp_path / "invalid.toml"
     invalid_file.write_text("this is not toml")
     assert validate_profiles_file(invalid_file) is not None
+
+
+def test_validate_profiles_file_nonexistent(tmp_path):
+    missing = tmp_path / "missing.toml"
+    assert validate_profiles_file(missing) is not None
 
 
 def test_validate_profiles_file_rm_class_name(tmp_path):
