@@ -205,3 +205,8 @@ Decision Update: Config Discovery Precedence (env > local > global)
 - Change: Implement `dspy-profiles which-config` that prints the resolved `profiles.toml` path from `find_profiles_path()`, and whether it exists. Prefer this over adding flags to `list`/`show` (item 15 becomes optional supplement).
 - Files: `dspy_profiles/cli.py` (new command), docs (`docs/cli-reference.md`, mention in Quickstart/Index as needed).
 - Tests: Add CLI test asserting output matches a patched resolver and correct existence status.
+34) P1 — Link RM docs from Quickstart — DONE
+- Intent: Improve discoverability of RM configuration for new users.
+- Change: Added a tip in Quickstart linking to the “Retrieval Model Configuration” section.
+- Files: `docs/quickstart.md`
+- Tests: Docs only.
