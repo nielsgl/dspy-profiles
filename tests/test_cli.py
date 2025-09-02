@@ -224,6 +224,32 @@ def test_which_config_prints_resolved_path(tmp_path, monkeypatch):
     assert "Exists: yes" in result.stdout
 
 
+@patch("dspy_profiles.commands.list.api")
+def test_list_json_httpurl_serialization(mock_api: MagicMock):
+    """Ensure HttpUrl values are serialized to strings in --json."""
+    from pydantic import HttpUrl
+
+    mock_api.list_profiles.return_value = {
+        "test": {"lm": {"model": "gpt-4", "api_base": HttpUrl("http://localhost:8080")}}
+    }
+    result = runner.invoke(cli.app, ["list", "--json"])
+    assert result.exit_code == 0
+    assert "http://localhost:8080" in result.stdout
+
+
+@patch("dspy_profiles.commands.show.api")
+def test_show_json_httpurl_serialization(mock_api: MagicMock):
+    from pydantic import HttpUrl
+
+    mock_api.get_profile.return_value = (
+        {"lm": {"api_base": HttpUrl("http://localhost:9999")}},
+        None,
+    )
+    result = runner.invoke(cli.app, ["show", "test", "--json"])
+    assert result.exit_code == 0
+    assert "http://localhost:9999" in result.stdout
+
+
 @patch("dspy_profiles.commands.run.subprocess.run")
 def test_run_command_fails(mock_subprocess_run: MagicMock):
     """Tests the run command when the subprocess fails."""

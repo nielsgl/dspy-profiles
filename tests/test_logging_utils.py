@@ -22,3 +22,11 @@ def test_setup_logging_idempotent(monkeypatch):
     setup_logging(logging.INFO)
     # No extra handlers added
     assert len(root.handlers) == handler_count
+
+
+def test_compute_level_env_override(monkeypatch):
+    import logging
+
+    monkeypatch.setenv("DSPY_PROFILES_LOG_LEVEL", "ERROR")
+    assert compute_level(verbose=2, quiet=0, log_level=None) == logging.ERROR
+    monkeypatch.delenv("DSPY_PROFILES_LOG_LEVEL", raising=False)
