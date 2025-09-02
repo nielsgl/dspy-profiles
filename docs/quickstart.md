@@ -208,6 +208,10 @@ You can view the contents of any profile with the `show` command:
 
     You can declaratively configure retrieval models in your profiles using the `rm` section and `class_name` (e.g., `ColBERTv2`). See the guide: [Retrieval Model Configuration](advanced-usage.md#retrieval-model-configuration).
 
+!!! tip "Preview & Verbosity"
+
+    Use `dspy-run --dry-run` to preview the resolved command, profile, and config path without executing. Add `-V` to echo the final command when you run it for real.
+
 ## 6. Next Steps
 
 You've now learned the basics of `dspy-profiles`. From here, you can:

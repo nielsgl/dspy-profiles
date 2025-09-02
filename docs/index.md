@@ -63,7 +63,8 @@
     -   `dspy-profiles list`: See all your available profiles.
     -   `dspy-profiles show <name>`: View the full configuration of a profile.
     -   `dspy-profiles diff <a> <b>`: Compare two profiles.
-    -   `dspy-run ...`: The star of the show. Execute any script with a profile, no code changes needed.
+    -   `dspy-profiles which-config`: Show the resolved `profiles.toml` path.
+    -   `dspy-run ...`: The star of the show. Execute any script with a profile, no code changes needed. Use `--dry-run` to preview and `-V` to echo the command.
 
 === "Seamless Python API"
 
