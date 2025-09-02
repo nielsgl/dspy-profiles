@@ -194,6 +194,27 @@ def test_run_command_not_found(mock_subprocess_run: MagicMock):
         cli.app, ["run", "--profile", "test_profile", "--", "nonexistent_command"]
     )
     assert "Command not found" in result.stdout
+
+
+def test_which_config_prints_resolved_path(tmp_path, monkeypatch):
+    """Tests that which-config shows the resolver's path and existence."""
+    from pathlib import Path
+
+    fake_path = tmp_path / "profiles.toml"
+    # Initially doesn't exist
+    monkeypatch.setattr("dspy_profiles.cli.find_profiles_path", lambda: Path(fake_path))
+
+    result = runner.invoke(cli.app, ["which-config"])
+    assert result.exit_code == 0
+    assert str(fake_path) in result.stdout
+    assert "Exists: no" in result.stdout
+
+    # Create the file and try again
+    fake_path.touch()
+    result = runner.invoke(cli.app, ["which-config"])
+    assert result.exit_code == 0
+    assert str(fake_path) in result.stdout
+    assert "Exists: yes" in result.stdout
     assert result.exit_code == 1
 
 
