@@ -204,6 +204,10 @@ You can view the contents of any profile with the `show` command:
         $ uv run dspy-run --profile default my_script.py
         ```
 
+!!! tip "Retrieval Models"
+
+    You can declaratively configure retrieval models in your profiles using the `rm` section and `class_name` (e.g., `ColBERTv2`). See the guide: [Retrieval Model Configuration](advanced-usage.md#retrieval-model-configuration).
+
 ## 6. Next Steps
 
 You've now learned the basics of `dspy-profiles`. From here, you can:
