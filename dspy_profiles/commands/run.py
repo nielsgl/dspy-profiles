@@ -172,12 +172,29 @@ def run_command(
     ],
 ):
     """Executes a command with the specified profile's environment variables."""
-    command = ctx.args
+    # Support --dry-run passed through the main CLI (unknown option here)
+    raw_args = list(ctx.args)
+    dry_run = False
+    if "--dry-run" in raw_args:
+        raw_args.remove("--dry-run")
+        dry_run = True
+
+    command = raw_args
     if not command:
         console.print("[bold red]Error:[/] No command provided to run.")
         raise typer.Exit(1)
 
-    final_command, _ = _prepare_command(command, profile_name)
+    final_command, python_wrapped = _prepare_command(command, profile_name)
+
+    if dry_run:
+        config_path = find_profiles_path()
+        print(f"Profile: {profile_name}")
+        print(f"Config: {config_path}")
+        print(f"Python-wrapped: {'yes' if python_wrapped else 'no'}")
+        print(f"Env: DSPY_PROFILE={profile_name}")
+        print(f"Resolved command: {' '.join(final_command)}")
+        return
+
     _execute_with_profile(final_command, profile_name)
 
 
