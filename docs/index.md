@@ -62,7 +62,7 @@
     -   `dspy-profiles init`: Interactively create a new profile.
     -   `dspy-profiles list`: See all your available profiles.
     -   `dspy-profiles show <name>`: View the full configuration of a profile.
-    -   `dspy-profiles diff <a a> <b b>`: Compare two profiles.
+    -   `dspy-profiles diff <a> <b>`: Compare two profiles.
     -   `dspy-run ...`: The star of the show. Execute any script with a profile, no code changes needed.
 
 === "Seamless Python API"

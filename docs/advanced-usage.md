@@ -268,27 +268,27 @@ from dspy_profiles import profile, with_profile
 # The class decorator sets the default execution context for all calls to this module.
 @with_profile("default")
 class AdaptiveAgent(dspy.Module):
-def __init__(self):
-    super().__init__()
-    # This signature asks the model to rate its own confidence.
-    self.initial_attempt = dspy.ChainOfThought("question -> answer, confidence_score: int")
-    self.expert_attempt = dspy.ChainOfThought("question -> answer")
+    def __init__(self):
+        super().__init__()
+        # This signature asks the model to rate its own confidence.
+        self.initial_attempt = dspy.ChainOfThought("question -> answer, confidence_score: int")
+        self.expert_attempt = dspy.ChainOfThought("question -> answer")
 
-def forward(self, question):
-    # This call will use the "default" profile (gpt-4o-mini).
-    print("--- Attempting with default model... ---")
-    first_pass = self.initial_attempt(question=question)
+    def forward(self, question):
+        # This call will use the "default" profile (gpt-4o-mini).
+        print("--- Attempting with default model... ---")
+        first_pass = self.initial_attempt(question=question)
 
-    # If confidence is low, we escalate.
-    if first_pass.confidence_score < 7:
-        print("\\n--- Low confidence. Escalating to expert model... ---")
+        # If confidence is low, we escalate.
+        if first_pass.confidence_score < 7:
+            print("\n--- Low confidence. Escalating to expert model... ---")
 
-        # Use the context manager to temporarily switch to the expert profile.
-        with profile("expert_reasoner"):
-            expert_result = self.expert_attempt(question=question)
-            return dspy.Prediction(answer=expert_result.answer, escalated=True)
+            # Use the context manager to temporarily switch to the expert profile.
+            with profile("expert_reasoner"):
+                expert_result = self.expert_attempt(question=question)
+                return dspy.Prediction(answer=expert_result.answer, escalated=True)
 
-    return dspy.Prediction(answer=first_pass.answer, escalated=False)
+        return dspy.Prediction(answer=first_pass.answer, escalated=False)
 
 # --- Execution ---
 agent = AdaptiveAgent()

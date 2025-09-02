@@ -33,7 +33,7 @@ First, install the package from PyPI:
     <!--termynal: {title: zsh, prompt_literal_start: [$]}-->
 
     ```
-    $ uvx run dspy-profiles --version
+    $ uvx dspy-profiles --version
     dspy-profiles version: {{ version }}
     ```
 
@@ -175,6 +175,8 @@ You can view the contents of any profile with the `show` command:
     ```
 
     Instead of adding a `with profile(...)` block to your code, you can simply tell `dspy-run` to handle it for you.
+
+    Note: For Python scripts, `dspy-run` wraps execution in a profile context automatically. For non-Python commands (e.g., `pytest`, `echo`), it sets the `DSPY_PROFILE` environment variable so your process (or test harness) can activate the profile accordingly.
 
     === "uv tool (Recommended)"
         If you have installed `dspy-profiles` as a tool with `uv tool install dspy-profiles`, you can call it directly. This is the cleanest and most convenient method.

@@ -14,6 +14,7 @@ from dspy_profiles.commands.show import show_profile
 from dspy_profiles.commands.test import test_profile
 from dspy_profiles.commands.validate import validate_profiles
 from dspy_profiles.config import find_profiles_path
+from dspy_profiles.logging_utils import compute_level, setup_logging
 
 
 def version_callback(value: bool):
@@ -42,8 +43,30 @@ def root_callback(
         callback=version_callback,
         is_eager=True,
     ),
+    verbose: int = typer.Option(
+        0,
+        "--verbose",
+        "-V",
+        count=True,
+        help="Increase verbosity (-V for INFO, -VV for DEBUG).",
+    ),
+    quiet: int = typer.Option(
+        0,
+        "--quiet",
+        "-q",
+        count=True,
+        help="Decrease verbosity (once for ERROR).",
+    ),
+    log_level: str | None = typer.Option(
+        None,
+        "--log-level",
+        help="Explicit log level (DEBUG, INFO, WARNING, ERROR). Overrides -V/-q.",
+    ),
 ):
     """Manage DSPy profiles."""
+    # Configure logging once per CLI invocation
+    level = compute_level(verbose=verbose, quiet=quiet, log_level=log_level)
+    setup_logging(level)
 
 
 # Add command functions
