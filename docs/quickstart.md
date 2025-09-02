@@ -59,8 +59,8 @@ A **profile** is a named collection of settings for DSPy. It can define:
 
 Profiles are stored in a `profiles.toml` file. `dspy-profiles` locates this file with a clear, `git`-like precedence:
 
-1.  **Project-Specific File**: It searches for a `profiles.toml` in the current directory and its parent directories.
-2.  **Environment Variable**: You can set the `DSPY_PROFILES_PATH` environment variable to point to a specific configuration file.
+1.  **Environment Variable**: Set `DSPY_PROFILES_PATH` to point to a specific configuration file.
+2.  **Project-Specific File**: Search for a `profiles.toml` in the current directory and its parent directories.
 3.  **Global File**: If neither of the above is found, it falls back to the global default at `~/.dspy/profiles.toml`.
 
 By default, the `init` command will create or edit the global file.
