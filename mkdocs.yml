@@ -2,6 +2,8 @@ site_name: dspy-profiles
 repo_url: https://github.com/nielsgl/dspy-profiles
 repo_name: nielsgl/dspy-profiles
 edit_uri: tree/main/docs
+site_url: https://nielsgl.github.io/dspy-profiles/
+strict: true
 
 theme:
   name: material
@@ -32,6 +34,7 @@ nav:
   - 'User Guide':
     - 'Quickstart': quickstart.md
     - 'Advanced Usage': advanced-usage.md
+    - 'Examples': examples.md
     - 'Troubleshooting': troubleshooting.md
   - 'Reference':
     - 'CLI Reference': cli-reference.md
