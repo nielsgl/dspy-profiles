@@ -1,3 +1,18 @@
+## [Unreleased]
+
+### Added
+- New `dspy-run` command as the primary way to execute scripts with a profile (shorter, intuitive; adds `python` for `.py` files automatically)
+- Defaults to the "default" profile if no profile specified
+- `dspy-run --dry-run` to preview resolved profile, config path, environment, and final command
+- Verbosity flags across CLIs: `-V/--verbose`, `-q/--quiet`, `--log-level`
+- `which-config` command to print the resolved `profiles.toml` path
+
+### Fixed
+- `dspy-profiles run`/`dspy-run` correctly activate the specified profile in subprocess (fixes "No LM is loaded")
+- Data corruption bugs in `set` and `delete` commands
+- `delete default` now blocked; `diff` and `list`/`show` handle `HttpUrl` consistently
+- Quickstart button rendering fix on index
+
 ## 0.2.2 (2025-09-01)
 
 ### Fix

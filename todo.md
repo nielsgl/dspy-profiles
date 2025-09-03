@@ -140,28 +140,28 @@ This is a prioritized, actionable checklist derived from a thorough code and doc
 - Files: `docs/index.md`, `docs/quickstart.md`
 - Tests: Docs only.
 
-24) P1 — Add acceptance tests for precedence and defaults
+24) P1 — Add acceptance tests for precedence and defaults — DONE
 - Intent: Guard against regressions in `profile()` precedence.
 - Change: Add tests where env var and `force=True` interact; assert default fallback path still yields empty config but not a no-op.
 - Files: `tests/test_core.py` (new/modified tests)
 
-25) P1 — Add tests for validation normalization path
+25) P1 — Add tests for validation normalization path — DONE
 - Intent: Ensure `validate_profiles_file` matches loader behavior.
 - Change: New tests invoking `validate_profiles_file` on dotted-key TOML.
 - Files: `tests/test_api.py` or new test file
 
-26) P1 — Add tests for `lm(config_path=...)`
+26) P1 — Add tests for `lm(config_path=...)` — DONE
 - Intent: Ensure LM helper respects explicit file paths.
 - Change: Construct temp profiles.toml and assert `lm()` reads it.
 - Files: `tests/test_core.py`
 
-27) P1 — Update docs build and navigation
+27) P1 — Update docs build and navigation — DONE
 - Intent: Keep docs site coherent after new pages.
 - Change: Add `troubleshooting.md` to nav, update references, verify `mkdocs.yml` builds cleanly.
 - Files: `mkdocs.yml`, new doc
 - Tests: Run `mkdocs build` locally.
 
-28) P1 — Update CHANGELOG for upcoming release
+28) P1 — Update CHANGELOG for upcoming release — DONE
 - Intent: Communicate changes and fixes.
 - Change: Add entries under “Unreleased” or bump version section: core precedence fix, LM config handling, validation normalization, docs fixes, example fixes.
 - Files: `CHANGELOG.md`
