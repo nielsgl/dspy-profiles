@@ -2,7 +2,7 @@ The `dspy-run` command runs any command with a profile activated. For Python
 scripts, it wraps execution in a profile context; for non-Python commands, it
 sets the `DSPY_PROFILE` environment variable.
 
-Notes
+## Notes
 
 - Python scripts: automatically bootstraps `with profile(...)` around your script.
 - Non-Python commands: use `DSPY_PROFILE` inside your tool or test harness.
@@ -13,3 +13,4 @@ Notes
 ::: mkdocs-typer2
     :module: dspy_profiles.commands.run
     :name: dspy-run
+    :pretty: true

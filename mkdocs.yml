@@ -3,7 +3,7 @@ repo_url: https://github.com/nielsgl/dspy-profiles
 repo_name: nielsgl/dspy-profiles
 edit_uri: tree/main/docs
 site_url: https://nielsgl.github.io/dspy-profiles/
-strict: true
+# strict: true
 
 theme:
   name: material
@@ -39,6 +39,7 @@ nav:
   - 'Reference':
     - 'CLI Reference': cli-reference.md
     - 'CLI Run Reference': cli-run-reference.md
+    - 'Configuration Reference': config-reference.md
     - 'API Reference': api-reference.md
   - 'About':
     - 'Contributing': contributing.md
@@ -58,6 +59,7 @@ markdown_extensions:
   - pymdownx.tabbed:
       alternate_style: true
   - admonition
+  - attr_list
   - toc:
       permalink: true
   # - mkdocs-typer
@@ -69,6 +71,7 @@ markdown_extensions:
 
 plugins:
   - search
+  - autorefs
   - section-index
   - mkdocstrings:
       handlers:

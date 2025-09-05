@@ -2,6 +2,13 @@
 
 This guide will walk you through the basics of setting up and using `dspy-profiles`.
 
+## Requirements
+
+- Python 3.12+
+- DSPy 3.0+ (installed as a dependency where needed)
+
+If you plan to build docs or run tests locally, install the dev tools listed in `pyproject.toml` using `uv sync --all-extras --group dev`.
+
 ## 1. Installation
 
 First, install the package from PyPI:
@@ -64,6 +71,8 @@ Profiles are stored in a `profiles.toml` file. `dspy-profiles` locates this file
 3.  **Global File**: If neither of the above is found, it falls back to the global default at `~/.dspy/profiles.toml`.
 
 By default, the `init` command will create or edit the global file.
+
+Note: Environment variables are automatically loaded from a local `.env` file when present. You can also import a profile directly from a `.env` file using `dspy-profiles import --profile <name> --from .env`.
 
 ### Profile Inheritance
 
