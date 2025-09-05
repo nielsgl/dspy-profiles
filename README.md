@@ -18,6 +18,13 @@
 
 ---
 
+## Requirements
+
+- Python 3.12+
+- DSPy 3.0+ (installed alongside your project)
+
+---
+
 ## The Problem
 
 When working with DSPy, you often need to switch between different language models, retrieval models, and settings. Managing this directly in your code can be messy, error-prone, and insecure.
@@ -90,6 +97,12 @@ dspy-profiles --help
 ## Full Documentation
 
 For a complete guide, including advanced features and the full API and CLI reference, please visit the **[official documentation site](https://nielsgl.github.io/dspy-profiles/)**.
+
+Quick links:
+
+- CLI: https://nielsgl.github.io/dspy-profiles/cli-reference/
+- Run Command: https://nielsgl.github.io/dspy-profiles/cli-run-reference/
+- Configuration Reference: https://nielsgl.github.io/dspy-profiles/config-reference/
 
 ---
 
