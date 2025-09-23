@@ -103,6 +103,8 @@ model = "openai/gpt-4o-mini"
 lm.model = "openai/gpt-4o-mini"
 ```
 
+> Nested dotted keys are fully recursive, so paths like `retrieval.settings.timeout.limit` resolve to the expected nested dictionaries.
+
 ## Discovery & Precedence
 
 When resolving the configuration file, precedence is:

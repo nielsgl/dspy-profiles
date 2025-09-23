@@ -15,6 +15,11 @@ This page lists common issues and how to resolve them quickly.
   - `dspy-profiles list`
   - `dspy-profiles show <name>`
 
+## Circular inheritance detected
+- Cause: Profiles extend each other in a loop (e.g. `a` extends `b`, `b` extends `a`).
+- Fix: Break the cycle by pointing each profile to a common base or removing the conflicting `extends` entry.
+- Message: `Circular profile inheritance detected: a -> b -> a` (chain shows the offending profiles).
+
 ## Validation errors on profiles.toml
 - Cause: TOML syntax error or invalid structure.
 - Fix: Run validation and address reported issues.

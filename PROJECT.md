@@ -61,9 +61,9 @@ The order of precedence is as follows (from highest to lowest):
 *   **No Secrets in Config**: API keys and other secrets are **never** stored in the `profiles.toml` file. They are referenced via environment variable placeholders (e.g., `api_key = "${OPENAI_API_KEY}"`).
 *   **Environment Loading**: Secrets are loaded on-demand from environment variables.
 *   **`.env` File Support**: For local development, the library automatically detects and loads a `.env` file from the current working directory. System-level environment variables always override values in a `.env` file.
-*   **OS Keyring (Optional)**: For enhanced security, secrets can be stored in the operating system's native keyring. This functionality is an optional feature (`pip install dspy-profiles[keyring]`).
-    *   Secrets are referenced in profiles using a special syntax (e.g., `api_key = "keyring:service/username"`).
-    *   A secure CLI command, `dspy-profiles set-secret`, will prompt interactively for credentials to store them in the keyring without exposing them in shell history.
+*   **OS Keyring (Planned)**: Post-launch we intend to support storing secrets in the operating system's native keyring (`pip install dspy-profiles[keyring]`).
+    *   Proposed syntax: reference secrets with `api_key = "keyring:service/username"`.
+    *   Planned CLI: `dspy-profiles set-secret` to capture credentials without leaking them into shell history.
 
 ## Python API
 
@@ -172,19 +172,19 @@ dspy-profiles run --profile prod my_script.py
 
 ### Phase 3: Advanced Profile Features
 
-10. **Profile Composition**: Implement `extends` functionality for profile inheritance.
-11. **Inline Overrides**: Allow `with profile("name", key=value)` overrides.
-12. **Keyring Support**: Integrate optional OS keyring support for secrets.
-13. **Validation & Testing**: [x] Add `dspy profiles validate` and `dspy profiles test` commands.
+- [x] **Profile Composition**: Implemented `extends` inheritance with deep merging.
+- [x] **Inline Overrides**: Support for `with profile("name", key=value)` and decorator overrides.
+- [ ] **Keyring Support**: Optional OS keyring integration for secrets (post-launch).
+- [x] **Validation & Testing**: Added `dspy-profiles validate` and `dspy-profiles test` commands.
 
 ### Phase 4: Python API & Runtime Utilities
 
-14. **Runtime Introspection**: Create a `current_profile()` utility.
-15. **LM Shortcuts**: Implement `from dspy_profiles import lm`.
-16. **Profile-Aware Caching**: Isolate cache directories per profile.
+- [x] **Runtime Introspection**: `current_profile()` utility available.
+- [x] **LM Shortcuts**: `from dspy_profiles import lm` implemented with caching.
+- [x] **Profile-Aware Caching**: Separate cache directories per profile by default.
 
 ### Phase 5: Quality-of-Life and Final Touches
 
-17. **Interactive Wizard**: Enhance `dspy profiles init` into a full setup wizard.
-18. **Decorator Enhancements**: Add `async` and `kwargs` support to `@with_profile`.
-19. **Export/Import**: Implement `dspy profiles export` and `import`.
+- [x] **Interactive Wizard**: `dspy-profiles init` guides users through profile creation.
+- [x] **Decorator Enhancements**: `@with_profile` now supports async functions and inline kwargs.
+- [ ] **Export/Import**: Extend import/export tooling (import shipped, export pending).

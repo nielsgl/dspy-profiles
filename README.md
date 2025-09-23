@@ -103,6 +103,7 @@ Quick links:
 - CLI: https://nielsgl.github.io/dspy-profiles/cli-reference/
 - Run Command: https://nielsgl.github.io/dspy-profiles/cli-run-reference/
 - Configuration Reference: https://nielsgl.github.io/dspy-profiles/config-reference/
+- CI & Testing: https://nielsgl.github.io/dspy-profiles/ci-testing/
 
 ---
 

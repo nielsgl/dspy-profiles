@@ -10,7 +10,18 @@ sets the `DSPY_PROFILE` environment variable.
   command without executing it (helpful for CI and debugging).
 - `-V/--verbose`: prints the resolved command before executing.
 
-::: mkdocs-typer2
-    :module: dspy_profiles.commands.run
-    :name: dspy-run
-    :pretty: true
+```
+$ dspy-run --help
+Usage: dspy-run [OPTIONS] [COMMAND]... COMMAND [ARGS]...
+
+Run a command with a dspy-profile activated.
+
+Options:
+  --profile, -p TEXT  The profile to activate. Defaults to 'default'.
+  --verbose, -V       Increase verbosity (-V for INFO, -VV for DEBUG).
+  --quiet, -q         Decrease verbosity (once for ERROR).
+  --log-level TEXT    Explicit log level (DEBUG, INFO, WARNING, ERROR).
+  --dry-run           Print the resolved command, environment, and config
+                      path; then exit.
+  --help              Show this message and exit.
+```
