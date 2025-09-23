@@ -1,24 +1,23 @@
-# Release Readiness Plan
+# Post-0.3 Improvement Plan
 
-This plan captures the final checks required before cutting the first public release of `dspy-profiles`.
+Version 0.3.0 is out. This plan captures the quality bars and focus areas for the next iteration of `dspy-profiles`.
 
 ## Objectives
 
-1. Ship a developer-friendly CLI and Python API with accurate, discoverable documentation.
-2. Guarantee stable configuration behaviour (profiles, inheritance, overrides, async flows).
-3. Exceed 95% statement coverage with meaningful automated tests (unit, integration, CLI).
-4. Keep the release pipeline green: lint, tests, docs build, packaging.
+1. Keep the CLI and Python API rock solid while we iterate on post-launch feedback.
+2. Raise test coverage above 95% and lock the fail-under so regressions surface immediately.
+3. Ship the next wave of developer-experience polish (docs, shell completion, provider guides).
+4. Maintain a zero-regression policy on CI: lint, tests, docs, and packaging must stay green on every merge.
 
-## Release Gates
+## Quality Gates (for every merge to `main`)
 
-- ✅ Tests: `uv run pytest --cov` (target ≥95% coverage; fail-under currently 90%).
-- ✅ Lint: `uv run ruff check .` with zero warnings.
-- ✅ Docs: `uv run mkdocs build --strict` without broken references.
-- ✅ Packaging: `uv build` succeeds; optional dry-run publish to TestPyPI.
-- ✅ CI: GitHub Actions workflow mirrors the commands above and must pass on `main`.
-- 🔄 Backlog tracked in `todo.md` stays in sync with any follow-up items.
+- ✅ Tests: `uv run pytest --cov` (soon raising `fail_under` to 95 once CLI gaps are covered).
+- ✅ Lint: `uv run ruff check .`.
+- ✅ Docs: `uv run mkdocs build --strict`.
+- ✅ Packaging sanity: `uv build` on demand before release tags.
+- 🔄 Backlog in `todo.md` reflects new work or defers it explicitly.
 
-## Verification Strategy
+## Verification Strategy (unchanged)
 
 | Layer        | What we cover                                                         | Tooling                                  |
 |--------------|------------------------------------------------------------------------|-------------------------------------------|
@@ -35,7 +34,7 @@ This plan captures the final checks required before cutting the first public rel
 - CLI commands (`set`, `run`, `import`, `diff`, `test`) covering success and failure paths.
 - Cache directory behaviour and environment precedence (`DSPY_PROFILE`, discovery).
 
-## Manual Smoke Checklist
+## Manual Smoke Checklist (run before tagging a release)
 
 1. `dspy-profiles init --profile demo` (cancel + force flows).
 2. `dspy-profiles list/show/set/delete` with a temporary config.
@@ -43,15 +42,16 @@ This plan captures the final checks required before cutting the first public rel
 4. `dspy-profiles validate` and `dspy-profiles test demo` against a stub LM.
 5. Review docs site locally (`uv run mkdocs serve`) for copy accuracy.
 
-## Outstanding Enhancements (Post-Launch Candidates)
+## High-Priority Enhancements
 
 - Keyring-backed secrets management (`dspy-profiles set-secret`).
 - Shell completion instructions and auto-generation helpers.
 - Provider-specific guides (OpenAI, Anthropic, Ollama, local models).
 - `dspy-profiles export` command and import conflict resolution UX.
+- Raise coverage fail-under to 95% once CLI edge cases are exercised.
 
 ## Reporting
 
-- Coverage (`coverage.json`) uploaded from CI; fail builds if future coverage drops below target after ratcheting.
-- Release notes derived from `CHANGELOG.md` and docs “Changelog” page.
-- Any deviations or flaky tests must be captured in `todo.md` before tagging.
+- Coverage reports (`coverage.json`) uploaded from CI; ratchet the fail-under after coverage work lands.
+- Release notes sourced from `CHANGELOG.md` and the docs changelog page.
+- Any deviations or flaky tests must be captured in `todo.md` (or an issue) before tagging.

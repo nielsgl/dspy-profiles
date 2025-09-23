@@ -1,17 +1,16 @@
-# dspy-profiles: Remaining Work (Pre‑Launch)
+# dspy-profiles: Backlog
 
-Priorities: P0 = launch blocker, P1 = launch polish, P2 = post‑launch.
-Each item includes intent, proposed changes, affected files, and acceptance criteria.
-
-—
-
-P0 — Must Ship
-
-_No open P0 items. Keep this section empty once all release blockers land._
+Priorities: P0 = urgent, P1 = next-up, P2 = queued. Each item includes intent, proposed changes, affected files, and acceptance criteria.
 
 —
 
-P1 — Launch Polish
+P0 — Urgent
+
+_No open P0 items._
+
+—
+
+P1 — Next Up
 
 1) P1 — Raise coverage on CLI surfaces & tighten fail-under
 - Intent: Ratchet the coverage floor to ≥95% once remaining CLI edges are exercised.
@@ -22,18 +21,9 @@ P1 — Launch Polish
 - Acceptance: Coverage report shows ≥95% across modules; fail-under raised without flake regressions.
 - Commit: :white_check_mark: test(cli): cover run error paths and raise coverage gate
 
-2) P1 — Prep release communication
-- Intent: Ensure docs and changelog narrate the v0.3 launch story clearly.
-- Changes:
-  - Draft release notes from `CHANGELOG.md` and docs highlights.
-  - Update `README.md` badges/status once tag cut.
-- Files: `CHANGELOG.md`, `README.md`, release checklist.
-- Acceptance: Notes ready for GitHub release; README reflects production status.
-- Commit: :memo: docs: finalize release notes for v0.3 launch
-
 —
 
-P2 — Post‑Launch Enhancements
+P2 — Queued Enhancements
 
 3) P2 — Secrets: optional keyring integration
 - Intent: Support secure storage of secrets.
@@ -74,7 +64,7 @@ Completed (for reference)
 
 —
 
-Quick checklist to close the milestone
+Quality checklist (v0.3)
 - [x] Deep dotted-key normalization implemented and tested
 - [x] Precedence guard test present
 - [x] CI runs `mkdocs build --strict`

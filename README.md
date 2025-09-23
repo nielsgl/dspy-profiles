@@ -12,9 +12,13 @@
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Project Status](https://img.shields.io/badge/status-active-success.svg)](https://github.com/nielsgl/dspy-profiles/pulse)
 
-**A companion tool for the [DSPy framework](https://github.com/stanfordnlp/dspy) to manage configuration profiles, inspired by the AWS CLI.**
+**A companion tool for the [DSPy framework](https://github.com/stanfordnlp/dspy) to manage configuration profiles, inspired by the AWS CLI and Databricks.**
 
 `dspy-profiles` allows you to define, switch between, and manage different DSPy configurations for various environments (e.g., development, staging, production) without cluttering your code.
+
+---
+
+> 📘 **Read the full documentation at [nielsgl.github.io/dspy-profiles](https://nielsgl.github.io/dspy-profiles/)** for installation, tutorials, CLI reference, and examples.
 
 ---
 
@@ -94,16 +98,16 @@ dspy-profiles --help
 
 ---
 
-## Full Documentation
+## Documentation
 
-For a complete guide, including advanced features and the full API and CLI reference, please visit the **[official documentation site](https://nielsgl.github.io/dspy-profiles/)**.
+The documentation site contains tutorials, API/CLI references, examples, and release notes: **https://nielsgl.github.io/dspy-profiles/**
 
 Quick links:
 
-- CLI: https://nielsgl.github.io/dspy-profiles/cli-reference/
-- Run Command: https://nielsgl.github.io/dspy-profiles/cli-run-reference/
-- Configuration Reference: https://nielsgl.github.io/dspy-profiles/config-reference/
-- CI & Testing: https://nielsgl.github.io/dspy-profiles/ci-testing/
+- CLI overview: https://nielsgl.github.io/dspy-profiles/cli-reference/
+- `dspy-run` command: https://nielsgl.github.io/dspy-profiles/cli-run-reference/
+- Configuration reference: https://nielsgl.github.io/dspy-profiles/config-reference/
+- CI & testing guide: https://nielsgl.github.io/dspy-profiles/ci-testing/
 
 ---
 
