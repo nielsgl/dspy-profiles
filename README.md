@@ -123,7 +123,7 @@ The project is under active development. All core features are implemented and s
 -   **[x] Phase 5: Developer Experience Overhaul**: A major refactor of the CLI, API, and documentation for clarity, stability, and ease of use.
 -   **[x] Phase 6: QoL & Advanced Workflows**: An interactive `init` wizard, profile import/export, and async-friendly decorators.
 
-See the [PROJECT.md](PROJECT.md) file for detailed specifications.
+See the [Project Overview](docs/project-overview.md) for detailed specifications.
 
 ## Contributing
 
