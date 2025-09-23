@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 0.3.1 (2025-09-24)
+
 ### Docs
 
 - 🧭 Consolidated planning documents into a single `ROADMAP.md` and moved the project overview into the docs site.
