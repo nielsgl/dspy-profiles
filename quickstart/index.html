@@ -5,6 +5,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
+<link href="https://nielsgl.github.io/dspy-profiles/quickstart/" rel="canonical"/>
 <link href=".." rel="prev"/>
 <link href="../advanced-usage/" rel="next"/>
 <link href="../assets/images/favicon.png" rel="icon"/>
@@ -221,6 +222,13 @@
     </label>
 <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
 <li class="md-nav__item">
+<a class="md-nav__link" href="#requirements">
+<span class="md-ellipsis">
+      Requirements
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#1-installation">
 <span class="md-ellipsis">
       1. Installation
@@ -284,6 +292,30 @@
   </span>
 </a>
 </li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../ci-testing/">
+<span class="md-ellipsis">
+    CI &amp; Testing
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../examples/">
+<span class="md-ellipsis">
+    Examples
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../troubleshooting/">
+<span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+</a>
+</li>
 </ul>
 </nav>
 </li>
@@ -314,6 +346,14 @@
 <a class="md-nav__link" href="../cli-run-reference/">
 <span class="md-ellipsis">
     CLI Run Reference
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../config-reference/">
+<span class="md-ellipsis">
+    Configuration Reference
     
   </span>
 </a>
@@ -378,6 +418,13 @@
     </label>
 <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
 <li class="md-nav__item">
+<a class="md-nav__link" href="#requirements">
+<span class="md-ellipsis">
+      Requirements
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#1-installation">
 <span class="md-ellipsis">
       1. Installation
@@ -439,21 +486,27 @@
 <article class="md-content__inner md-typeset">
 <h1 id="quickstart">Quickstart<a class="headerlink" href="#quickstart" title="Permanent link">¶</a></h1>
 <p>This guide will walk you through the basics of setting up and using <code>dspy-profiles</code>.</p>
+<h2 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">¶</a></h2>
+<ul>
+<li>Python 3.12+</li>
+<li>DSPy 3.0+ (installed as a dependency where needed)</li>
+</ul>
+<p>If you plan to build docs or run tests locally, install the dev tools listed in <code>pyproject.toml</code> using <code>uv sync --all-extras --group dev</code>.</p>
 <h2 id="1-installation">1. Installation<a class="headerlink" href="#1-installation" title="Permanent link">¶</a></h2>
 <p>First, install the package from PyPI:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:4"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio"><input id="__tabbed_1_2" name="__tabbed_1" type="radio"><input id="__tabbed_1_3" name="__tabbed_1" type="radio"><input id="__tabbed_1_4" name="__tabbed_1" type="radio"><div class="tabbed-labels"><label for="__tabbed_1_1">uv</label><label for="__tabbed_1_2">pip</label><label for="__tabbed_1_3">uvx</label><label for="__tabbed_1_4">uv tool</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<p><div class="termy" data-termynal="" data-ty-macos="" data-ty-title="bash"><span data-ty="input" data-ty-prompt="$">uv add dspy-profiles</span><span data-ty="progress"></span><span data-ty="">Installed</span><span data-ty="input" data-ty-prompt="$">uv run dspy-profiles --version</span><span data-ty="">dspy-profiles version: 0.2.2<br/></span></div></p>
+<p><div class="termy" data-termynal="" data-ty-macos="" data-ty-title="bash"><span data-ty="input" data-ty-prompt="$">uv add dspy-profiles</span><span data-ty="progress"></span><span data-ty="">Installed</span><span data-ty="input" data-ty-prompt="$">uv run dspy-profiles --version</span><span data-ty="">dspy-profiles version: 0.3.0<br/></span></div></p>
 </div>
 <div class="tabbed-block">
 <p><div class="termy" data-termynal="" data-ty-macos="" data-ty-title="zsh"><span data-ty="input" data-ty-prompt="$">pip install dspy-profiles</span><span data-ty="progress"></span><span data-ty="">Installed<br/></span></div></p>
 </div>
 <div class="tabbed-block">
-<p><div class="termy" data-termynal="" data-ty-macos="" data-ty-title="zsh"><span data-ty="input" data-ty-prompt="$">uvx run dspy-profiles --version</span><span data-ty="">dspy-profiles version: 0.2.2<br/></span></div></p>
+<p><div class="termy" data-termynal="" data-ty-macos="" data-ty-title="zsh"><span data-ty="input" data-ty-prompt="$">uvx dspy-profiles --version</span><span data-ty="">dspy-profiles version: 0.3.0<br/></span></div></p>
 </div>
 <div class="tabbed-block">
-<p><div class="termy" data-termynal="" data-ty-macos="" data-ty-title="zsh"><span data-ty="input" data-ty-prompt="$">uv tool install dspy-profiles</span><span data-ty="progress"></span><span data-ty="">Installed</span><span data-ty="input" data-ty-prompt="$">dspy-profiles --version</span><span data-ty="">dspy-profiles version: 0.2.2<br/></span></div></p>
+<p><div class="termy" data-termynal="" data-ty-macos="" data-ty-title="zsh"><span data-ty="input" data-ty-prompt="$">uv tool install dspy-profiles</span><span data-ty="progress"></span><span data-ty="">Installed</span><span data-ty="input" data-ty-prompt="$">dspy-profiles --version</span><span data-ty="">dspy-profiles version: 0.3.0<br/></span></div></p>
 </div>
 </div>
 </input></input></input></input></div>
@@ -466,11 +519,12 @@
 </ul>
 <p>Profiles are stored in a <code>profiles.toml</code> file. <code>dspy-profiles</code> locates this file with a clear, <code>git</code>-like precedence:</p>
 <ol>
-<li><strong>Project-Specific File</strong>: It searches for a <code>profiles.toml</code> in the current directory and its parent directories.</li>
-<li><strong>Environment Variable</strong>: You can set the <code>DSPY_PROFILES_PATH</code> environment variable to point to a specific configuration file.</li>
+<li><strong>Environment Variable</strong>: Set <code>DSPY_PROFILES_PATH</code> to point to a specific configuration file.</li>
+<li><strong>Project-Specific File</strong>: Search for a <code>profiles.toml</code> in the current directory and its parent directories.</li>
 <li><strong>Global File</strong>: If neither of the above is found, it falls back to the global default at <code>~/.dspy/profiles.toml</code>.</li>
 </ol>
 <p>By default, the <code>init</code> command will create or edit the global file.</p>
+<p>Note: Environment variables are automatically loaded from a local <code>.env</code> file when present. You can also import a profile directly from a <code>.env</code> file using <code>dspy-profiles import --profile &lt;name&gt; --from .env</code>.</p>
 <h3 id="profile-inheritance">Profile Inheritance<a class="headerlink" href="#profile-inheritance" title="Permanent link">¶</a></h3>
 <p>Profiles can inherit and extend other profiles using the <code>extends</code> key. This allows you to create a base configuration and then create specialized variations without repeating yourself.</p>
 <p>For example, you could have a <code>base</code> profile with common settings, and <code>dev</code> and <code>prod</code> profiles that extend it but use different language models.</p>
@@ -554,6 +608,7 @@
 <a href="#__codelineno-2-7" id="__codelineno-2-7" name="__codelineno-2-7"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The capital of Spain is </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">answer</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
 </code></pre></div>
 <p>Instead of adding a <code>with profile(...)</code> block to your code, you can simply tell <code>dspy-run</code> to handle it for you.</p>
+<p>Note: For Python scripts, <code>dspy-run</code> wraps execution in a profile context automatically. For non-Python commands (e.g., <code>pytest</code>, <code>echo</code>), it sets the <code>DSPY_PROFILE</code> environment variable so your process (or test harness) can activate the profile accordingly.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="5:3"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio"/><input id="__tabbed_5_2" name="__tabbed_5" type="radio"/><input id="__tabbed_5_3" name="__tabbed_5" type="radio"/><div class="tabbed-labels"><label for="__tabbed_5_1">uv tool (Recommended)</label><label for="__tabbed_5_2">uvx (Ad-hoc)</label><label for="__tabbed_5_3">uv run (In a project)</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -573,6 +628,14 @@
 </div>
 </div>
 </input></div>
+<div class="admonition tip">
+<p class="admonition-title">Retrieval Models</p>
+<p>You can declaratively configure retrieval models in your profiles using the <code>rm</code> section and <code>class_name</code> (e.g., <code>ColBERTv2</code>). See the guide: <a href="../advanced-usage/#retrieval-model-configuration">Retrieval Model Configuration</a>.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Preview &amp; Verbosity</p>
+<p>Use <code>dspy-run --dry-run</code> to preview the resolved command, profile, and config path without executing. Add <code>-V</code> to echo the final command when you run it for real.</p>
+</div>
 <h2 id="6-next-steps">6. Next Steps<a class="headerlink" href="#6-next-steps" title="Permanent link">¶</a></h2>
 <p>You've now learned the basics of <code>dspy-profiles</code>. From here, you can:</p>
 <ul>

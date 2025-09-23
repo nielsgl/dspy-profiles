@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://nielsgl.github.io/dspy-profiles/cli-run-reference/">
+        <link rel="canonical" href="https://nielsgl.github.io/dspy-profiles/troubleshooting/">
       
       
-        <link rel="prev" href="../cli-reference/">
+        <link rel="prev" href="../examples/">
       
       
-        <link rel="next" href="../config-reference/">
+        <link rel="next" href="../cli-reference/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>CLI Run Reference - dspy-profiles</title>
+        <title>Troubleshooting - dspy-profiles</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#notes" class="md-skip">
+        <a href="#troubleshooting" class="md-skip">
           Skip to content
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              CLI Run Reference
+              Troubleshooting
             
           </span>
         </div>
@@ -242,10 +242,12 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
+      <li class="md-tabs__item md-tabs__item--active">
         <a href="../quickstart/" class="md-tabs__link">
           
   
@@ -262,12 +264,10 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
+      <li class="md-tabs__item">
         <a href="../cli-reference/" class="md-tabs__link">
           
   
@@ -371,28 +371,31 @@
       
   
   
+    
   
   
+  
     
     
     
     
+      
+        
+        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
-        
-          
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
             
   
   
@@ -405,7 +408,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             User Guide
@@ -508,10 +511,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../troubleshooting/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -522,6 +547,98 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#no-lm-loaded-no-lm-is-loaded" class="md-nav__link">
+    <span class="md-ellipsis">
+      No LM loaded / "No LM is loaded"
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#profile-not-found" class="md-nav__link">
+    <span class="md-ellipsis">
+      Profile not found
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#circular-inheritance-detected" class="md-nav__link">
+    <span class="md-ellipsis">
+      Circular inheritance detected
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validation-errors-on-profilestoml" class="md-nav__link">
+    <span class="md-ellipsis">
+      Validation errors on profiles.toml
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#which-profilestoml-is-being-used" class="md-nav__link">
+    <span class="md-ellipsis">
+      Which profiles.toml is being used?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dspy-run-didnt-seem-to-apply-my-profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      dspy-run didn’t seem to apply my profile
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#retrieval-model-could-not-be-imported-class-not-found" class="md-nav__link">
+    <span class="md-ellipsis">
+      Retrieval model could not be imported / class not found
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      See also
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -538,31 +655,28 @@
       
   
   
-    
   
   
-  
     
     
     
     
-      
-        
-        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
             
   
   
@@ -575,7 +689,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             Reference
@@ -609,30 +723,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    CLI Run Reference
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../cli-run-reference/" class="md-nav__link">
         
   
   
@@ -643,33 +737,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#notes" class="md-nav__link">
-    <span class="md-ellipsis">
-      Notes
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -843,6 +910,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -851,9 +920,72 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#notes" class="md-nav__link">
+  <a href="#no-lm-loaded-no-lm-is-loaded" class="md-nav__link">
     <span class="md-ellipsis">
-      Notes
+      No LM loaded / "No LM is loaded"
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#profile-not-found" class="md-nav__link">
+    <span class="md-ellipsis">
+      Profile not found
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#circular-inheritance-detected" class="md-nav__link">
+    <span class="md-ellipsis">
+      Circular inheritance detected
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validation-errors-on-profilestoml" class="md-nav__link">
+    <span class="md-ellipsis">
+      Validation errors on profiles.toml
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#which-profilestoml-is-being-used" class="md-nav__link">
+    <span class="md-ellipsis">
+      Which profiles.toml is being used?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dspy-run-didnt-seem-to-apply-my-profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      dspy-run didn’t seem to apply my profile
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#retrieval-model-could-not-be-imported-class-not-found" class="md-nav__link">
+    <span class="md-ellipsis">
+      Retrieval model could not be imported / class not found
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      See also
     </span>
   </a>
   
@@ -878,33 +1010,60 @@
   
 
 
-  <h1>CLI Run Reference</h1>
-
-<p>The <code>dspy-run</code> command runs any command with a profile activated. For Python
-scripts, it wraps execution in a profile context; for non-Python commands, it
-sets the <code>DSPY_PROFILE</code> environment variable.</p>
-<h2 id="notes">Notes<a class="headerlink" href="#notes" title="Permanent link">&para;</a></h2>
+<h1 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h1>
+<p>This page lists common issues and how to resolve them quickly.</p>
+<h2 id="no-lm-loaded-no-lm-is-loaded">No LM loaded / "No LM is loaded"<a class="headerlink" href="#no-lm-loaded-no-lm-is-loaded" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Python scripts: automatically bootstraps <code>with profile(...)</code> around your script.</li>
-<li>Non-Python commands: use <code>DSPY_PROFILE</code> inside your tool or test harness.</li>
-<li><code>--dry-run</code>: prints the resolved profile, config path, environment and final
-  command without executing it (helpful for CI and debugging).</li>
-<li><code>-V/--verbose</code>: prints the resolved command before executing.</li>
+<li>Cause: Active profile has no <code>lm</code> section, or no profile is active.</li>
+<li>Fix: Ensure your profile includes an <code>[&lt;name&gt;.lm]</code> section, and that you activate the profile using the context manager, decorator, or <code>dspy-run</code>.</li>
+<li>Tip: Use <code>dspy-profiles show &lt;name&gt;</code> to verify the profile content.</li>
 </ul>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>$ dspy-run --help
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Usage: dspy-run [OPTIONS] [COMMAND]... COMMAND [ARGS]...
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>Run a command with a dspy-profile activated.
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>Options:
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  --profile, -p TEXT  The profile to activate. Defaults to &#39;default&#39;.
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>  --verbose, -V       Increase verbosity (-V for INFO, -VV for DEBUG).
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>  --quiet, -q         Decrease verbosity (once for ERROR).
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>  --log-level TEXT    Explicit log level (DEBUG, INFO, WARNING, ERROR).
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>  --dry-run           Print the resolved command, environment, and config
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>                      path; then exit.
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>  --help              Show this message and exit.
-</code></pre></div>
+<h2 id="profile-not-found">Profile not found<a class="headerlink" href="#profile-not-found" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Cause: The profile name is misspelled or not present in the resolved <code>profiles.toml</code>.</li>
+<li>Fix: Check which file is being used, then list and show its profiles.</li>
+<li>Commands:</li>
+<li><code>dspy-profiles which-config</code></li>
+<li><code>dspy-profiles list</code></li>
+<li><code>dspy-profiles show &lt;name&gt;</code></li>
+</ul>
+<h2 id="circular-inheritance-detected">Circular inheritance detected<a class="headerlink" href="#circular-inheritance-detected" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Cause: Profiles extend each other in a loop (e.g. <code>a</code> extends <code>b</code>, <code>b</code> extends <code>a</code>).</li>
+<li>Fix: Break the cycle by pointing each profile to a common base or removing the conflicting <code>extends</code> entry.</li>
+<li>Message: <code>Circular profile inheritance detected: a -&gt; b -&gt; a</code> (chain shows the offending profiles).</li>
+</ul>
+<h2 id="validation-errors-on-profilestoml">Validation errors on profiles.toml<a class="headerlink" href="#validation-errors-on-profilestoml" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Cause: TOML syntax error or invalid structure.</li>
+<li>Fix: Run validation and address reported issues.</li>
+<li>Command: <code>dspy-profiles validate -c /path/to/profiles.toml</code></li>
+<li>Notes:</li>
+<li>Dotted keys are supported and normalized (e.g., <code>lm.model = "..."</code>).</li>
+<li>Retrieval config can use <code>rm.class_name = "ColBERTv2"</code> and arbitrary kwargs.</li>
+</ul>
+<h2 id="which-profilestoml-is-being-used">Which profiles.toml is being used?<a class="headerlink" href="#which-profilestoml-is-being-used" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Behavior (precedence): <code>DSPY_PROFILES_PATH</code> &gt; local discovery (CWD and parents) &gt; global <code>~/.dspy/profiles.toml</code>.</li>
+<li>Command: <code>dspy-profiles which-config</code></li>
+</ul>
+<h2 id="dspy-run-didnt-seem-to-apply-my-profile"><code>dspy-run</code> didn’t seem to apply my profile<a class="headerlink" href="#dspy-run-didnt-seem-to-apply-my-profile" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Explanation: For Python scripts, <code>dspy-run</code> wraps execution in a profile context. For non-Python commands (e.g., <code>pytest</code>), it sets the <code>DSPY_PROFILE</code> env var.</li>
+<li>Fix: Ensure your process or test harness respects <code>DSPY_PROFILE</code>, or run Python scripts through <code>dspy-run</code> directly.</li>
+</ul>
+<h2 id="retrieval-model-could-not-be-imported-class-not-found">Retrieval model could not be imported / class not found<a class="headerlink" href="#retrieval-model-could-not-be-imported-class-not-found" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Cause: <code>rm.class_name</code> points to a class that cannot be resolved.</li>
+<li>Fix:</li>
+<li>Use <code>ColBERTv2</code>, <code>dspy.ColBERTv2</code>, or a fully-qualified import path like <code>my_package.retrieval.CustomRM</code>.</li>
+<li>Ensure the package is installed and importable.</li>
+</ul>
+<h2 id="see-also">See also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Quickstart: installation and core concepts</li>
+<li>Advanced Usage: activation precedence, LM/RM configuration, and decorators</li>
+</ul>
 
 
 

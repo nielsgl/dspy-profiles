@@ -8,8 +8,10 @@
       
       
       
+        <link rel="canonical" href="https://nielsgl.github.io/dspy-profiles/cli-reference/">
       
-        <link rel="prev" href="../advanced-usage/">
+      
+        <link rel="prev" href="../troubleshooting/">
       
       
         <link rel="next" href="../cli-run-reference/">
@@ -446,6 +448,75 @@
   
   <span class="md-ellipsis">
     Advanced Usage
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ci-testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CI & Testing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Examples
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting
     
   </span>
   
@@ -1033,6 +1104,48 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#dspy-profiles-which-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      dspy-profiles which-config
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dspy-profiles which-config">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#usage_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arguments_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      Arguments
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#options_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      Options
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1060,6 +1173,29 @@
   
   <span class="md-ellipsis">
     CLI Run Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuration Reference
     
   </span>
   
@@ -1690,6 +1826,48 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#dspy-profiles-which-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      dspy-profiles which-config
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dspy-profiles which-config">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#usage_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arguments_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      Arguments
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#options_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      Options
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1714,6 +1892,10 @@
   
 
 
+<p>The <code>dspy-profiles</code> CLI manages profiles and includes global verbosity
+controls. Use <code>-V/--verbose</code> (once for INFO, twice for DEBUG), <code>-q/--quiet</code>
+for ERROR, or <code>--log-level</code> to set an explicit level. Use <code>which-config</code> to
+print the resolved <code>profiles.toml</code> path.</p>
 <div class="typer-docs">
 <h1 id="dspy-profiles">dspy-profiles<a class="headerlink" href="#dspy-profiles" title="Permanent link">&para;</a></h1>
 <p>A CLI for managing DSPy profiles.</p>
@@ -1735,6 +1917,24 @@
 <tr>
 <td><code>-v, --version</code></td>
 <td>Show the version and exit.</td>
+<td>No</td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>-V, --verbose</code></td>
+<td>Increase verbosity (-V for INFO, -VV for DEBUG).  [default: 0]</td>
+<td>No</td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>-q, --quiet</code></td>
+<td>Decrease verbosity (once for ERROR).  [default: 0]</td>
+<td>No</td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>--log-level TEXT</code></td>
+<td>Explicit log level (DEBUG, INFO, WARNING, ERROR). Overrides -V/-q.</td>
 <td>No</td>
 <td>-</td>
 </tr>
@@ -1794,6 +1994,10 @@
 <tr>
 <td><code>run</code></td>
 <td>Executes a command with the specified...</td>
+</tr>
+<tr>
+<td><code>which-config</code></td>
+<td>Print the resolved profiles.toml path and...</td>
 </tr>
 </tbody>
 </table>
@@ -2184,6 +2388,31 @@
 <td>Yes</td>
 <td>-</td>
 </tr>
+<tr>
+<td><code>--help</code></td>
+<td>Show this message and exit.</td>
+<td>No</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<h3 id="dspy-profiles-which-config"><code>dspy-profiles which-config</code><a class="headerlink" href="#dspy-profiles-which-config" title="Permanent link">&para;</a></h3>
+<p>Print the resolved profiles.toml path and whether it exists.</p>
+<h4 id="usage_11">Usage<a class="headerlink" href="#usage_11" title="Permanent link">&para;</a></h4>
+<p><code>dspy-profiles which-config [OPTIONS]</code></p>
+<h4 id="arguments_11">Arguments<a class="headerlink" href="#arguments_11" title="Permanent link">&para;</a></h4>
+<p><em>No arguments available</em></p>
+<h4 id="options_11">Options<a class="headerlink" href="#options_11" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Required</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
 <tr>
 <td><code>--help</code></td>
 <td>Show this message and exit.</td>

@@ -8,6 +8,8 @@
       
       
       
+        <link rel="canonical" href="https://nielsgl.github.io/dspy-profiles/">
+      
       
       
         <link rel="next" href="quickstart/">
@@ -523,6 +525,75 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ci-testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CI & Testing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Examples
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -611,6 +682,29 @@
   
   <span class="md-ellipsis">
     CLI Run Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="config-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuration Reference
     
   </span>
   
@@ -843,9 +937,9 @@
 <h2 id="configuration-hierarchy">Configuration Hierarchy<a class="headerlink" href="#configuration-hierarchy" title="Permanent link">&para;</a></h2>
 <p><code>dspy-profiles</code> locates your configuration file with a clear, <code>git</code>-like precedence:</p>
 <ol>
-<li><strong>Project-Specific File</strong>: It searches for a <code>profiles.toml</code> in the current directory and its parent directories. This allows you to commit project-specific profiles directly to your repository.</li>
-<li><strong>Environment Variable</strong>: You can set the <code>DSPY_PROFILES_PATH</code> environment variable to point to a specific configuration file.</li>
-<li><strong>Global File</strong>: If neither of the above is found, it falls back to the global default at <code>~/.dspy/profiles.toml</code>.</li>
+<li><strong>Environment Variable</strong>: Set <code>DSPY_PROFILES_PATH</code> to point to a specific configuration file.</li>
+<li><strong>Project-Specific File</strong>: Search for a <code>profiles.toml</code> in the current directory and its parent directories. This allows you to commit project-specific profiles directly to your repository.</li>
+<li><strong>Global File</strong>: If neither of the above is found, fall back to the global default at <code>~/.dspy/profiles.toml</code>.</li>
 </ol>
 <hr />
 <h2 id="key-features">Key Features<a class="headerlink" href="#key-features" title="Permanent link">&para;</a></h2>
@@ -875,8 +969,9 @@
 <li><code>dspy-profiles init</code>: Interactively create a new profile.</li>
 <li><code>dspy-profiles list</code>: See all your available profiles.</li>
 <li><code>dspy-profiles show &lt;name&gt;</code>: View the full configuration of a profile.</li>
-<li><code>dspy-profiles diff &lt;a a&gt; &lt;b b&gt;</code>: Compare two profiles.</li>
-<li><code>dspy-run ...</code>: The star of the show. Execute any script with a profile, no code changes needed.</li>
+<li><code>dspy-profiles diff &lt;a&gt; &lt;b&gt;</code>: Compare two profiles.</li>
+<li><code>dspy-profiles which-config</code>: Show the resolved <code>profiles.toml</code> path.</li>
+<li><code>dspy-run ...</code>: The star of the show. Execute any script with a profile, no code changes needed. Use <code>--dry-run</code> to preview and <code>-V</code> to echo the command.</li>
 </ul>
 </div>
 <div class="tabbed-block">

@@ -5,8 +5,9 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
+<link href="https://nielsgl.github.io/dspy-profiles/advanced-usage/" rel="canonical"/>
 <link href="../quickstart/" rel="prev"/>
-<link href="../cli-reference/" rel="next"/>
+<link href="../ci-testing/" rel="next"/>
 <link href="../assets/images/favicon.png" rel="icon"/>
 <meta content="mkdocs-1.6.1, mkdocs-material-9.6.18" name="generator"/>
 <title>Advanced Usage - dspy-profiles</title>
@@ -410,8 +411,71 @@
 </ul>
 </nav>
 </li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#retrieval-model-configuration">
+<span class="md-ellipsis">
+      Retrieval Model Configuration
+    </span>
+</a>
+<nav aria-label="Retrieval Model Configuration" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#declaring-the-rm-class">
+<span class="md-ellipsis">
+      Declaring the RM class
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#example-colbertv2-via-class_name">
+<span class="md-ellipsis">
+      Example: ColBERTv2 via class_name
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#using-the-configured-rm">
+<span class="md-ellipsis">
+      Using the configured RM
+    </span>
+</a>
+</li>
 </ul>
 </nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#security-best-practices">
+<span class="md-ellipsis">
+      Security Best Practices
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../ci-testing/">
+<span class="md-ellipsis">
+    CI &amp; Testing
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../examples/">
+<span class="md-ellipsis">
+    Examples
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../troubleshooting/">
+<span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+</a>
 </li>
 </ul>
 </nav>
@@ -443,6 +507,14 @@
 <a class="md-nav__link" href="../cli-run-reference/">
 <span class="md-ellipsis">
     CLI Run Reference
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../config-reference/">
+<span class="md-ellipsis">
+    Configuration Reference
     
   </span>
 </a>
@@ -688,6 +760,45 @@
 </ul>
 </nav>
 </li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#retrieval-model-configuration">
+<span class="md-ellipsis">
+      Retrieval Model Configuration
+    </span>
+</a>
+<nav aria-label="Retrieval Model Configuration" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#declaring-the-rm-class">
+<span class="md-ellipsis">
+      Declaring the RM class
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#example-colbertv2-via-class_name">
+<span class="md-ellipsis">
+      Example: ColBERTv2 via class_name
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#using-the-configured-rm">
+<span class="md-ellipsis">
+      Using the configured RM
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#security-best-practices">
+<span class="md-ellipsis">
+      Security Best Practices
+    </span>
+</a>
+</li>
 </ul>
 </nav>
 </div>
@@ -892,27 +1003,27 @@
 <a href="#__codelineno-11-4" id="__codelineno-11-4" name="__codelineno-11-4"></a><span class="c1"># The class decorator sets the default execution context for all calls to this module.</span>
 <a href="#__codelineno-11-5" id="__codelineno-11-5" name="__codelineno-11-5"></a><span class="nd">@with_profile</span><span class="p">(</span><span class="s2">"default"</span><span class="p">)</span>
 <a href="#__codelineno-11-6" id="__codelineno-11-6" name="__codelineno-11-6"></a><span class="k">class</span><span class="w"> </span><span class="nc">AdaptiveAgent</span><span class="p">(</span><span class="n">dspy</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<a href="#__codelineno-11-7" id="__codelineno-11-7" name="__codelineno-11-7"></a><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a href="#__codelineno-11-8" id="__codelineno-11-8" name="__codelineno-11-8"></a>    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-<a href="#__codelineno-11-9" id="__codelineno-11-9" name="__codelineno-11-9"></a>    <span class="c1"># This signature asks the model to rate its own confidence.</span>
-<a href="#__codelineno-11-10" id="__codelineno-11-10" name="__codelineno-11-10"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">initial_attempt</span> <span class="o">=</span> <span class="n">dspy</span><span class="o">.</span><span class="n">ChainOfThought</span><span class="p">(</span><span class="s2">"question -&gt; answer, confidence_score: int"</span><span class="p">)</span>
-<a href="#__codelineno-11-11" id="__codelineno-11-11" name="__codelineno-11-11"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">expert_attempt</span> <span class="o">=</span> <span class="n">dspy</span><span class="o">.</span><span class="n">ChainOfThought</span><span class="p">(</span><span class="s2">"question -&gt; answer"</span><span class="p">)</span>
+<a href="#__codelineno-11-7" id="__codelineno-11-7" name="__codelineno-11-7"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a href="#__codelineno-11-8" id="__codelineno-11-8" name="__codelineno-11-8"></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+<a href="#__codelineno-11-9" id="__codelineno-11-9" name="__codelineno-11-9"></a>        <span class="c1"># This signature asks the model to rate its own confidence.</span>
+<a href="#__codelineno-11-10" id="__codelineno-11-10" name="__codelineno-11-10"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">initial_attempt</span> <span class="o">=</span> <span class="n">dspy</span><span class="o">.</span><span class="n">ChainOfThought</span><span class="p">(</span><span class="s2">"question -&gt; answer, confidence_score: int"</span><span class="p">)</span>
+<a href="#__codelineno-11-11" id="__codelineno-11-11" name="__codelineno-11-11"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">expert_attempt</span> <span class="o">=</span> <span class="n">dspy</span><span class="o">.</span><span class="n">ChainOfThought</span><span class="p">(</span><span class="s2">"question -&gt; answer"</span><span class="p">)</span>
 <a href="#__codelineno-11-12" id="__codelineno-11-12" name="__codelineno-11-12"></a>
-<a href="#__codelineno-11-13" id="__codelineno-11-13" name="__codelineno-11-13"></a><span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">question</span><span class="p">):</span>
-<a href="#__codelineno-11-14" id="__codelineno-11-14" name="__codelineno-11-14"></a>    <span class="c1"># This call will use the "default" profile (gpt-4o-mini).</span>
-<a href="#__codelineno-11-15" id="__codelineno-11-15" name="__codelineno-11-15"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">"--- Attempting with default model... ---"</span><span class="p">)</span>
-<a href="#__codelineno-11-16" id="__codelineno-11-16" name="__codelineno-11-16"></a>    <span class="n">first_pass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_attempt</span><span class="p">(</span><span class="n">question</span><span class="o">=</span><span class="n">question</span><span class="p">)</span>
+<a href="#__codelineno-11-13" id="__codelineno-11-13" name="__codelineno-11-13"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">question</span><span class="p">):</span>
+<a href="#__codelineno-11-14" id="__codelineno-11-14" name="__codelineno-11-14"></a>        <span class="c1"># This call will use the "default" profile (gpt-4o-mini).</span>
+<a href="#__codelineno-11-15" id="__codelineno-11-15" name="__codelineno-11-15"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">"--- Attempting with default model... ---"</span><span class="p">)</span>
+<a href="#__codelineno-11-16" id="__codelineno-11-16" name="__codelineno-11-16"></a>        <span class="n">first_pass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_attempt</span><span class="p">(</span><span class="n">question</span><span class="o">=</span><span class="n">question</span><span class="p">)</span>
 <a href="#__codelineno-11-17" id="__codelineno-11-17" name="__codelineno-11-17"></a>
-<a href="#__codelineno-11-18" id="__codelineno-11-18" name="__codelineno-11-18"></a>    <span class="c1"># If confidence is low, we escalate.</span>
-<a href="#__codelineno-11-19" id="__codelineno-11-19" name="__codelineno-11-19"></a>    <span class="k">if</span> <span class="n">first_pass</span><span class="o">.</span><span class="n">confidence_score</span> <span class="o">&lt;</span> <span class="mi">7</span><span class="p">:</span>
-<a href="#__codelineno-11-20" id="__codelineno-11-20" name="__codelineno-11-20"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\\</span><span class="s2">n--- Low confidence. Escalating to expert model... ---"</span><span class="p">)</span>
+<a href="#__codelineno-11-18" id="__codelineno-11-18" name="__codelineno-11-18"></a>        <span class="c1"># If confidence is low, we escalate.</span>
+<a href="#__codelineno-11-19" id="__codelineno-11-19" name="__codelineno-11-19"></a>        <span class="k">if</span> <span class="n">first_pass</span><span class="o">.</span><span class="n">confidence_score</span> <span class="o">&lt;</span> <span class="mi">7</span><span class="p">:</span>
+<a href="#__codelineno-11-20" id="__codelineno-11-20" name="__codelineno-11-20"></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">--- Low confidence. Escalating to expert model... ---"</span><span class="p">)</span>
 <a href="#__codelineno-11-21" id="__codelineno-11-21" name="__codelineno-11-21"></a>
-<a href="#__codelineno-11-22" id="__codelineno-11-22" name="__codelineno-11-22"></a>        <span class="c1"># Use the context manager to temporarily switch to the expert profile.</span>
-<a href="#__codelineno-11-23" id="__codelineno-11-23" name="__codelineno-11-23"></a>        <span class="k">with</span> <span class="n">profile</span><span class="p">(</span><span class="s2">"expert_reasoner"</span><span class="p">):</span>
-<a href="#__codelineno-11-24" id="__codelineno-11-24" name="__codelineno-11-24"></a>            <span class="n">expert_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expert_attempt</span><span class="p">(</span><span class="n">question</span><span class="o">=</span><span class="n">question</span><span class="p">)</span>
-<a href="#__codelineno-11-25" id="__codelineno-11-25" name="__codelineno-11-25"></a>            <span class="k">return</span> <span class="n">dspy</span><span class="o">.</span><span class="n">Prediction</span><span class="p">(</span><span class="n">answer</span><span class="o">=</span><span class="n">expert_result</span><span class="o">.</span><span class="n">answer</span><span class="p">,</span> <span class="n">escalated</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a href="#__codelineno-11-22" id="__codelineno-11-22" name="__codelineno-11-22"></a>            <span class="c1"># Use the context manager to temporarily switch to the expert profile.</span>
+<a href="#__codelineno-11-23" id="__codelineno-11-23" name="__codelineno-11-23"></a>            <span class="k">with</span> <span class="n">profile</span><span class="p">(</span><span class="s2">"expert_reasoner"</span><span class="p">):</span>
+<a href="#__codelineno-11-24" id="__codelineno-11-24" name="__codelineno-11-24"></a>                <span class="n">expert_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expert_attempt</span><span class="p">(</span><span class="n">question</span><span class="o">=</span><span class="n">question</span><span class="p">)</span>
+<a href="#__codelineno-11-25" id="__codelineno-11-25" name="__codelineno-11-25"></a>                <span class="k">return</span> <span class="n">dspy</span><span class="o">.</span><span class="n">Prediction</span><span class="p">(</span><span class="n">answer</span><span class="o">=</span><span class="n">expert_result</span><span class="o">.</span><span class="n">answer</span><span class="p">,</span> <span class="n">escalated</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <a href="#__codelineno-11-26" id="__codelineno-11-26" name="__codelineno-11-26"></a>
-<a href="#__codelineno-11-27" id="__codelineno-11-27" name="__codelineno-11-27"></a>    <span class="k">return</span> <span class="n">dspy</span><span class="o">.</span><span class="n">Prediction</span><span class="p">(</span><span class="n">answer</span><span class="o">=</span><span class="n">first_pass</span><span class="o">.</span><span class="n">answer</span><span class="p">,</span> <span class="n">escalated</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<a href="#__codelineno-11-27" id="__codelineno-11-27" name="__codelineno-11-27"></a>        <span class="k">return</span> <span class="n">dspy</span><span class="o">.</span><span class="n">Prediction</span><span class="p">(</span><span class="n">answer</span><span class="o">=</span><span class="n">first_pass</span><span class="o">.</span><span class="n">answer</span><span class="p">,</span> <span class="n">escalated</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <a href="#__codelineno-11-28" id="__codelineno-11-28" name="__codelineno-11-28"></a>
 <a href="#__codelineno-11-29" id="__codelineno-11-29" name="__codelineno-11-29"></a><span class="c1"># --- Execution ---</span>
 <a href="#__codelineno-11-30" id="__codelineno-11-30" name="__codelineno-11-30"></a><span class="n">agent</span> <span class="o">=</span> <span class="n">AdaptiveAgent</span><span class="p">()</span>
@@ -943,6 +1054,44 @@
 <blockquote>
 <p>For a full list of supported providers and their prefixes, please refer to the official <a href="https://dspy.ai/learn/programming/language_models/">dspy documentation</a>.</p>
 </blockquote>
+<hr/>
+<h2 id="retrieval-model-configuration">Retrieval Model Configuration<a class="headerlink" href="#retrieval-model-configuration" title="Permanent link">¶</a></h2>
+<p><code>dspy-profiles</code> supports configuring retrieval models (RMs) directly in your profile via the <code>rm</code> section. You can declare the retrieval class using <code>class_name</code> in several convenient forms, and provide any constructor kwargs your RM needs (like <code>url</code>).</p>
+<h3 id="declaring-the-rm-class">Declaring the RM class<a class="headerlink" href="#declaring-the-rm-class" title="Permanent link">¶</a></h3>
+<p>Accepted values for <code>rm.class_name</code>:</p>
+<ul>
+<li>Short DSPy class name: <code>"ColBERTv2"</code></li>
+<li>Fully qualified under DSPy: <code>"dspy.ColBERTv2"</code></li>
+<li>Fully qualified import path: <code>"my_package.retrieval.CustomRM"</code></li>
+</ul>
+<p>If <code>class_name</code> is omitted, profiles may still specify <code>provider = "ColBERTv2"</code> as a fallback, which behaves similarly.</p>
+<h3 id="example-colbertv2-via-class_name">Example: ColBERTv2 via <code>class_name</code><a class="headerlink" href="#example-colbertv2-via-class_name" title="Permanent link">¶</a></h3>
+<div class="highlight"><span class="filename">~/.dspy/profiles.toml</span><pre><span></span><code><a href="#__codelineno-13-1" id="__codelineno-13-1" name="__codelineno-13-1"></a><span class="k">[search.rm]</span>
+<a href="#__codelineno-13-2" id="__codelineno-13-2" name="__codelineno-13-2"></a><span class="n">class_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ColBERTv2"</span>
+<a href="#__codelineno-13-3" id="__codelineno-13-3" name="__codelineno-13-3"></a><span class="n">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"http://localhost:8893/api/search"</span>
+</code></pre></div>
+<h3 id="using-the-configured-rm">Using the configured RM<a class="headerlink" href="#using-the-configured-rm" title="Permanent link">¶</a></h3>
+<p>When you activate the profile (via the context manager, decorator, or <code>dspy-run</code>), the RM is instantiated and injected into the <code>dspy.context</code>, so any DSPy modules that make use of retrieval can access it through <code>dspy.settings.rm</code>.</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-14-1" id="__codelineno-14-1" name="__codelineno-14-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">dspy</span>
+<a href="#__codelineno-14-2" id="__codelineno-14-2" name="__codelineno-14-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">dspy_profiles</span><span class="w"> </span><span class="kn">import</span> <span class="n">profile</span>
+<a href="#__codelineno-14-3" id="__codelineno-14-3" name="__codelineno-14-3"></a>
+<a href="#__codelineno-14-4" id="__codelineno-14-4" name="__codelineno-14-4"></a><span class="k">with</span> <span class="n">profile</span><span class="p">(</span><span class="s2">"search"</span><span class="p">):</span>
+<a href="#__codelineno-14-5" id="__codelineno-14-5" name="__codelineno-14-5"></a>    <span class="c1"># At this point, dspy.settings.rm is a configured ColBERTv2 instance</span>
+<a href="#__codelineno-14-6" id="__codelineno-14-6" name="__codelineno-14-6"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">"RM:"</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">dspy</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">rm</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dspy</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">rm</span><span class="p">,</span> <span class="s2">"kwargs"</span><span class="p">,</span> <span class="p">{}))</span>
+<a href="#__codelineno-14-7" id="__codelineno-14-7" name="__codelineno-14-7"></a>
+<a href="#__codelineno-14-8" id="__codelineno-14-8" name="__codelineno-14-8"></a>    <span class="c1"># Your retrieval-aware DSPy modules can run here.</span>
+</code></pre></div>
+<hr/>
+<h2 id="security-best-practices">Security Best Practices<a class="headerlink" href="#security-best-practices" title="Permanent link">¶</a></h2>
+<p>Profiles can contain secrets like API keys. Prefer environment variables where possible, and only store secrets in <code>profiles.toml</code> if you must.</p>
+<ul>
+<li>Use environment variables:</li>
+<li>Set <code>OPENAI_API_KEY</code>, <code>ANTHROPIC_API_KEY</code>, etc. in your shell or CI.</li>
+<li>Or keep them in a local <code>.env</code> and import with <code>dspy-profiles import --from .env</code>.</li>
+<li>Avoid committing secrets to version control. Keep <code>profiles.toml</code> out of repos if it contains secrets.</li>
+<li>Optional: use the <code>keyring</code> extra to integrate with your OS keychain for secret storage (<code>pip install dspy-profiles[keyring]</code>).</li>
+<li>For teams, consider using separate files per environment and <code>DSPY_PROFILES_PATH</code> to select the right one in CI.</li>
+</ul>
 </article>
 </div>
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
