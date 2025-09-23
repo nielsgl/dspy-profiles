@@ -12,7 +12,7 @@
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Project Status](https://img.shields.io/badge/status-active-success.svg)](https://github.com/nielsgl/dspy-profiles/pulse)
 
-**A companion tool for the [DSPy framework](https://github.com/stanfordnlp/dspy) to manage configuration profiles, inspired by the AWS CLI and Databricks.**
+**A companion tool for the [DSPy framework](https://dspy.ai) to manage configuration profiles, inspired by the AWS CLI and Databricks.**
 
 `dspy-profiles` allows you to define, switch between, and manage different DSPy configurations for various environments (e.g., development, staging, production) without cluttering your code.
 
