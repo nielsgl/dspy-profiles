@@ -16,7 +16,7 @@ The core goal is to move configuration out of the code and into a centralized, m
 
 ## Configuration (`~/.dspy/profiles.toml`)
 
-Profiles are stored in a TOML file located at `~/.dspy/profiles.toml` (or `$XDG_CONFIG_HOME/dspy/profiles.toml`). Each profile can have `lm`, `rm`, `settings`, and `provider` sections.
+Profiles are stored in a TOML file located at `~/.dspy/profiles.toml` (or `$XDG_CONFIG_HOME/dspy/profiles.toml`). Each profile can have `lm`, `rm`, and `settings` sections.
 
 ### Schema Principles
 
@@ -128,13 +128,20 @@ dspy-profiles delete staging
 dspy-profiles run --profile prod my_script.py
 ```
 
-### Additional CLI Commands
+### CLI Surface
+
+Available today:
 
 *   **`dspy-profiles diff <A> <B>`**: Provides a color-coded diff of two profiles to easily compare configurations.
 *   **`dspy-profiles import --from .env`**: Creates a new profile by mapping variables from a `.env` file using a `DSPY_` prefix convention (e.g., `DSPY_LM_MODEL` -> `lm.model`).
-*   **`dspy-profiles export/import`**: Allows users to share profile configurations. The `import` command will interactively prompt on conflicts (overwrite/skip/rename). `export` will scrub secrets by default.
 *   **`dspy-profiles validate`**: Lints the `profiles.toml` file, checking for schema errors, unknown keys, and deprecated keys (suggesting alternatives).
 *   **`dspy-profiles test <profile>`**: Performs a live dry run by loading a profile and attempting a minimal API call to verify connectivity and credentials.
+*   **`dspy-run` / `dspy-profiles run`**: Execute scripts or arbitrary commands under a profile, automatically handling Python bootstrap and environment propagation.
+
+Planned enhancements:
+
+*   **`dspy-profiles export`**: Share profile configurations with optional secret scrubbing and conflict prompts.
+*   **`dspy-profiles set-secret`**: Manage secrets in the OS keyring and reference them from profiles.
 
 ## Technical Design Notes
 
@@ -144,7 +151,7 @@ dspy-profiles run --profile prod my_script.py
 *   **Programmatic Shortcuts**:
     *   `lm("prod")`: A cached factory function to get a pre-configured `dspy.LM` instance. Can be disabled with `lm("prod", cached=False)`.
     *   `current_profile()`: An introspection utility to see the currently active profile and its resolved settings.
-*   **Notebook Integration**: A session-wide `%profile <name>` magic command will be available for interactive use in IPython/Jupyter.
+*   **Notebook Integration** *(future)*: Explore a session-wide `%profile <name>` magic command for IPython/Jupyter.
 
 ## Developer Experience & Publishing
 
@@ -187,4 +194,10 @@ dspy-profiles run --profile prod my_script.py
 
 - [x] **Interactive Wizard**: `dspy-profiles init` guides users through profile creation.
 - [x] **Decorator Enhancements**: `@with_profile` now supports async functions and inline kwargs.
-- [ ] **Export/Import**: Extend import/export tooling (import shipped, export pending).
+- [ ] **Export Command**: Extend import/export tooling (import shipped, export pending).
+
+### Phase 6: Developer Experience Backlog
+
+- [ ] Keyring-backed secret storage and `dspy-profiles set-secret` CLI.
+- [ ] Shell completion documentation/install helpers.
+- [ ] Provider-specific guides and recipes for popular LLM vendors (OpenAI, Anthropic, Ollama, etc.).
