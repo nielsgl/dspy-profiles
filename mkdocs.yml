@@ -43,6 +43,7 @@ nav:
     - 'Configuration Reference': config-reference.md
     - 'API Reference': api-reference.md
   - 'About':
+    - 'Project Overview': project-overview.md
     - 'Contributing': contributing.md
     - 'Changelog': changelog.md
 
