@@ -109,6 +109,7 @@ Quick links:
 - Configuration reference: https://nielsgl.github.io/dspy-profiles/config-reference/
 - CI & testing guide: https://nielsgl.github.io/dspy-profiles/ci-testing/
 - Project roadmap: [ROADMAP.md](ROADMAP.md)
+- Project overview: https://nielsgl.github.io/dspy-profiles/project-overview/
 
 ---
 
