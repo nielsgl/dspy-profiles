@@ -39,6 +39,8 @@ To Run This Example:
 3. Run the script from your terminal: `python examples/adaptive_agent.py`
 """
 
+import os
+
 import dspy
 
 import dspy_profiles
@@ -74,11 +76,9 @@ class AdaptiveAgent(dspy.Module):
         print(f"\n--- Running with task_type: {task_type or 'default'} ---")
 
         # Here's the dynamic part: we can pass a profile name directly to the
-        # forward pass. The decorator's logic will pick this up and use it
-        # to override the default profile for this specific call.
-        # Note: This requires a hypothetical modification to the decorator to
-        # handle runtime overrides passed this way. For now, we simulate it
-        # by calling the context manager directly.
+        # forward pass. The decorator keeps the base profile active, and we
+        # temporarily layer another profile on top using the context manager
+        # for this specific call.
         if task_type:
             with dspy_profiles.profile(task_type, force=True):
                 active_profile = dspy_profiles.current_profile()
@@ -117,9 +117,17 @@ def main():
     # After the calls, the global settings should be reset, proving the
     # context management of the decorator and context manager works correctly.
     print("\n--- After Execution ---")
-    print(f"Current global LM config: {dspy.settings.lm}")
-    assert dspy.settings.lm is None, "dspy.settings.lm should be reset after the calls."
-    print("Global settings have been successfully reset.")
+    active_profile = dspy_profiles.current_profile()
+    print(f"Current active profile: {active_profile.name if active_profile else None}")
+
+    runner_profile = os.getenv("DSPY_PROFILE")
+    if runner_profile:
+        assert active_profile and active_profile.name == runner_profile
+        print("Context correctly returned to the dspy-run profile.")
+    else:
+        assert active_profile is None
+        assert dspy.settings.lm is None
+        print("Global settings have been successfully reset.")
 
 
 if __name__ == "__main__":

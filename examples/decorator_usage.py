@@ -15,19 +15,19 @@ Key Concepts Illustrated:
   programs without boilerplate code.
 
 To Run This Example:
-1. Make sure you have dspy-profiles installed (`pip install .`).
+1. Make sure you have dspy-profiles installed (`uv add dspy-profiles`).
 2. Ensure you have a `profiles.toml` file with a "default" profile.
    Example:
 
    ```toml
    # ~/.dspy/profiles.toml
 
-   [default]
-   provider = "openai"
-   model = "gpt-3.5-turbo-instruct"
-   api_key = "YOUR_OPENAI_API_KEY" # Or set the OPENAI_API_KEY environment variable
+   [default.lm]
+   model = "openai/gpt-4o-mini"
+   api_key = "${OPENAI_API_KEY}"
+   temperature = 0.7
    ```
-3. Run the script from your terminal: `python examples/decorator_usage.py`
+3. Run the script from your terminal: `uv run python examples/decorator_usage.py`
 """
 
 import dspy
