@@ -1,17 +1,24 @@
-## [Unreleased]
+## 0.3.0 (2025-09-23)
 
-### Added
-- Async-aware `@with_profile` decorator so awaited coroutines stay inside the active profile context.
-- Dedicated “CI & Testing” guide covering `dspy-run`, environment configuration, and a GitHub Actions template.
+### Feat
 
-### Changed
-- Dotted-key normalization is now fully recursive, guaranteeing arbitrarily deep TOML profiles merge cleanly.
-- Profile inheritance resolution now detects multi-profile cycles and surfaces clear error messages.
-- Documentation and planning guides updated for the v0.3 launch checklist.
+- **cli**: ✨ pretty-print set command updates
+- **core**: ✨ keep with_profile active for async callables
+- **loader**: ♻️ detect profile inheritance cycles
+- **run**: ✨ add --dry-run to show resolved command/env/config; print command when verbose; refactor command prepare path
+- **rm**: ✨ support rm.class_name in profiles; instantiate via class_name with import fallback; make rm.model optional
+- **logging**: ✨ add configurable logging with -V/-q/--log-level; wire in both CLIs
+- **loader**: ✨ default config discovery env > local > global via find_profiles_path()
 
-### Fixed
-- Prevented runaway recursion when profiles form an inheritance loop.
-- Addressed stale notes around the `set` command output and deep merge behaviour in docs.
+### Fix
+
+- **examples**: 🐛 ensure scripts run under dspy-run
+- **cli**: 🧪 stabilize which-config output by using plain print (avoid rich wrapping)
+- **cli**: 🐛 keep which-config output on a single line and without rich markup for test stability
+
+### Refactor
+
+- **utils**: ♻️ support recursive dotted key normalization
 
 ## 0.2.2 (2025-09-01)
 
