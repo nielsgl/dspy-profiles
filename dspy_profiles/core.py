@@ -197,19 +197,47 @@ def with_profile(
 
     def decorator(target: Callable) -> Callable:
         # This is the wrapper that will be applied to the function or __call__ method.
+        profile_keys = {"lm", "rm", "settings"}
+
+        def _prepare_kwargs(kwargs: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
+            func_overrides = {k: v for k, v in kwargs.items() if k in profile_keys}
+            func_args = {k: v for k, v in kwargs.items() if k not in profile_keys}
+
+            base_overrides = dict(overrides)
+            if func_overrides:
+                if base_overrides:
+                    merged = _deep_merge(base_overrides, func_overrides)
+                else:
+                    merged = func_overrides
+            else:
+                merged = base_overrides
+
+            return merged or {}, func_args
+
         def profile_wrapper(func_to_wrap: Callable) -> Callable:
+            if inspect.iscoroutinefunction(func_to_wrap):
+
+                @wraps(func_to_wrap)
+                async def async_wrapper(*args, **kwargs):
+                    final_overrides, func_args = _prepare_kwargs(kwargs)
+                    with profile(
+                        profile_name, force=force, config_path=config_path, **final_overrides
+                    ):
+                        result = func_to_wrap(*args, **func_args)
+                        if inspect.isawaitable(result):
+                            return await result
+                        return result
+
+                return async_wrapper
+
             @wraps(func_to_wrap)
             def wrapper(*args, **kwargs):
-                final_overrides = overrides.copy()
-                profile_keys = {"lm", "rm", "settings"}
-                func_overrides = {k: v for k, v in kwargs.items() if k in profile_keys}
-                func_args = {k: v for k, v in kwargs.items() if k not in profile_keys}
-
-                if func_overrides:
-                    final_overrides = _deep_merge(final_overrides, func_overrides)
-
+                final_overrides, func_args = _prepare_kwargs(kwargs)
                 with profile(profile_name, force=force, config_path=config_path, **final_overrides):
-                    return func_to_wrap(*args, **func_args)
+                    result = func_to_wrap(*args, **func_args)
+                    if inspect.isawaitable(result):
+                        return result
+                    return result
 
             return wrapper
 

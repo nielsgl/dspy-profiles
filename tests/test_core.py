@@ -1,3 +1,4 @@
+import asyncio
 import os
 
 import dspy
@@ -92,6 +93,23 @@ def test_with_profile_decorator_force_overrides_env_var(profile_manager, manage_
         return dspy.settings.lm.model
 
     assert my_function() == "forced_model"
+
+
+def test_with_profile_async_function(profile_manager):
+    """Async functions should stay inside the activated profile until awaited."""
+
+    @with_profile("decorator_profile", config_path=profile_manager.path)
+    async def async_function():
+        active = current_profile()
+        assert active is not None
+        assert active.name == "decorator_profile"
+        await asyncio.sleep(0)
+        return dspy.settings.lm
+
+    lm_instance = asyncio.run(async_function())
+    assert isinstance(lm_instance, DummyLM)
+    assert lm_instance.model == "dummy"
+    assert current_profile() is None
 
 
 def test_current_profile_utility(profile_manager):
