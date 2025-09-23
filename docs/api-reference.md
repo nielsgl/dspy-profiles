@@ -2,6 +2,32 @@
 
 This section provides a detailed reference for the `dspy-profiles` Python API.
 
+## Usage Examples
+
+```python title="Activate a profile"
+from dspy_profiles import profile
+
+with profile("prod"):
+    predictor = dspy.Predict("question -> answer")
+    result = predictor(question="What is the latest build status?")
+```
+
+```python title="Decorate a function"
+from dspy_profiles import with_profile
+
+@with_profile("staging", settings={"cache_dir": ".cache/staging"})
+def run_evaluation(prompt: str) -> str:
+    return dspy.Predict("prompt -> answer")(prompt=prompt).answer
+```
+
+```python title="Inspect the active profile"
+from dspy_profiles import current_profile, profile
+
+with profile("analysis"):
+    active = current_profile()
+    assert active and active.name == "analysis"
+```
+
 ::: dspy_profiles
 
 ## Runtime Helpers

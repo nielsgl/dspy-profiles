@@ -1,17 +1,17 @@
 ## [Unreleased]
 
 ### Added
-- New `dspy-run` command as the primary way to execute scripts with a profile (shorter, intuitive; adds `python` for `.py` files automatically)
-- Defaults to the "default" profile if no profile specified
-- `dspy-run --dry-run` to preview resolved profile, config path, environment, and final command
-- Verbosity flags across CLIs: `-V/--verbose`, `-q/--quiet`, `--log-level`
-- `which-config` command to print the resolved `profiles.toml` path
+- Async-aware `@with_profile` decorator so awaited coroutines stay inside the active profile context.
+- Dedicated “CI & Testing” guide covering `dspy-run`, environment configuration, and a GitHub Actions template.
+
+### Changed
+- Dotted-key normalization is now fully recursive, guaranteeing arbitrarily deep TOML profiles merge cleanly.
+- Profile inheritance resolution now detects multi-profile cycles and surfaces clear error messages.
+- Documentation and planning guides updated for the v0.3 launch checklist.
 
 ### Fixed
-- `dspy-profiles run`/`dspy-run` correctly activate the specified profile in subprocess (fixes "No LM is loaded")
-- Data corruption bugs in `set` and `delete` commands
-- `delete default` now blocked; `diff` and `list`/`show` handle `HttpUrl` consistently
-- Quickstart button rendering fix on index
+- Prevented runaway recursion when profiles form an inheritance loop.
+- Addressed stale notes around the `set` command output and deep merge behaviour in docs.
 
 ## 0.2.2 (2025-09-01)
 
