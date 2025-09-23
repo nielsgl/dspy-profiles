@@ -38,10 +38,26 @@ def test_multi_level_inheritance(profile_manager):
 
 
 def test_circular_dependency_error(profile_manager):
-    """Tests that a circular 'extends' reference raises a ValueError."""
+    """Tests that a direct circular 'extends' reference raises a ValueError."""
     loader = ProfileLoader()
-    with pytest.raises(ValueError, match="cannot extend itself"):
+    with pytest.raises(ValueError, match="Circular profile inheritance detected"):
         loader.get_config("circular")
+
+
+def test_multi_profile_cycle_error(profile_manager):
+    """Detect cycles that span multiple profiles in the extends chain."""
+    profiles = profile_manager.load.return_value
+    profiles.update(
+        {
+            "cycle_a": {"extends": "cycle_b"},
+            "cycle_b": {"extends": "cycle_c"},
+            "cycle_c": {"extends": "cycle_a"},
+        }
+    )
+
+    loader = ProfileLoader()
+    with pytest.raises(ValueError, match="cycle_a -> cycle_b -> cycle_c -> cycle_a"):
+        loader.get_config("cycle_a")
 
 
 def test_context_manager_with_inline_overrides(profile_manager):

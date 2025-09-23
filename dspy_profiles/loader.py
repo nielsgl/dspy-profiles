@@ -67,34 +67,45 @@ class ProfileLoader:
         return merged
 
     def _load_profile_config(
-        self, profile_name: str, all_profiles: dict[str, Any] | None = None
+        self,
+        profile_name: str,
+        all_profiles: dict[str, Any] | None = None,
+        ancestry: list[str] | None = None,
     ) -> dict[str, Any]:
         """Loads and recursively merges the specified profile from the config."""
         if all_profiles is None:
             manager = ProfileManager(self.config_path)
             all_profiles = manager.load()
 
+        ancestry = ancestry or []
+        if profile_name in ancestry:
+            cycle = ancestry + [profile_name]
+            raise ValueError("Circular profile inheritance detected: " + " -> ".join(cycle))
+
+        ancestry.append(profile_name)
         if profile_name not in all_profiles:
             if profile_name == "default":
+                ancestry.pop()
                 return {}  # It's okay if the default profile doesn't exist
+            ancestry.pop()
             raise ValueError(f"Profile '{profile_name}' not found.")
 
         profile_data = all_profiles.get(profile_name, {})
         parent_name = profile_data.get("extends")
 
         if parent_name:
-            if parent_name == profile_name:
-                raise ValueError(f"Profile '{profile_name}' cannot extend itself.")
-
-            parent_config = self._load_profile_config(parent_name, all_profiles)
+            parent_config = self._load_profile_config(parent_name, all_profiles, ancestry)
 
             # Create copies to avoid modifying the original loaded profiles
             merged_config = parent_config.copy()
             child_config = profile_data.copy()
             child_config.pop("extends", None)  # Remove extends from child before merging
 
-            return self._deep_merge(merged_config, child_config)
+            resolved = self._deep_merge(merged_config, child_config)
+            ancestry.pop()
+            return resolved
 
+        ancestry.pop()
         return profile_data
 
     def get_config(self, profile_name: str | None = None) -> ResolvedProfile:
