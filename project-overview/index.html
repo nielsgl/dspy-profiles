@@ -1,0 +1,1580 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://nielsgl.github.io/dspy-profiles/project-overview/">
+      
+      
+        <link rel="prev" href="../api-reference/">
+      
+      
+        <link rel="next" href="../contributing/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>Project Overview - dspy-profiles</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../termynal.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#project-dspy-profiles" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="dspy-profiles" class="md-header__button md-logo" aria-label="dspy-profiles" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            dspy-profiles
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Project Overview
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/nielsgl/dspy-profiles" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    nielsgl/dspy-profiles
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Overview
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../quickstart/" class="md-tabs__link">
+          
+  
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../cli-reference/" class="md-tabs__link">
+          
+  
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
+          
+  
+  
+  About
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="dspy-profiles" class="md-nav__button md-logo" aria-label="dspy-profiles" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    dspy-profiles
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/nielsgl/dspy-profiles" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    nielsgl/dspy-profiles
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    User Guide
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            User Guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quickstart
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../advanced-usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Advanced Usage
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ci-testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CI & Testing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Examples
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLI Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli-run-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLI Run Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuration Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    About
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            About
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Project Overview
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Project Overview
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#vision" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vision
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      Core Features
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-dspyprofilestoml" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration (~/.dspy/profiles.toml)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration (~/.dspy/profiles.toml)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#schema-principles" class="md-nav__link">
+    <span class="md-ellipsis">
+      Schema Principles
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example Schema
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#activation-precedence-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      Activation Precedence Rules
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#secret-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      Secret Management
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#python-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      Python API
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Python API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#with-profile-context-manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      with profile(...) Context Manager
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with-profile-overrides-composition" class="md-nav__link">
+    <span class="md-ellipsis">
+      with profile(...) Overrides &amp; Composition
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with_profile-decorator" class="md-nav__link">
+    <span class="md-ellipsis">
+      @with_profile(...) Decorator
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#command-line-interface-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      Command-Line Interface (CLI)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Command-Line Interface (CLI)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli-surface" class="md-nav__link">
+    <span class="md-ellipsis">
+      CLI Surface
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#technical-design-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Technical Design Notes
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#developer-experience-publishing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Developer Experience &amp; Publishing
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#development-roadmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      Development Roadmap
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Development Roadmap">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-1-dx-packaging-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 1: DX, Packaging &amp; Documentation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-core-cli-env-var-enhancements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 2: Core CLI &amp; Env Var Enhancements
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-3-advanced-profile-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 3: Advanced Profile Features
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-4-python-api-runtime-utilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 4: Python API &amp; Runtime Utilities
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-5-quality-of-life-and-final-touches" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 5: Quality-of-Life and Final Touches
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-6-developer-experience-backlog" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 6: Developer Experience Backlog
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Contributing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Changelog
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#vision" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vision
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      Core Features
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-dspyprofilestoml" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration (~/.dspy/profiles.toml)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration (~/.dspy/profiles.toml)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#schema-principles" class="md-nav__link">
+    <span class="md-ellipsis">
+      Schema Principles
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example Schema
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#activation-precedence-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      Activation Precedence Rules
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#secret-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      Secret Management
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#python-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      Python API
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Python API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#with-profile-context-manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      with profile(...) Context Manager
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with-profile-overrides-composition" class="md-nav__link">
+    <span class="md-ellipsis">
+      with profile(...) Overrides &amp; Composition
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with_profile-decorator" class="md-nav__link">
+    <span class="md-ellipsis">
+      @with_profile(...) Decorator
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#command-line-interface-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      Command-Line Interface (CLI)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Command-Line Interface (CLI)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli-surface" class="md-nav__link">
+    <span class="md-ellipsis">
+      CLI Surface
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#technical-design-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Technical Design Notes
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#developer-experience-publishing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Developer Experience &amp; Publishing
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#development-roadmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      Development Roadmap
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Development Roadmap">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-1-dx-packaging-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 1: DX, Packaging &amp; Documentation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-core-cli-env-var-enhancements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 2: Core CLI &amp; Env Var Enhancements
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-3-advanced-profile-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 3: Advanced Profile Features
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-4-python-api-runtime-utilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 4: Python API &amp; Runtime Utilities
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-5-quality-of-life-and-final-touches" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 5: Quality-of-Life and Final Touches
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-6-developer-experience-backlog" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 6: Developer Experience Backlog
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="project-dspy-profiles">Project: dspy-profiles<a class="headerlink" href="#project-dspy-profiles" title="Permanent link">&para;</a></h1>
+<h2 id="vision">Vision<a class="headerlink" href="#vision" title="Permanent link">&para;</a></h2>
+<p><code>dspy-profiles</code> is a companion package for the DSPy framework that provides a robust and user-friendly system for managing configurations. Inspired by the AWS CLI, it allows developers to define, switch between, and manage different DSPy configurations (profiles) for various environments like development, staging, and production.</p>
+<p>The core goal is to move configuration out of the code and into a centralized, manageable location, improving reproducibility, security, and developer experience.</p>
+<h2 id="core-features">Core Features<a class="headerlink" href="#core-features" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Profile Management</strong>: A CLI and Python API to manage configuration profiles.</li>
+<li><strong>Context Managers &amp; Decorators</strong>: Pythonic <code>with profile(...)</code> and <code>@with_profile(...)</code> constructs to apply profiles in code.</li>
+<li><strong>CLI Integration</strong>: A <code>dspy-profiles</code> command-line interface for managing profiles and running scripts under a specific profile.</li>
+<li><strong>Secure Secret Management</strong>: Seamless integration with environment variables and <code>.env</code> files for API keys and other secrets.</li>
+<li><strong>Configuration Validation</strong>: Robust validation of profile schemas to prevent misconfiguration.</li>
+</ol>
+<h2 id="configuration-dspyprofilestoml">Configuration (<code>~/.dspy/profiles.toml</code>)<a class="headerlink" href="#configuration-dspyprofilestoml" title="Permanent link">&para;</a></h2>
+<p>Profiles are stored in a TOML file located at <code>~/.dspy/profiles.toml</code> (or <code>$XDG_CONFIG_HOME/dspy/profiles.toml</code>). Each profile can have <code>lm</code>, <code>rm</code>, and <code>settings</code> sections.</p>
+<h3 id="schema-principles">Schema Principles<a class="headerlink" href="#schema-principles" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Direct Mapping</strong>: All keys within the <code>lm</code>, <code>rm</code>, and <code>settings</code> sections are designed to be a direct mapping to the argument names in the corresponding DSPy classes (<code>dspy.LM</code>, <code>dspy.ColBERTv2</code>, etc.) and <code>dspy.settings</code>.</li>
+<li><strong>Optionality</strong>: All settings are optional. If a setting is omitted from a profile, the default value from DSPy will be used.</li>
+</ul>
+<h3 id="example-schema">Example Schema<a class="headerlink" href="#example-schema" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Default profile, used when no other is specified</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">[default.lm]</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;openai/gpt-4o-mini&quot;</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">temperature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.7</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">max_tokens</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4000</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="k">[default.settings]</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="n">track_usage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="c1"># Production profile</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="k">[prod.lm]</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;cohere/command-r&quot;</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="n">api_key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;${COHERE_API_KEY}&quot;</span><span class="w"> </span><span class="c1"># Example of secret injection</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="k">[prod.settings]</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="n">num_threads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">32</span>
+</code></pre></div>
+<h2 id="activation-precedence-rules">Activation Precedence Rules<a class="headerlink" href="#activation-precedence-rules" title="Permanent link">&para;</a></h2>
+<p>The system has a clearly defined hierarchy to determine which profile is active at any given time. This ensures predictable behavior across different usage patterns, from CI/CD environments to interactive notebooks.</p>
+<p>The order of precedence is as follows (from highest to lowest):</p>
+<ol>
+<li><strong>Forced Code (<code>with profile("Y", force=True)</code>)</strong>: An explicit call in the code with <code>force=True</code> has the absolute highest priority. It will override any other setting, including the environment variable. This is intended for developers who need to guarantee a specific profile is used in a block of code, regardless of the execution environment.</li>
+<li><strong>Environment Variable (<code>DSPY_PROFILE</code>)</strong>: If a profile is specified via the <code>DSPY_PROFILE</code> environment variable (e.g., set by <code>dspy-profiles run</code>), it will take precedence over any normal, non-forced code. This allows operators and CI/CD systems to enforce a specific configuration for a script run, ensuring operational safety.</li>
+<li><strong>Normal Code (<code>with profile("Y")</code>)</strong>: A standard, non-forced call to the context manager or decorator. This will only take effect if the <code>DSPY_PROFILE</code> environment variable is <em>not</em> set.</li>
+<li><strong>Default Profile</strong>: If none of the above are active, the system will look for and use the <code>[default]</code> profile in the <code>profiles.toml</code> file.</li>
+<li><strong>DSPy Library Defaults</strong>: If no profiles are configured or activated, the system falls back to the standard defaults of the underlying DSPy library.</li>
+</ol>
+<h2 id="secret-management">Secret Management<a class="headerlink" href="#secret-management" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>No Secrets in Config</strong>: API keys and other secrets are <strong>never</strong> stored in the <code>profiles.toml</code> file. They are referenced via environment variable placeholders (e.g., <code>api_key = "${OPENAI_API_KEY}"</code>).</li>
+<li><strong>Environment Loading</strong>: Secrets are loaded on-demand from environment variables.</li>
+<li><strong><code>.env</code> File Support</strong>: For local development, the library automatically detects and loads a <code>.env</code> file from the current working directory. System-level environment variables always override values in a <code>.env</code> file.</li>
+<li><strong>OS Keyring (Planned)</strong>: Post-launch we intend to support storing secrets in the operating system's native keyring (<code>pip install dspy-profiles[keyring]</code>).<ul>
+<li>Proposed syntax: reference secrets with <code>api_key = "keyring:service/username"</code>.</li>
+<li>Planned CLI: <code>dspy-profiles set-secret</code> to capture credentials without leaking them into shell history.</li>
+</ul>
+</li>
+</ul>
+<h2 id="python-api">Python API<a class="headerlink" href="#python-api" title="Permanent link">&para;</a></h2>
+<h3 id="with-profile-context-manager"><code>with profile(...)</code> Context Manager<a class="headerlink" href="#with-profile-context-manager" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">dspy_profiles</span><span class="w"> </span><span class="kn">import</span> <span class="n">profile</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># This block will use the &#39;prod&#39; profile</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="k">with</span> <span class="n">profile</span><span class="p">(</span><span class="s2">&quot;prod&quot;</span><span class="p">):</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="c1"># DSPy calls inside this block will use the &#39;prod&#39; configuration</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">response</span> <span class="o">=</span> <span class="n">dspy</span><span class="o">.</span><span class="n">Predict</span><span class="p">(</span><span class="s2">&quot;Question -&gt; Answer&quot;</span><span class="p">)(</span><span class="s2">&quot;What is the capital of France?&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="with-profile-overrides-composition"><code>with profile(...)</code> Overrides &amp; Composition<a class="headerlink" href="#with-profile-overrides-composition" title="Permanent link">&para;</a></h3>
+<p>The context manager supports powerful composition and override features:</p>
+<ul>
+<li><strong>Profile Extension</strong>: A profile can inherit from another using <code>extends = "basename"</code>. Settings are merged, with the extending profile's values taking precedence.</li>
+<li><strong>Inline Overrides</strong>: Provide keyword arguments to dynamically override settings for the scope of the block (e.g., <code>with profile("prod", temperature=0.9)</code>).</li>
+</ul>
+<p>The layering logic is applied in a specific order:
+1.  The base profile (from <code>extends</code>) is loaded.
+2.  The main profile's settings are merged on top.
+3.  The inline keyword arguments are applied as the final override.</p>
+<h3 id="with_profile-decorator"><code>@with_profile(...)</code> Decorator<a class="headerlink" href="#with_profile-decorator" title="Permanent link">&para;</a></h3>
+<p>The decorator supports the same override and composition features as the context manager.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">dspy_profiles</span><span class="w"> </span><span class="kn">import</span> <span class="n">with_profile</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="nd">@with_profile</span><span class="p">(</span><span class="s2">&quot;prod&quot;</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">my_async_dspy_function</span><span class="p">():</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="c1"># This function will run with the &#39;prod&#39; profile, but with temperature=0.9</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="o">...</span>
+</code></pre></div>
+*   <strong>Async Support</strong>: The decorator is designed to be fully compatible with <code>async def</code> functions.</p>
+<h2 id="command-line-interface-cli">Command-Line Interface (CLI)<a class="headerlink" href="#command-line-interface-cli" title="Permanent link">&para;</a></h2>
+<p>The CLI will be a standalone <code>dspy-profiles</code> command, built with <code>typer</code> and <code>rich</code>. The code will be structured to allow for easy integration into a parent <code>dspy</code> command in the future.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Initialize a new profile interactively</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>dspy-profiles<span class="w"> </span>init<span class="w"> </span>--profile<span class="w"> </span>prod
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Set a value in a profile</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>dspy-profiles<span class="w"> </span><span class="nb">set</span><span class="w"> </span>--profile<span class="w"> </span>prod<span class="w"> </span>lm.model<span class="o">=</span>openai/gpt-4o
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># List all available profiles</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>dspy-profiles<span class="w"> </span>list
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="c1"># Show the configuration of a specific profile</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>dspy-profiles<span class="w"> </span>show<span class="w"> </span>prod
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="c1"># Delete a profile</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>dspy-profiles<span class="w"> </span>delete<span class="w"> </span>staging
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="c1"># Run a Python script under a specific profile</span>
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>dspy-profiles<span class="w"> </span>run<span class="w"> </span>--profile<span class="w"> </span>prod<span class="w"> </span>my_script.py
+</code></pre></div>
+<h3 id="cli-surface">CLI Surface<a class="headerlink" href="#cli-surface" title="Permanent link">&para;</a></h3>
+<p>Available today:</p>
+<ul>
+<li><strong><code>dspy-profiles diff &lt;A&gt; &lt;B&gt;</code></strong>: Provides a color-coded diff of two profiles to easily compare configurations.</li>
+<li><strong><code>dspy-profiles import --from .env</code></strong>: Creates a new profile by mapping variables from a <code>.env</code> file using a <code>DSPY_</code> prefix convention (e.g., <code>DSPY_LM_MODEL</code> -&gt; <code>lm.model</code>).</li>
+<li><strong><code>dspy-profiles validate</code></strong>: Lints the <code>profiles.toml</code> file, checking for schema errors, unknown keys, and deprecated keys (suggesting alternatives).</li>
+<li><strong><code>dspy-profiles test &lt;profile&gt;</code></strong>: Performs a live dry run by loading a profile and attempting a minimal API call to verify connectivity and credentials.</li>
+<li><strong><code>dspy-run</code> / <code>dspy-profiles run</code></strong>: Execute scripts or arbitrary commands under a profile, automatically handling Python bootstrap and environment propagation.</li>
+</ul>
+<p>Planned enhancements:</p>
+<ul>
+<li><strong><code>dspy-profiles export</code></strong>: Share profile configurations with optional secret scrubbing and conflict prompts.</li>
+<li><strong><code>dspy-profiles set-secret</code></strong>: Manage secrets in the OS keyring and reference them from profiles.</li>
+</ul>
+<h2 id="technical-design-notes">Technical Design Notes<a class="headerlink" href="#technical-design-notes" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Concurrency</strong>: The <code>with profile(...)</code> context manager will be a wrapper around <code>dspy.context</code>, making it safe for use in multi-threaded and async applications by leveraging <code>contextvars</code>.</li>
+<li><strong><code>dspy-profiles run</code> Implementation</strong>: This command will set the <code>DSPY_PROFILE</code> environment variable and execute the user's script in a subprocess, enabling the precedence rules described above.</li>
+<li><strong>Schema Validation</strong>: Pydantic models will be used to validate the structure of <code>profiles.toml</code>.</li>
+<li><strong>Programmatic Shortcuts</strong>:<ul>
+<li><code>lm("prod")</code>: A cached factory function to get a pre-configured <code>dspy.LM</code> instance. Can be disabled with <code>lm("prod", cached=False)</code>.</li>
+<li><code>current_profile()</code>: An introspection utility to see the currently active profile and its resolved settings.</li>
+</ul>
+</li>
+<li><strong>Notebook Integration</strong> <em>(future)</em>: Explore a session-wide <code>%profile &lt;name&gt;</code> magic command for IPython/Jupyter.</li>
+</ul>
+<h2 id="developer-experience-publishing">Developer Experience &amp; Publishing<a class="headerlink" href="#developer-experience-publishing" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>PyPI Packaging</strong>: The project will be packaged and distributed via PyPI, making it easily installable with <code>pip</code>.</li>
+<li><strong>Automated Publishing</strong>: A GitHub Actions workflow will automate the process of building and publishing the package to PyPI whenever a new version tag is pushed.</li>
+<li><strong>Official Documentation</strong>: A documentation site will be built using MkDocs with the Material theme, providing comprehensive guides, tutorials, and API references. It will be hosted on GitHub Pages.</li>
+<li><strong>Contribution-Friendly</strong>: With clear documentation, automated testing, and a well-defined project structure, the goal is to make it easy for the community to contribute.</li>
+</ul>
+<h2 id="development-roadmap">Development Roadmap<a class="headerlink" href="#development-roadmap" title="Permanent link">&para;</a></h2>
+<h3 id="phase-1-dx-packaging-documentation">Phase 1: DX, Packaging &amp; Documentation<a class="headerlink" href="#phase-1-dx-packaging-documentation" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Packaging</strong>: [x] Configure <code>pyproject.toml</code> for PyPI publishing.</li>
+<li><strong>CI/CD</strong>: [x] Implement a GitHub Actions workflow for automated publishing to PyPI.</li>
+<li><strong>Documentation Setup</strong>: [x] Add and configure MkDocs with the Material theme.</li>
+<li><strong>Content Scaffolding</strong>: [x] Create the initial documentation structure and placeholder pages.</li>
+<li><strong>Project Vision Alignment</strong>: [x] Update <code>README.md</code> and <code>PROJECT.md</code> to reflect the full scope.</li>
+</ol>
+<h3 id="phase-2-core-cli-env-var-enhancements">Phase 2: Core CLI &amp; Env Var Enhancements<a class="headerlink" href="#phase-2-core-cli-env-var-enhancements" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong><code>.env</code> Import</strong>: [x] Implement <code>dspy profiles import --from .env</code>.</li>
+<li><strong>Profile Diffing</strong>: [x] Implement <code>dspy profiles diff &lt;profile_a&gt; &lt;profile_b&gt;</code>.</li>
+<li><strong><code>DSPY_PROFILE</code> Env Var</strong>: [x] Add support for the <code>DSPY_PROFILE</code> environment variable.</li>
+<li><strong><code>run</code> Command</strong>: [x] Enhance the <code>dspy-profiles run</code> command.</li>
+</ol>
+<h3 id="phase-3-advanced-profile-features">Phase 3: Advanced Profile Features<a class="headerlink" href="#phase-3-advanced-profile-features" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[x] <strong>Profile Composition</strong>: Implemented <code>extends</code> inheritance with deep merging.</li>
+<li>[x] <strong>Inline Overrides</strong>: Support for <code>with profile("name", key=value)</code> and decorator overrides.</li>
+<li>[ ] <strong>Keyring Support</strong>: Optional OS keyring integration for secrets (post-launch).</li>
+<li>[x] <strong>Validation &amp; Testing</strong>: Added <code>dspy-profiles validate</code> and <code>dspy-profiles test</code> commands.</li>
+</ul>
+<h3 id="phase-4-python-api-runtime-utilities">Phase 4: Python API &amp; Runtime Utilities<a class="headerlink" href="#phase-4-python-api-runtime-utilities" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[x] <strong>Runtime Introspection</strong>: <code>current_profile()</code> utility available.</li>
+<li>[x] <strong>LM Shortcuts</strong>: <code>from dspy_profiles import lm</code> implemented with caching.</li>
+<li>[x] <strong>Profile-Aware Caching</strong>: Separate cache directories per profile by default.</li>
+</ul>
+<h3 id="phase-5-quality-of-life-and-final-touches">Phase 5: Quality-of-Life and Final Touches<a class="headerlink" href="#phase-5-quality-of-life-and-final-touches" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[x] <strong>Interactive Wizard</strong>: <code>dspy-profiles init</code> guides users through profile creation.</li>
+<li>[x] <strong>Decorator Enhancements</strong>: <code>@with_profile</code> now supports async functions and inline kwargs.</li>
+<li>[ ] <strong>Export Command</strong>: Extend import/export tooling (import shipped, export pending).</li>
+</ul>
+<h3 id="phase-6-developer-experience-backlog">Phase 6: Developer Experience Backlog<a class="headerlink" href="#phase-6-developer-experience-backlog" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] Keyring-backed secret storage and <code>dspy-profiles set-secret</code> CLI.</li>
+<li>[ ] Shell completion documentation/install helpers.</li>
+<li>[ ] Provider-specific guides and recipes for popular LLM vendors (OpenAI, Anthropic, Ollama, etc.).</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy", "content.code.annotate", "content.code.select", "navigation.tabs", "navigation.top", "navigation.sections", "navigation.expand", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+        <script src="../termynal.js"></script>
+      
+    
+  </body>
+</html>
