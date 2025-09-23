@@ -2,8 +2,8 @@
 
 from typing import Annotated
 
-import rich
 from rich.console import Console
+from rich.pretty import Pretty
 import typer
 
 from dspy_profiles import api
@@ -17,11 +17,10 @@ def set_value(
     value: Annotated[str, typer.Argument(help="The value to set for the key.")],
 ):
     """Sets or updates a configuration value for a given profile."""
-    # Note: The underlying API function is currently bugged and will be fixed in a later phase.
     updated_profile, error = api.update_profile(profile_name, key, value)
     if error:
         console.print(f"[bold red]Error:[/] {error}")
         raise typer.Exit(code=1)
 
     console.print(f"Profile '{profile_name}' updated successfully.")
-    rich.print(updated_profile)
+    console.print(Pretty(updated_profile, expand_all=True))
