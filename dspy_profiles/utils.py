@@ -1,37 +1,55 @@
-from collections import defaultdict
+from __future__ import annotations
+
 from typing import Any
 
 
+def _deep_merge_dicts(existing: dict[str, Any], incoming: dict[str, Any]) -> dict[str, Any]:
+    """Recursively merge two dictionaries without mutating either input."""
+    merged: dict[str, Any] = existing.copy()
+    for key, value in incoming.items():
+        if key in merged and isinstance(merged[key], dict) and isinstance(value, dict):
+            merged[key] = _deep_merge_dicts(merged[key], value)
+        else:
+            merged[key] = value
+    return merged
+
+
+def _assign_path(target: dict[str, Any], parts: list[str], value: Any) -> None:
+    """Assign a value into a nested dictionary using a list of keys."""
+    head, *tail = parts
+
+    if tail:
+        next_container = target.get(head)
+        if not isinstance(next_container, dict):
+            next_container = {}
+        target[head] = next_container
+        if isinstance(value, dict):
+            value = normalize_config(value)
+        _assign_path(next_container, tail, value)
+        return
+
+    normalized_value = normalize_config(value) if isinstance(value, dict) else value
+    existing_value = target.get(head)
+    if isinstance(existing_value, dict) and isinstance(normalized_value, dict):
+        target[head] = _deep_merge_dicts(existing_value, normalized_value)
+    else:
+        target[head] = normalized_value
+
+
 def normalize_config(config: dict[str, Any]) -> dict[str, Any]:
-    """
-    Normalize a dictionary to expand dotted keys into nested dictionaries.
+    """Expand dotted TOML keys into nested dictionaries (recursively)."""
+    normalized: dict[str, Any] = {}
 
-    This function is designed to handle TOML configurations where nested
-    structures might be represented with dotted keys. For example, a key
-    'lm.model' would be transformed into a nested dictionary
-    {'lm': {'model': ...}}.
-
-    Args:
-        config: The dictionary to normalize.
-
-    Returns:
-        A new dictionary with dotted keys expanded into nested structures.
-    """
-    normalized = defaultdict(dict)
     for key, value in config.items():
         if "." in key:
-            parts = key.split(".", 1)
-            # This is a simplified implementation that assumes one level of nesting
-            # which is sufficient for the current use case (e.g., 'lm.model').
-            # A more complex recursive solution would be needed for deeper nesting.
-            parent_key, child_key = parts
-            if parent_key not in normalized:
-                normalized[parent_key] = {}
-            normalized[parent_key][child_key] = value
+            _assign_path(normalized, key.split("."), value)
+            continue
+
+        normalized_value = normalize_config(value) if isinstance(value, dict) else value
+        existing_value = normalized.get(key)
+        if isinstance(existing_value, dict) and isinstance(normalized_value, dict):
+            normalized[key] = _deep_merge_dicts(existing_value, normalized_value)
         else:
-            # If the value is a dictionary, it could be a sub-profile that also needs normalization
-            if isinstance(value, dict):
-                normalized[key] = normalize_config(value)
-            else:
-                normalized[key] = value
-    return dict(normalized)
+            normalized[key] = normalized_value
+
+    return normalized
