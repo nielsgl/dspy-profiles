@@ -1,3 +1,10 @@
+## Unreleased
+
+### Docs
+
+- 🧭 Consolidated planning documents into a single `ROADMAP.md` and moved the project overview into the docs site.
+- 📚 Promoted the documentation site in the README and expanded example guidance with execution tips.
+
 ## 0.3.0 (2025-09-23)
 
 ### Feat
