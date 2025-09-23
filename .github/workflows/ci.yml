@@ -98,6 +98,9 @@ jobs:
       - name: "Run tests"
         run: uv run pytest --cov --cov-report json
 
+      - name: "Build docs (strict)"
+        run: uv run mkdocs build --strict
+
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:

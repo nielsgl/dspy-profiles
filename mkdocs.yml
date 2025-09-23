@@ -34,6 +34,7 @@ nav:
   - 'User Guide':
     - 'Quickstart': quickstart.md
     - 'Advanced Usage': advanced-usage.md
+    - 'CI & Testing': ci-testing.md
     - 'Examples': examples.md
     - 'Troubleshooting': troubleshooting.md
   - 'Reference':
