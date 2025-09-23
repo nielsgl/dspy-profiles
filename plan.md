@@ -1,47 +1,57 @@
-# Test Coverage and Code Health Strategy
+# Release Readiness Plan
 
-## 1. Executive Summary
+This plan captures the final checks required before cutting the first public release of `dspy-profiles`.
 
-This document outlines a strategy to enhance the robustness and maintainability of the `dspy-profiles` library. Our primary goal is to achieve **>95% test coverage**, but more importantly, to ensure that our tests are meaningful, maintainable, and strategically aligned with the library's architecture. We will prioritize testing based on criticality, starting with core logic and moving to the application's outer layers (API and CLI). We will also refactor code where necessary to improve testability and adhere to best practices in modular design.
+## Objectives
 
-## 2. Guiding Principles
+1. Ship a developer-friendly CLI and Python API with accurate, discoverable documentation.
+2. Guarantee stable configuration behaviour (profiles, inheritance, overrides, async flows).
+3. Exceed 95% statement coverage with meaningful automated tests (unit, integration, CLI).
+4. Keep the release pipeline green: lint, tests, docs build, packaging.
 
-*   **Test for Behavior, Not Implementation:** Tests should validate the public-facing behavior of components. This makes them less brittle to internal refactoring.
-*   **The Testing Pyramid:** We will adhere to the testing pyramid:
-    *   **Unit Tests:** Fast, isolated tests for pure, stateless functions (e.g., `utils._deep_merge`).
-    *   **Integration Tests:** Tests for components that interact with each other or the filesystem (e.g., `ProfileManager`, `ProfileLoader`). These will use a sandboxed temporary filesystem.
-    *   **End-to-End (E2E) Tests:** High-level tests that validate user-facing workflows via the CLI (`CliRunner`).
-*   **Refactor for Testability:** We will actively identify and refactor code that is difficult to test, promoting smaller functions and clear separation of concerns.
+## Release Gates
 
-## 3. Strategic Plan
+- ✅ Tests: `uv run pytest --cov` (target ≥95% coverage; fail-under currently 90%).
+- ✅ Lint: `uv run ruff check .` with zero warnings.
+- ✅ Docs: `uv run mkdocs build --strict` without broken references.
+- ✅ Packaging: `uv build` succeeds; optional dry-run publish to TestPyPI.
+- ✅ CI: GitHub Actions workflow mirrors the commands above and must pass on `main`.
+- 🔄 Backlog tracked in `todo.md` stays in sync with any follow-up items.
 
-### Phase 1: Baseline and Core Logic (Highest Priority)
+## Verification Strategy
 
-1.  **Establish Baseline:** Run `pytest --cov` to measure the current test coverage. This is our starting metric.
-2.  **Core Utilities & Logic:**
-    *   **Target:** `dspy_profiles/utils.py`, `dspy_profiles/core.py`.
-    *   **Action:** Create `tests/test_utils.py` and `tests/test_core_logic.py`. Write unit tests for pure functions like `normalize_config` and `_deep_merge`.
-    *   **Refactoring:** Analyze the `profile` context manager in `core.py`. Extract complex logic into smaller, independently testable helper functions.
+| Layer        | What we cover                                                         | Tooling                                  |
+|--------------|------------------------------------------------------------------------|-------------------------------------------|
+| Unit         | Pure helpers, normalization, deep merge behaviour                      | `pytest`, focused fixtures & parametrised |
+| Integration  | Profile loading, inheritance, CLI workflows via `CliRunner`           | `pytest`, Typer `CliRunner`               |
+| End-to-end   | `dspy-run` wrapping, subprocess env propagation, async decorator paths | `pytest`, live subprocess invocation      |
+| Documentation| Navigation, snippets, API docs, reference consistency                 | `mkdocs build --strict`                   |
 
-### Phase 2: State and Configuration Management
+## Regression Focus
 
-1.  **Configuration & File I/O:**
-    *   **Target:** `dspy_profiles/config.py`.
-    *   **Action:** Create `tests/test_config.py`. Write integration tests for `ProfileManager`, ensuring it correctly handles creating, reading, updating, and deleting profiles from a temporary `profiles.toml`.
-2.  **Profile Resolution:**
-    *   **Target:** `dspy_profiles/loader.py`.
-    *   **Action:** Create `tests/test_loader.py`. Test `ProfileLoader` against various scenarios: simple profiles, profiles with `extends`, nested inheritance, and edge cases like circular dependencies.
+- Dotted-key handling (arbitrary depth, idempotency).
+- Profile inheritance precedence and cycle detection.
+- Async `@with_profile` decorator correctness.
+- CLI commands (`set`, `run`, `import`, `diff`, `test`) covering success and failure paths.
+- Cache directory behaviour and environment precedence (`DSPY_PROFILE`, discovery).
 
-### Phase 3: API and CLI (User-Facing Layers)
+## Manual Smoke Checklist
 
-1.  **Public API:**
-    *   **Target:** `dspy_profiles/api.py`.
-    *   **Action:** Create `tests/test_api.py`. Test the public functions, ensuring they correctly interface with the underlying managers and loaders.
-2.  **CLI Commands:**
-    *   **Target:** `dspy_profiles/commands/`.
-    *   **Action:** Create `tests/test_cli_commands.py`. Use `typer.testing.CliRunner` to write E2E tests for the CLI, covering all commands (`init`, `list`, `set`, `show`, `delete`, `validate`).
+1. `dspy-profiles init --profile demo` (cancel + force flows).
+2. `dspy-profiles list/show/set/delete` with a temporary config.
+3. `dspy-run --profile demo --dry-run python hello.py` to validate bootstrap messaging.
+4. `dspy-profiles validate` and `dspy-profiles test demo` against a stub LM.
+5. Review docs site locally (`uv run mkdocs serve`) for copy accuracy.
 
-### Phase 4: Review and Refine
+## Outstanding Enhancements (Post-Launch Candidates)
 
-1.  **Existing Test Refactoring:** Review all existing test files. Refactor them to align with our principles of small, focused tests.
-2.  **Final Coverage Measurement:** Run `pytest --cov` again and analyze the report. Identify any remaining gaps and write tests to cover them until we exceed our 95% goal.
+- Keyring-backed secrets management (`dspy-profiles set-secret`).
+- Shell completion instructions and auto-generation helpers.
+- Provider-specific guides (OpenAI, Anthropic, Ollama, local models).
+- `dspy-profiles export` command and import conflict resolution UX.
+
+## Reporting
+
+- Coverage (`coverage.json`) uploaded from CI; fail builds if future coverage drops below target after ratcheting.
+- Release notes derived from `CHANGELOG.md` and docs “Changelog” page.
+- Any deviations or flaky tests must be captured in `todo.md` before tagging.
