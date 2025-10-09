@@ -2,7 +2,7 @@
 
 [![PyPI Version](https://img.shields.io/pypi/v/dspy-profiles.svg)](https://pypi.org/project/dspy-profiles/)
 [![Python Version](https://img.shields.io/pypi/pyversions/dspy-profiles.svg)](https://pypi.org/project/dspy-profiles/)
-[![PyPI Downloads](https://img.shields.io/pypi/dm/dspy-profiles.svg)](https://pypi.org/project/dspy-profiles/)
+[![PyPI Downloads](https://static.pepy.tech/personalized-badge/dspy-profiles?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads)](https://pepy.tech/projects/dspy-profiles)
 [![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://nielsgl.github.io/dspy-profiles/)
 [![Tests](https://github.com/nielsgl/dspy-profiles/actions/workflows/ci.yml/badge.svg)](https://github.com/nielsgl/dspy-profiles/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/codecov/c/github/nielsgl/dspy-profiles)](https://codecov.io/gh/nielsgl/dspy-profiles)
